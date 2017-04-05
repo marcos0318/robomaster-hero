@@ -7,11 +7,16 @@ volatile u32 ticks_msimg = (u32)-1;
 #define ANGLE_PID_LIMIT 300
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
-#define LiftingMotorSetpointLimit 32768
+#define LiftingMotorSetpointLimit 31999
+#define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
+#define DOWN_SETPOINT 3000						//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define TOTALLY_DOWN_SETPOINT 1000
 int16_t LiftingMotorSetpoint[4]={0};
 enum State{StaticState,MovingState};
 bool SetpointStatic=false;
 enum State GimbalState; 	
+volatile bool pneumatic_state=false;
+bool pneumatic_prev=false;
 void init(){
 	SysTick_Init();  
 	Dbus_init();//usart1
@@ -36,13 +41,13 @@ void init(){
 
 int16_t checkSetpoint(int16_t a, bool dir){
 	if(dir){
-		if(a>LiftingMotorSetpointLimit-10)
+		if(a>LiftingMotorSetpointLimit-200)
 			a=LiftingMotorSetpointLimit-1;
-		else{a+=10;}
+		else{a+=200;}
 	}		else{
-		if(a<(-LiftingMotorSetpointLimit+10)){
-			a=-LiftingMotorSetpointLimit;
-		} else {a-=10;}
+		if(a<200){
+			a=0;
+		} else {a-=200;}
 	}
 	return a;
 }
@@ -443,39 +448,95 @@ int main(void)
 			*/
 			else if (DBUS_ReceiveData.rc.switch_left ==2) { //The stop mode
 				if(ticks_msimg%20==0){
-					if(DBUS_CheckPush(KEY_Z)){
-						LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=checkSetpoint(LiftingMotorSetpoint[0],true);
+			
+					if (DBUS_CheckPush(KEY_SHIFT)) {
+						if(DBUS_CheckPush(KEY_R)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=0;
+							DataMonitor_Send(5,0);
+						}
+						else if(DBUS_CheckPush(KEY_Z)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=checkSetpoint(LiftingMotorSetpoint[0],true);
+							DataMonitor_Send(0,LiftingMotorSetpoint[0]);
+						}
+						else if(DBUS_CheckPush(KEY_X)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=checkSetpoint(LiftingMotorSetpoint[0],false);
+							DataMonitor_Send(0,LiftingMotorSetpoint[0]);
+						}
+						else if(DBUS_CheckPush(KEY_C)){
+							LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=checkSetpoint(LiftingMotorSetpoint[2],true);
+							DataMonitor_Send(2,LiftingMotorSetpoint[2]);
+						}
+						else if(DBUS_CheckPush(KEY_V)){
+							LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=checkSetpoint(LiftingMotorSetpoint[2],false);
+							DataMonitor_Send(2,LiftingMotorSetpoint[2]);
+						}
+						else if(!pneumatic_prev&&DBUS_CheckPush(KEY_F)){
+							//pneumatic
+							if(pneumatic_state) pneumatic_state=false;
+							else pneumatic_state=true;
+							pneumatic_control(1,pneumatic_state);
+							pneumatic_control(2,pneumatic_state);
+						}
+					
 					}
-					if(DBUS_CheckPush(KEY_X)){
-						LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=checkSetpoint(LiftingMotorSetpoint[0],false);
+					else {
+						if(DBUS_CheckPush(KEY_W)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=UP_SETPOINT/5;
+							DataMonitor_Send(0xFF,LiftingMotorSetpoint[0]);   //GO_ON_STAGE_ONE_KEY
+						}
+						else if(DBUS_CheckPush(KEY_S)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=DOWN_SETPOINT/5;
+							DataMonitor_Send(0xFE,LiftingMotorSetpoint[0]);   //GO_DOWN_STAGE_ONE_KEY
+						}
+						else if(DBUS_CheckPush(KEY_A)){
+							DataMonitor_Send(0xFD,LiftingMotorSetpoint[0]);   //BREAK
+						}
+						else if(DBUS_CheckPush(KEY_X)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=DOWN_SETPOINT/8;
+							DataMonitor_Send(0xFC,LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
+						}
+						else if(DBUS_CheckPush(KEY_V)){
+							LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=DOWN_SETPOINT/8;
+							DataMonitor_Send(0xFB,LiftingMotorSetpoint[2]);		//ONE_KEY_DOWN_BACK					
+						}
+						else if(DBUS_CheckPush(KEY_Z)){
+							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=UP_SETPOINT/8;
+							DataMonitor_Send(0xFA,LiftingMotorSetpoint[0]);		//ONE_KEY_UP_FRONT						
+						}
+						else if(DBUS_CheckPush(KEY_C)){
+							LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=UP_SETPOINT/8;
+							DataMonitor_Send(0xF9,LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK					
+						}
+						
+					
 					}
-					if(DBUS_CheckPush(KEY_Z)){
-						LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=checkSetpoint(LiftingMotorSetpoint[2],true);
-					}
-					if(DBUS_CheckPush(KEY_Z)){
-						LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=checkSetpoint(LiftingMotorSetpoint[3],false);
-					}
+					
+					pneumatic_prev=DBUS_CheckPush(KEY_SHIFT)&&DBUS_CheckPush(KEY_F);
+					
+					
+					for(uint8_t i=2;i<12;i++)
+						tft_clear_line(i);
 					for(uint8_t i=0;i<4;i++){
 						tft_prints(1,i+2,"LMP %d %d",i,LiftingMotorSetpoint[i]);
 					}
-					tft_prints(1,7,"gero:%d", output_angle);
+					tft_prints(1,7,"gyro:%d", output_angle);
+					
+					
+					
 					tft_update();
 					
 				}
-				for(uint8_t i;i<4;i++){
-					if(ticks_msimg%4==i){
-						DataMonitor_Send(i,LiftingMotorSetpoint[i]);
-					}
-				}
-
-
-
+				
 
 				Set_CM_Speed(CAN1, 0, 0, 0, 0);
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);
 			}		
 			
-			
+			if ( ticks_msimg % 20 == 0 ){
+				tft_prints(1,9,"mode:%d", DBUS_ReceiveData.rc.switch_left );
+				tft_update();
+				
+			}
 			/*
 			//all the tft_prints things				
 			if(ticks_msimg%50==0)
