@@ -1,13 +1,14 @@
 #define GUN_FILE
-
-#include "Dbus.h"
 #include "Driver_Encoder.h"
 #include "Driver_Gun.h"
-
+#include "canBusProcess.h"
+#include "PID.h"
 #include <string.h>
+#include <stdbool.h>
 
-static PID_Controller PokeSpeedController;
-static PID_Controller PokeAngleController;
+
+
+
 
 void GUN_BSP_Init(void) {
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -91,194 +92,13 @@ void GUN_Init(void) {
 
     memset((char*)&GUN_Data, 0, sizeof(GUN_Data));
 
-    PID_Reset(&PokeSpeedController);
-    PokeSpeedController.Kp = 100.0f;
-    PokeSpeedController.Ki = 20.00f;
-    PokeSpeedController.Kd = 0.00f;
-    PokeSpeedController.MAX_Pout = 12000;
-    PokeSpeedController.MAX_Integral = 100000;
-    PokeSpeedController.MAX_PIDout = 12000;
-    PokeSpeedController.MIN_PIDout = 0;
-    PokeSpeedController.mode = kPositional;
-
-    PID_Reset(&PokeAngleController);
-    PokeAngleController.Kp = 0.30f;
-    PokeAngleController.Ki = 0.00f;
-    PokeAngleController.Kd = 0.00f;
-    PokeAngleController.MAX_Pout = 12000;
-    PokeAngleController.MAX_Integral = 100000;
-    PokeAngleController.MAX_PIDout = 80;
-    PokeAngleController.MIN_PIDout = 0;
-    PokeAngleController.mode = kPositional;
+    
+		
+		
 }
 
 extern volatile u32 ticks_msimg;
 void GUN_SetMotion(void) {
-    static char shoot = 0;
-    static char jumpPress = 0, jumpRelease = 0;
-    static int32_t lastTick = 0;
-    static int32_t pressCount = 0;
-
-    // friction wheel
-    if (DBUS_ReceiveData.rc.switch_right != 1) {
-        FRIC_SET_THRUST_L(700);
-        FRIC_SET_THRUST_R(700);
-    }
-    else {
-        FRIC_SET_THRUST_L(0);
-        FRIC_SET_THRUST_R(0);
-    }
-
-    // poke motor
-    jumpPress = DBUS_ReceiveData.mouse.press_left &&
-        !LASTDBUS_ReceiveData.mouse.press_left;
-    jumpRelease = !DBUS_ReceiveData.mouse.press_left &&
-        LASTDBUS_ReceiveData.mouse.press_left;
-    if (jumpRelease) pressCount = 0;
-    if (DBUS_ReceiveData.mouse.press_left) {
-        ++pressCount;
-    }
-
-    shoot = jumpPress || (((pressCount & 0x000FU) == 0)&&pressCount);
-    shoot = shoot && (DBUS_ReceiveData.rc.switch_right != 1);
-    shoot = shoot && (ticks_msimg - lastTick > 220);
-    if (shoot) {
-        GUN_ShootOne();
-        lastTick = ticks_msimg;
-    }
-}
-
-void GUN_ShootOne(void) {
-#if ENCODER_DIR == 1
-    GUN_Data.pokeTargetAngle += 660;
-#else
-    GUN_Data.pokeTargetAngle -= 660;
-#endif
-}
-
-void GUN_PokeControl(void) {
-    GUN_Data.pokeTargetSpeed = PID_Update(&PokeAngleController,
-        GUN_Data.pokeTargetAngle, GUN_Data.pokeAngle);
-    GUN_PokeSpeedControl();
-}
-
-void GUN_PokeSpeedControl(void) {
-    ENCODER_Update();
-    GUN_Data.pokeAngle += ENCODER_Data;
-    if (GUN_Data.pokeAngle > 16777216) {
-        GUN_Data.pokeAngle = GUN_Data.pokeTargetAngle = 0;
-    }
-    GUN_Data.pokeOutput = PID_Update(&PokeSpeedController,
-        GUN_Data.pokeTargetSpeed, ENCODER_Data);
-
-#if POKE_DIR == 0
-    if (GUN_Data.pokeOutput >= 0) {
-        GPIO_SetBits(POKE_DIR_PORT, POKE_DIR_PIN);
-        POKE_SET_PWM(GUN_Data.pokeOutput);
-    }
-    else {
-        GPIO_ResetBits(POKE_DIR_PORT, POKE_DIR_PIN);
-        POKE_SET_PWM(-GUN_Data.pokeOutput);
-    }
-#else
-    if (GUN_Data.pokeOutput >= 0) {
-        GPIO_ResetBits(POKE_DIR_PORT, POKE_DIR_PIN);
-        POKE_SET_PWM(GUN_Data.pokeOutput);
-    }
-    else {
-        GPIO_SetBits(POKE_DIR_PORT, POKE_DIR_PIN);
-        POKE_SET_PWM(-GUN_Data.pokeOutput);
-    }
-#endif
-}
-
-void GUN_SetFree(void) {
-    PID_Reset(&PokeSpeedController);
-    PID_Reset(&PokeAngleController);
-
-    GUN_Data.pokeOutput = 0;
-    GUN_Data.pokeTargetSpeed = 0;
-    GUN_Data.pokeTargetAngle = 0;
-}
-
-#include <string.h>
-
-/*
-    Trim val to [-lim, lim]
-*/
-static float PID_Trim(float val, float lim) {
-    if (lim < 0.0f) return val;
-    if (val < -lim) val = -lim;
-    if (val > lim) val = lim;
-    return val;
-}
-
-/*
-    Restore to initial state
-*/
-void PID_Reset(PID_Controller *pid) {
-    memset(pid->set, 0, sizeof(pid->set));
-    memset(pid->real, 0, sizeof(pid->real));
-    memset(pid->err, 0, sizeof(pid->err));
-    pid->errIntegral = 0.0f;
-    pid->output = 0.0f;
-}
-
-/*
-    Update PID controller and return output
-*/
-float PID_Update(PID_Controller *pid, float target, float measure) {
-    // update error
-    pid->set[kNOW] = target;
-    pid->real[kNOW] = measure;
-    pid->err[kNOW] = target - measure;
-
-    float Pout, Iout, Dout;
-    if (pid->mode == kIncremental) {
-        Pout = pid->Kp * (pid->err[kNOW] - pid->err[kLAST]);
-        Iout = pid->Ki * pid->err[kNOW];
-        Dout = pid->Kd * (pid->err[kNOW] - 2*pid->err[kLAST] + pid->err[kLLAST]);
-
-        Iout = PID_Trim(Iout, pid->MAX_Integral * pid->Ki);
-        pid->output += (Pout + Iout + Dout);
-        pid->output = PID_Trim(pid->output, pid->MAX_PIDout);
-    }
-    else if (pid->mode == kPositional) {
-        pid->errIntegral += pid->err[kNOW];
-        pid->errIntegral = PID_Trim(pid->errIntegral, pid->MAX_Integral);
-
-        Pout = pid->Kp * pid->err[kNOW];
-        Iout = pid->Ki * pid->errIntegral;
-        Dout = pid->Kd * (pid->err[kNOW] - pid->err[kLAST]);
-
-        Pout = PID_Trim(Pout, pid->MAX_Pout);
-        pid->output = Pout + Iout + Dout;
-        pid->output = PID_Trim(pid->output, pid->MAX_PIDout);
-    }
-    else if (pid->mode == kIntegralDecay) {
-        pid->errIntegral = pid->errIntegral * pid->IDecayFactor + pid->err[kNOW];
-        pid->errIntegral = PID_Trim(pid->errIntegral, pid->MAX_Integral);
-
-        Pout = pid->Kp * pid->err[kNOW];
-        Iout = pid->Ki * pid->errIntegral;
-        Dout = pid->Kd * (pid->err[kNOW] - pid->err[kLAST]);
-
-        Pout = PID_Trim(Pout, pid->MAX_Pout);
-        pid->output = Pout + Iout + Dout;
-        pid->output = PID_Trim(pid->output, pid->MAX_PIDout);
-    }
-
-    pid->set[kLLAST] = pid->set[kLAST];
-    pid->set[kLAST] = pid->set[kNOW];
-    pid->real[kLLAST] = pid->real[kLAST];
-    pid->real[kLAST] = pid->real[kNOW];
-    pid->err[kLLAST] = pid->err[kLAST];
-    pid->err[kLAST] = pid->err[kNOW];
-
-    float ret = pid->output;
-    float abs_ret = ret;
-    if (abs_ret < 0.0f) abs_ret = -abs_ret;
-    if (abs_ret < pid->MIN_PIDout) ret = 0.0f;
-    return ret;
+    
 }
 
