@@ -13,6 +13,8 @@ volatile Encoder CM4Encoder = {0,0,0,0,0,0,0,0,0};//204
 volatile Encoder GMYawEncoder = {0,0,0,0,0,0,0,0,0};//205
 volatile Encoder GMPitchEncoder = {0,0,0,0,0,0,0,0,0};//206
 volatile Encoder GMballfeedEncoder = {0,0,0,0,0,0,0,0,0};//206
+volatile Encoder GMCameraEncoder = {0,0,0,0,0,0,0,0,0};//206
+
 
 volatile Encoder GMxEncoder = {0,0,0,0,0,0,0,0,0};//207
 
@@ -148,7 +150,11 @@ void CanReceiveMsgProcess_for_gimbal(CanRxMsg * msg)
 				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
 				{
 					(can_count<=50) ? GetEncoderBias(&GMballfeedEncoder,msg):EncoderProcess(&GMballfeedEncoder,msg);
-				}break;				
+				}break;
+				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
+				{
+					(can_count<=50) ? GetEncoderBias(&GMCameraEncoder,msg):EncoderProcess(&GMCameraEncoder ,msg);
+				}break;			
 				
 		}
  

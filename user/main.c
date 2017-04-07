@@ -76,7 +76,7 @@ int32_t kd_angle = 1;
 	
 
 //The power control, NOT intend to use pid control, but still consider using close-loop control 
-int32_t FILTER_RATE_LIMIT = 700;
+int32_t FILTER_RATE_LIMIT = 500;
 //int32_t power_buffer[POWER_BUFFER_LENGTH];
 float feedback_current = 0;
 float feedback_voltage = 0;
@@ -111,7 +111,7 @@ int32_t yawPosMultiplier = 3;		//DBUS mouse yaw control
 struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
 int32_t gimbalSpeedSetpoint = 0;
 int32_t gimbalSpeedMoveOutput = 0;
-int32_t outsideLimit=1500;
+int32_t outsideLimit=670;
 //********************************************************************************************************************
 //Pitch control
 //setpoint control
@@ -134,7 +134,14 @@ int32_t pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
 //********************************************************************************************************************
+//camera control
 
+float cameraPositionFeedback = 0 ;
+
+
+
+
+//********************************************************************************************************************
 //DBUS control data
 int32_t speed_limitor  = 660;
 int32_t speed_multiplier;
@@ -219,6 +226,7 @@ int main(void)
 
 
 				//direction = -DBUS_ReceiveData.rc.ch2*2 + -DBUS_ReceiveData.mouse.xtotal*4 ;
+				/*
 				if(DBUS_ReceiveData.rc.switch_left == 1) {		//auto follow mode
 					direction += (-DBUS_ReceiveData.rc.ch2/300 + -DBUS_ReceiveData.mouse.x);
 					setpoint_angle = -direction * 3600/upperTotal;
@@ -226,7 +234,8 @@ int main(void)
 					if (gimbalPositionSetpoint > 1500) gimbalPositionSetpoint = 1500;
 					if (gimbalPositionSetpoint < -1500) gimbalPositionSetpoint = -1500;
 				}
-				if(DBUS_ReceiveData.rc.switch_left == 3)		//keyboard-mouse mode, chasis will turn if mouse go beyong the boundary
+				*/
+				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1)		//keyboard-mouse mode, chasis will turn if mouse go beyong the boundary
 				{
 					xtotal =  DBUS_ReceiveData.mouse.xtotal;
  					//direction not move when the difference is large
@@ -243,41 +252,13 @@ int main(void)
 						setpoint_angle = -direction * 3600/upperTotal;
 					}
 
-					/*
-					if(DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier>=outsideLimit){
-						gimbalPositionSetpoint=-outsideLimit;
-						
-						setpoint_angle+=(DBUS_ReceiveData.mouse.x)/14;
-						DBUS_ReceiveData.mouse.xtotal=outsideLimit/yawPosMultiplier;
-					}else if(DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier<=-outsideLimit){
-						gimbalPositionSetpoint=outsideLimit;
-						
-						setpoint_angle+=(DBUS_ReceiveData.mouse.x)/14;
-						DBUS_ReceiveData.mouse.xtotal=-outsideLimit/yawPosMultiplier	;
-					}
-					*/
+					
 					//Used for protection				
-					if (gimbalPositionSetpoint > 2000) gimbalPositionSetpoint = 2000;
-					if (gimbalPositionSetpoint < -2000) gimbalPositionSetpoint = -2000;
+					if (gimbalPositionSetpoint > 700) gimbalPositionSetpoint = 700;
+					if (gimbalPositionSetpoint < -700) gimbalPositionSetpoint = -700;
 					// else gimbalPositionSetpoint=-DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier;
 					
-					/*
-					if(DBUS_ReceiveData.mouse.press_right && Fprev){
-						setpoint_angle+=(DBUS_ReceiveData.mouse.x)/5;
-						gimbalPositionSetpoint=0;
-					}
 					
-					if( DBUS_ReceiveData.mouse.press_right && !Fprev)		//calibrating
-					{
-						//start to press F
-						gimbalPositionSetpoint=0;
-						setpoint_angle=output_angle-GMYawEncoder.ecd_angle/2.7;
-						DBUS_ReceiveData.mouse.xtotal=0;
-						
-					}
-					Fprev=DBUS_ReceiveData.mouse.press_right;
-					//mouse_prev=DBUS_ReceiveData.mouse.xtotal;
-					*/
 					pre_xtotal = xtotal;
 				}
 //********************************************************************************************************************
@@ -331,16 +312,8 @@ int main(void)
 				}
 //chasis turning speed limit control ends
 //********************************************************************************************************************
-//auto follow mode gimbal control begins
-				if(DBUS_ReceiveData.rc.switch_left == 1){
 
-					//The separate gimbal control 
-					//Gimbal input
-				}
-//auto follow mode gimbal control ends
-//********************************************************************************************************************
-
-				if(DBUS_ReceiveData.rc.switch_left == 3){
+				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1){
 					
 				//position setpoint is done above
 									
@@ -363,8 +336,8 @@ int main(void)
 //pitch setpoint control
 				//limit pitch position
 				
-					if(DBUS_ReceiveData.mouse.ytotal*pitchPosMultiplier>-120) DBUS_ReceiveData.mouse.ytotal=-120/pitchPosMultiplier;
-					else if(DBUS_ReceiveData.mouse.ytotal*pitchPosMultiplier<-950) DBUS_ReceiveData.mouse.ytotal=-950/pitchPosMultiplier;
+					if(DBUS_ReceiveData.mouse.ytotal*pitchPosMultiplier>-460) DBUS_ReceiveData.mouse.ytotal=-460/pitchPosMultiplier;
+					else if(DBUS_ReceiveData.mouse.ytotal*pitchPosMultiplier<-1100) DBUS_ReceiveData.mouse.ytotal=-1100/pitchPosMultiplier;
 					
 					//pitch setpoint
 					pitchPositionSetpoint=-DBUS_ReceiveData.mouse.ytotal*pitchPosMultiplier;
@@ -391,6 +364,7 @@ int main(void)
 				pitchPositionFeedback = GMPitchEncoder.ecd_angle;
 				pitchSpeedSetpoint = (int32_t)fpid_process(&pitchPositionState, &pitchPositionSetpoint, &pitchPositionFeedback,ppos_kp,ppos_ki,ppos_kd );
 
+				cameraPositionFeedback = GMCameraEncoder.ecd_angle;
 
 				//Limit the output
 				if (gimbalSpeedSetpoint > 80) gimbalSpeedSetpoint = 80;
@@ -411,13 +385,18 @@ int main(void)
 
 //********************************************************************************************************************	
 				//Print gimbal Yaw and Pitch
+				/*
 			  if(ticks_msimg%20==0){	
 					for (int j=2;j<12;j++) tft_clear_line(j);
-					tft_prints(1,2,"pos_set= %.1f",gimbalPositionSetpoint);
-					tft_prints(1,3,"pos_set= %.1f",pitchPositionSetpoint);
+					//tft_prints(1,2,"pos_set= %.1f",gimbalPositionSetpoint);
+					//tft_prints(1,3,"pos_set= %.1f",pitchPositionSetpoint);
+					
+					tft_prints(1,2,"yback=%.1f",gimbalPositionFeedback);
+					tft_prints(1,3,"pback=%.1f",pitchPositionFeedback);
+					tft_prints(1,4,"cback-%.1f",cameraPositionFeedback);
 					//tft_prints(1,4,"D= %d", direction);
-					tft_prints(1,5,"error= %d", error);
-					tft_prints(1,4,"tarbu:%d", Cerror);
+					//tft_prints(1,5,"error= %d", error);
+					//tft_prints(1,4,"tarbu:%d", Cerror);
 					//tft_prints(1,5,"error= %d", states[0].cummulated_error);
 					tft_prints(1,6,"speed=%d",GMballfeedEncoder.filter_rate);
 					tft_prints(1,7,"ecd:%d", spSp);
@@ -429,12 +408,13 @@ int main(void)
 					tft_prints(1,11,"l=%d,r=%d",DBUS_ReceiveData.mouse.press_right,DBUS_ReceiveData.mouse.press_right);
 					tft_update();		
 				}
+				*/
 
 				//call the acturater function
 				//if (ticks_msimg % 20 == 0)
 				GUN_PokeControl();
 
-		  	Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,0);						 
+		  		Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,0);						 
 				Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);
 			}	
 			
@@ -446,7 +426,7 @@ int main(void)
 		
 			} 
 			*/
-			else if (DBUS_ReceiveData.rc.switch_left ==2) { //The stop mode
+		
 				if(ticks_msimg%20==0){
 			
 					if (DBUS_CheckPush(KEY_SHIFT)) {
@@ -476,21 +456,22 @@ int main(void)
 							else pneumatic_state=true;
 							pneumatic_control(1,pneumatic_state);
 							pneumatic_control(2,pneumatic_state);
+							pneumatic_control(3,pneumatic_state);
 						}
 					
 					}
 					else {
-						if(DBUS_CheckPush(KEY_W)){
+						if(DBUS_CheckPush(KEY_R)){
 							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=UP_SETPOINT/5;
 							DataMonitor_Send(0xFF,LiftingMotorSetpoint[0]);   //GO_ON_STAGE_ONE_KEY
 						}
-						else if(DBUS_CheckPush(KEY_S)){
+						else if(DBUS_CheckPush(KEY_F)){
 							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=LiftingMotorSetpoint[2]=LiftingMotorSetpoint[3]=DOWN_SETPOINT/5;
 							DataMonitor_Send(0xFE,LiftingMotorSetpoint[0]);   //GO_DOWN_STAGE_ONE_KEY
 						}
-						else if(DBUS_CheckPush(KEY_A)){
-							DataMonitor_Send(0xFD,LiftingMotorSetpoint[0]);   //BREAK
-						}
+						//else if(DBUS_CheckPush(KEY_A)){
+							//DataMonitor_Send(0xFD,LiftingMotorSetpoint[0]);   //BREAK
+						//}
 						else if(DBUS_CheckPush(KEY_X)){
 							LiftingMotorSetpoint[0]=LiftingMotorSetpoint[1]=DOWN_SETPOINT/8;
 							DataMonitor_Send(0xFC,LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
@@ -514,12 +495,23 @@ int main(void)
 					pneumatic_prev=DBUS_CheckPush(KEY_SHIFT)&&DBUS_CheckPush(KEY_F);
 					
 					
-					for(uint8_t i=2;i<12;i++)
-						tft_clear_line(i);
-					for(uint8_t i=0;i<4;i++){
+					//for(uint8_t i=2;i<12;i++)
+						//tft_clear_line(i);
+					/*for(uint8_t i=0;i<4;i++){
 						tft_prints(1,i+2,"LMP %d %d",i,LiftingMotorSetpoint[i]);
 					}
-					tft_prints(1,7,"gyro:%d", output_angle);
+					*/
+					tft_clear();
+					for(uint8_t i=0;i<4;i++){
+						tft_prints(1,i+2,"%d %d",i,wheel_feedbacks[i]);
+					}
+
+					tft_prints(1,6,"yback=%.1f",gimbalPositionFeedback);
+					tft_prints(1,7,"pback=%.1f",pitchPositionFeedback);
+					tft_prints(1,8,"cback-%.1f",cameraPositionFeedback);
+
+
+					//tft_prints(1,7,"gyro:%d", output_angle);
 					
 					
 					
@@ -528,13 +520,19 @@ int main(void)
 				}
 				
 
-				Set_CM_Speed(CAN1, 0, 0, 0, 0);
-				Set_CM_Speed(CAN2, 0, 0, 0, 0);
-			}		
+				//Set_CM_Speed(CAN1, 0, 0, 0, 0);
+				//Set_CM_Speed(CAN2, 0, 0, 0, 0);
+			//}		
+
+
+			if(DBUS_ReceiveData.rc.switch_left == 2){
+				Set_CM_Speed(CAN1,0,0,0,0);
+				Set_CM_Speed(CAN2,0,0,0,0);
+			}
 			
 			if ( ticks_msimg % 20 == 0 ){
-				tft_prints(1,9,"mode:%d", DBUS_ReceiveData.rc.switch_left );
-				tft_update();
+				//tft_prints(1,9,"mode:%d", DBUS_ReceiveData.rc.switch_left );
+				//tft_update();
 				
 			}
 			/*
