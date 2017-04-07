@@ -45,7 +45,6 @@ extern int16_t pid_process_gai1(struct pid_control_states* states, int32_t* setp
 
 
 
-//These things are not my code 
 
 struct inc_pid_states {
 	signed int setpoint;
