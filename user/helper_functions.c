@@ -22,6 +22,24 @@ int32_t abs(int32_t x){
 	return x;
 }
 
+int32_t max(int32_t a, int32_t b){
+
+	if(a > b)
+		return a;
+	else
+		return b;
+
+}
+
+int32_t min(int32_t a, int32_t b){
+
+	if(a < b)
+		return a;
+	else
+		return b;
+
+}
+
 void wheel_setpoints_adjust(int32_t * sp1, int32_t* sp2, int32_t* sp3, int32_t* sp4, int32_t limit){
 	int32_t max = abs(*sp1);
 	if (abs(*sp2) > max) max = abs(*sp2);

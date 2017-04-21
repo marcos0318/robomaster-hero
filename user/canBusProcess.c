@@ -25,6 +25,7 @@ volatile Encoder GMxEncoder = {0,0,0,0,0,0,0,0,0};//207
 *Input         :can message
 *Return        :void
 *Description   :to get the initiatial encoder of the chassis motor 201 202 203 204
+
 *
 *
 ***********************************************************************************************
@@ -33,7 +34,7 @@ volatile Encoder GMxEncoder = {0,0,0,0,0,0,0,0,0};//207
 void GetEncoderBias(volatile Encoder *v, CanRxMsg * msg)
 {
 
-            v->ecd_bias = (msg->Data[0]<<8)|msg->Data[1];  //±£´æ³õÊ¼±àÂëÆ÷Öµ×÷ÎªÆ«²î  
+            v->ecd_bias = (msg->Data[0]<<8)|msg->Data[1];  //Â±Â£Â´Ã¦Â³ÃµÃŠÂ¼Â±Ã Ã‚Ã«Ã†Ã·Ã–ÂµÃ—Ã·ÃŽÂªÃ†Â«Â²Ã®  
             v->ecd_value = v->ecd_bias;
             v->last_raw_value = v->ecd_bias;
             v->temp_count++;
@@ -59,7 +60,7 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	v->diff = v->raw_value - v->last_raw_value;
 	v->velocity_from_ESC = (msg->Data[2]<<8)|msg->Data[3];
 	//for detecting the speed with last sample
-	if(v->diff < -7000)    //Á½´Î±àÂëÆ÷µÄ·´À¡Öµ²î±ðÌ«´ó£¬±íÊ¾È¦Êý·¢ÉúÁË¸Ä±ä
+	if(v->diff < -7000)    //ÃÂ½Â´ÃŽÂ±Ã Ã‚Ã«Ã†Ã·ÂµÃ„Â·Â´Ã€Â¡Ã–ÂµÂ²Ã®Â±Ã°ÃŒÂ«Â´Ã³Â£Â¬Â±Ã­ÃŠÂ¾ÃˆÂ¦ÃŠÃ½Â·Â¢Ã‰ÃºÃÃ‹Â¸Ã„Â±Ã¤
 	{
 		v->round_cnt++;
 		v->ecd_raw_rate = v->diff + 8192;
@@ -75,11 +76,11 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	}
 	
 	
-	//¼ÆËãµÃµ½Á¬ÐøµÄ±àÂëÆ÷Êä³öÖµ 
+	//Â¼Ã†Ã‹Ã£ÂµÃƒÂµÂ½ÃÂ¬ÃÃ¸ÂµÃ„Â±Ã Ã‚Ã«Ã†Ã·ÃŠÃ¤Â³Ã¶Ã–Âµ 
 	v->ecd_value = v->raw_value + v->round_cnt * 8192;
 	
 	
-	//¼ÆËãµÃµ½½Ç¶ÈÖµ£¬·¶Î§Õý¸ºÎÞÇî´ó
+	//Â¼Ã†Ã‹Ã£ÂµÃƒÂµÂ½Â½Ã‡Â¶ÃˆÃ–ÂµÂ£Â¬Â·Â¶ÃŽÂ§Ã•Ã½Â¸ÂºÃŽÃžÃ‡Ã®Â´Ã³
 	v->ecd_angle = (float)(v->raw_value - v->ecd_bias)*360/8192 + v->round_cnt * 360;
 	v->rate_buf[v->buf_count++] = v->ecd_raw_rate;
 	
@@ -88,7 +89,7 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	{
 		v->buf_count = 0;
 	}
-	//¼ÆËãËÙ¶ÈÆ½¾ùÖµ
+	//Â¼Ã†Ã‹Ã£Ã‹Ã™Â¶ÃˆÃ†Â½Â¾Ã¹Ã–Âµ
 	for(i = 0;i < RATE_BUF_SIZE; i++)
 	{
 		temp_sum += v->rate_buf[i];
@@ -114,7 +115,7 @@ void CanReceiveMsgProcess_for_chassis(CanRxMsg * msg)
 		{
 				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
 				{
-					(can_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //»ñÈ¡µ½±àÂëÆ÷µÄ³õÊ¼Æ«²îÖµ            
+					(can_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //Â»Ã±ÃˆÂ¡ÂµÂ½Â±Ã Ã‚Ã«Ã†Ã·ÂµÃ„Â³ÃµÃŠÂ¼Ã†Â«Â²Ã®Ã–Âµ            
                     
 				}break;
 				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
@@ -141,7 +142,7 @@ void CanReceiveMsgProcess_for_gimbal(CanRxMsg * msg)
 		{
 				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
 				{
-					(can_count<=50) ? GetEncoderBias(&GMYawEncoder,msg):  EncoderProcess(&GMYawEncoder,msg);       //»ñÈ¡µ½±àÂëÆ÷µÄ³õÊ¼Æ«²îÖµ                 
+					(can_count<=50) ? GetEncoderBias(&GMYawEncoder,msg):  EncoderProcess(&GMYawEncoder,msg);       //Â»Ã±ÃˆÂ¡ÂµÂ½Â±Ã Ã‚Ã«Ã†Ã·ÂµÃ„Â³ÃµÃŠÂ¼Ã†Â«Â²Ã®Ã–Âµ                 
 				}break;
 				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
 				{
@@ -163,7 +164,7 @@ void CanReceiveMsgProcess_for_gimbal(CanRxMsg * msg)
 
 
 /********************************************************************************
-   ¸øµ×ÅÌµçµ÷°å·¢ËÍÖ¸Áî£¬IDºÅÎª0x200£¸øµµ×ÅÌ·µ»ØIDÎª0x201-0x204
+   Â¸Ã¸ÂµÃ—Ã…ÃŒÂµÃ§ÂµÃ·Â°Ã¥Â·Â¢Ã‹ÃÃ–Â¸ÃÃ®Â£Â¬IDÂºÃ…ÃŽÂª0x200Â£Â¸Ã¸ÂµÂµÃ—Ã…ÃŒÂ·ÂµÂ»Ã˜IDÃŽÂª0x201-0x204
 *********************************************************************************/
 void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3_iq, int16_t cm4_iq)
 {
@@ -218,8 +219,8 @@ void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3
 }
 
 /********************************************************************************
-   ¸øµçµ÷°å·¢ËÍÖ¸Áî£¬IDºÅÎª0x1FF£¬Ö»ÓÃÁ½¸öµçµ÷°å£¬Êý¾Ý»Ø´«IDÎª0x205ºÍ0x206
-	 cyq:¸ü¸ÄÎª·¢ËÍÈý¸öµçµ÷µÄÖ¸Áî¡£
+   Â¸Ã¸ÂµÃ§ÂµÃ·Â°Ã¥Â·Â¢Ã‹ÃÃ–Â¸ÃÃ®Â£Â¬IDÂºÃ…ÃŽÂª0x1FFÂ£Â¬Ã–Â»Ã“ÃƒÃÂ½Â¸Ã¶ÂµÃ§ÂµÃ·Â°Ã¥Â£Â¬ÃŠÃ½Â¾ÃÂ»Ã˜Â´Â«IDÃŽÂª0x205ÂºÃ0x206
+	 cyq:Â¸Ã¼Â¸Ã„ÃŽÂªÂ·Â¢Ã‹ÃÃˆÃ½Â¸Ã¶ÂµÃ§ÂµÃ·ÂµÃ„Ã–Â¸ÃÃ®Â¡Â£
 *********************************************************************************/
 void Set_Gimbal_Current(CAN_TypeDef *CANx, int16_t gimbal_yaw_iq, int16_t gimbal_pitch_iq,int16_t gimbal_x_iq)
 {

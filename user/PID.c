@@ -1,16 +1,15 @@
 #include "PID.h"
 int16_t pid_process( struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd){
 
-		//first update current state 
+	//first update current state 
 	states->last_error	= states->current_error;
 	states->current_error = *setpoint - *feedback;
 	states->cummulated_error += states->current_error;
 	
-	
-		//then return the output value
-	int32_t output = kp* 	states->current_error 
-									+ki* states->cummulated_error 
-									+kd* (states->current_error-states->last_error);
+	//then return the output value
+	int32_t output = kp *  states->current_error +
+					 ki *  states->cummulated_error +
+					 kd * (states->current_error - states->last_error);
 		
 	return output;
 	
@@ -96,7 +95,6 @@ float incPIDcalc (struct inc_pid_states * state_ptr, signed int nextpoint) {
 void incPIDsetpoint (struct inc_pid_states * state_ptr, signed int setvalue) {
 		state_ptr->setpoint = setvalue;
 }
-
 
 void incPIDClearError(struct inc_pid_states * state_ptr) {
 	state_ptr->sum_error = 0;

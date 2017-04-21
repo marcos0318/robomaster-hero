@@ -1,10 +1,6 @@
 #include "stdint.h"
 #ifndef PID
 #define PID
-/*This is the struct that record the cumulated error, current error
-and last error to record the 
-
-*/
 
 /*
 Note: 
@@ -20,8 +16,6 @@ error
 4, the function below are for the increment pid control, almost the same
 */
 
-
-
 //you have to initailize the value in this structure, 
 struct pid_control_states {
 	int32_t cummulated_error;
@@ -34,7 +28,6 @@ struct fpid_control_states {
 	float current_error;
 	float last_error;
 };
-
 
 extern int16_t pid_process(struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd);
 extern void pidLimitI(struct pid_control_states* states, int32_t limit);

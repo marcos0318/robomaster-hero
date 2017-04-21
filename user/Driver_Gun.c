@@ -148,8 +148,8 @@ void GUN_SetMotion(void) {
 
     // friction wheel
     if (DBUS_ReceiveData.rc.switch_right != 1) {
-        FRIC_SET_THRUST_L(700);
-        FRIC_SET_THRUST_R(700);
+        FRIC_SET_THRUST_L(800);
+        FRIC_SET_THRUST_R(800);
     }
     else {
         FRIC_SET_THRUST_L(0);
