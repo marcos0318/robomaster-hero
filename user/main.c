@@ -1,6 +1,7 @@
 #include "main.h"
 #include "function_list.h"
 #include "Lifting_Motor_Control.h"
+#include "GoOnStage.h"
 
 
 #define POWER_BUFFER_LENGTH 20
@@ -85,8 +86,15 @@ int main(void)
 				FRIC_SET_THRUST_L(friction_wheel_setpoint);
 				FRIC_SET_THRUST_R(friction_wheel_setpoint);
 			}
-			
-			
+			if(ticks_msimg % 50 ==0) {
+				tft_clear();
+				for(uint8_t i=0;i<4;i++) 
+          tft_prints(1,i+6,"ecd %d %f", i+1, LiftingMotorPositionFeedback[i]); 
+        for (int i=0;i<4;i++) 
+          tft_prints(1,i+2,"bfdSP%d %d",i+1, LiftingMotorSpeedSetpointBuffered[i]); 
+				tft_update();
+			}
+	
 			
 			
 		}//main loop with ticks	

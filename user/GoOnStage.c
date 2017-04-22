@@ -49,6 +49,8 @@ void speedProcess(){
         if (LiftingMotorOutput[i]>30000) LiftingMotorOutput[i]=30000;
         if (LiftingMotorOutput[i]<-30000) LiftingMotorOutput[i]=-30000;
     }
+		
+		Set_CM_Speed(CAN2,LiftingMotorOutput[0],LiftingMotorOutput[1],LiftingMotorOutput[2],LiftingMotorOutput[3]);
     
 }
 
