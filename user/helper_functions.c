@@ -53,3 +53,11 @@ void wheel_setpoints_adjust(int32_t * sp1, int32_t* sp2, int32_t* sp3, int32_t* 
 			*sp4 = *sp4 * limit  / max;			
 	}
 }	
+
+void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit) {
+
+	if(*dst > upperLimit)
+		*dst = upperLimit;
+	else if(*dst < lowerLimit)
+		*dst = lowerLimit;
+}

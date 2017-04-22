@@ -624,6 +624,21 @@
               <FileType>1</FileType>
               <FilePath>.\Driver_Gun.c</FilePath>
             </File>
+            <File>
+              <FileName>slave_communication.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\slave_communication.c</FilePath>
+            </File>
+            <File>
+              <FileName>chasis_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\chasis_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>gimbal_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\gimbal_control.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

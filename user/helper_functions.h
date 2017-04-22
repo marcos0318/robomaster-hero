@@ -16,6 +16,7 @@ extern int32_t abs(int32_t x);
 extern int32_t max(int32_t a, int32_t b);
 extern int32_t min(int32_t a, int32_t b);
 extern void wheel_setpoints_adjust(int32_t * sp1, int32_t* sp2, int32_t* sp3, int32_t* sp4, int32_t limit);
+void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit);
 
 
 #endif

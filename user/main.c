@@ -1,17 +1,13 @@
 #include "main.h"
-#include "function_list.h"
-#include "hero_param.h"
-
+#include "slave_communication.h"
+#include "chasis_control.h"
 volatile u32 ticks_msimg = (u32) - 1;
 
 int16_t LiftingMotorSetpoint[4] = {0};
 enum State{StaticState, MovingState};
 bool SetpointStatic = false;
 enum State GimbalState; 	
-volatile uint8_t upper_pneumatic_state = 0;
-volatile bool lower_pneumatic_state = false;
-bool lower_pneumatic_prev = false;
-bool upper_pneumatic_prev = false;
+
 
 void init(){
 
@@ -36,34 +32,9 @@ void init(){
 }
 
  
-int16_t checkSetpoint(int16_t a, bool dir){
 
-	if(dir) 
-		if(a > LiftingMotorSetpointLimit - 200) a = LiftingMotorSetpointLimit - 1;
-		else 																		a += 200;
-	
-	else 
-		if(a < 200) 														a = 0;
-		else 																		a -= 200;
-	
-	return a;
-}
 
-void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit) {
 
-	if(*dst > upperLimit)
-		*dst = upperLimit;
-	else if(*dst < lowerLimit)
-		*dst = lowerLimit;
-}
-
-void windowLimitFloat(float* dst, int32_t upperLimit, int32_t lowerLimit) {
-
-	if(*dst > upperLimit)
-		*dst = upperLimit;
-	else if(*dst < lowerLimit)
-		*dst = lowerLimit;
-}
 
 int32_t buffer[4][BUFFER_LENGTH];
 
@@ -103,17 +74,7 @@ int main(void)
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 
 			//filter_rate limit control
-			if (cameraPositionId == 0 && DBUS_CheckPush(KEY_CTRL) == 0) 
-				filter_rate_limit = 600;
-			else 
-				filter_rate_limit = 200;
-
-			if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_Q)){
-				cameraPositionId++;
-				if (cameraPositionId == 6)
-					cameraPositionId = 0;
-				cameraPositionSetpoint = cameraArray[cameraPositionId];
-			}
+			
 
 			if (DBUS_ReceiveData.rc.switch_left == 1 || DBUS_ReceiveData.rc.switch_left == 3){ 
 
@@ -123,12 +84,7 @@ int main(void)
 
 				//Analyse the data received from DBUS and transfer moving command					
 				
-				speed_limitor  = 660;
-				speed_multiplier = filter_rate_limit;
-				angular_speed_limitor = 200;
-				forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
-				right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
-
+				Dbus_data_analysis();
 				//direction = -DBUS_ReceiveData.rc.ch2*2 + -DBUS_ReceiveData.mouse.xtotal*4 ;
 				/*
 				if(DBUS_ReceiveData.rc.switch_left == 1) {		//auto follow mode
@@ -139,173 +95,56 @@ int main(void)
 					if (gimbalPositionSetpoint < -1500) gimbalPositionSetpoint = -1500;
 				}
 				*/
-				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1){ //keyboard-mouse mode, chasis will turn if mouse go beyong the boundary
+				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1) //keyboard-mouse mode, chasis will turn if mouse go beyong the boundary				
+					keyboard_mouse_control();
 				
-					xtotal =  DBUS_ReceiveData.mouse.xtotal;
-
- 					//direction not move when the difference is large
-					if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
-						direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
-
-					else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
-						direction =   outsideLimit - output_angle * upperTotal / 3600;			
-
-					else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
-						direction = - outsideLimit - output_angle * upperTotal / 3600;
-
-					gimbalPositionSetpoint = direction +  output_angle*upperTotal / 3600;
-
-					if(DBUS_ReceiveData.mouse.press_right || abs(DBUS_ReceiveData.rc.ch2)>3){
-						setpoint_angle = -direction * 3600 / upperTotal;
-					}
-
-					//Used for protection				
-					
-					//windowLimit(&gimbalPositionSetpoint, 700, -700); //problem with overloading, write another function
-					if(gimbalPositionSetpoint > 700)
-						gimbalPositionSetpoint = 700;
-					else if (gimbalPositionSetpoint < -700)
-						gimbalPositionSetpoint = -700;
-					
-					// else gimbalPositionSetpoint=-DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier;
-				
-					pre_xtotal = xtotal;
-				}
 
 				/*******************************************************
 				*********** Chasis turing speed limit control **********
 				*******************************************************/				
-				feedback_angle = output_angle;
 				
-				output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);
-				windowLimit(&output_angle_speed, CHASSIS_ANGULAR_VELOCITY_LIMIT, -CHASSIS_ANGULAR_VELOCITY_LIMIT);
-
-				int32_t max_wheel_setpoint = abs(forward_speed) + abs(right_speed);	
-
-				int32_t larger_abs_speed = max(abs(forward_speed), abs(right_speed));
-				
-				wheel_setpoints[0] = (  forward_speed + right_speed) * larger_abs_speed / max_wheel_setpoint ;
-				wheel_setpoints[1] = (- forward_speed + right_speed) * larger_abs_speed / max_wheel_setpoint ;
-				wheel_setpoints[2] = (- forward_speed - right_speed) * larger_abs_speed / max_wheel_setpoint ;
-				wheel_setpoints[3] = (  forward_speed - right_speed) * larger_abs_speed / max_wheel_setpoint ;
-				//but the code above is only for the moving back and forth, left and right
-								
-				for (int i=0; i<4; i++){
-					buffer_in(buffer[i], BUFFER_LENGTH, ticks_msimg , wheel_setpoints[i]);
-					wheel_setpoints[i] = buffer_out(buffer[i], BUFFER_LENGTH, ticks_msimg);
-
-					if(cameraPositionId == 0)
-						wheel_setpoints[i] += output_angle_speed;
-					else 
-						wheel_setpoints[i] += DBUS_ReceiveData.mouse.x * 6;
-				}	
 				
 				/*******************************************************
 				******************** Power Control *********************
 				*******************************************************/
-				for(int i=0; i<4; i++)
-					wheel_setpoints[i] = wheel_setpoints[i] * wheel_setpoint_coefficient / 1000;
 				
-				
-				wheel_setpoints_adjust(&wheel_setpoints[0], &wheel_setpoints[1],&wheel_setpoints[2],&wheel_setpoints[3] , filter_rate_limit);
-				
-				//these are the feed back as the current state 
-				wheel_feedbacks[0] = CM1Encoder.filter_rate;
-				wheel_feedbacks[1] = CM2Encoder.filter_rate;
-				wheel_feedbacks[2] = CM3Encoder.filter_rate;
-	 			wheel_feedbacks[3] = CM4Encoder.filter_rate;
-			
-				//pid process to get the output as the torque
-				for (int i=0; i<4; i++)
-					wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints[i], &wheel_feedbacks[i], kp, ki, kd);
-	
+				turning_speed_limit_control();
 				/*******************************************************
 				******** Chasis turing speed limit control ends ********
 				*******************************************************/
 
-				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1){
-					
+				
 				//position setpoint is done above
 									
-					isGimbalPositionSetpointIncrease = (bufferedGimbalPositionSetpoint < gimbalPositionSetpoint);
-
-					if(isGimbalPositionSetpointIncrease){
-						bufferedGimbalPositionSetpoint += 5;
-
-						if (bufferedGimbalPositionSetpoint > gimbalPositionSetpoint)
-							bufferedGimbalPositionSetpoint = gimbalPositionSetpoint;
-					}
-					else {
-						bufferedGimbalPositionSetpoint -= 5;
-
-						if(bufferedGimbalPositionSetpoint < gimbalPositionSetpoint) 
-							bufferedGimbalPositionSetpoint = gimbalPositionSetpoint;
-					}
+					gimbal_yaw_control();
 													
-				}
 
 				/*******************************************************
 				*************** Pitch setpoint control *****************
 				*******************************************************/
 
-				//limit pitch position
-				windowLimit(&DBUS_ReceiveData.mouse.ytotal, -460/pitchPosMultiplier, -1100/pitchPosMultiplier);
-				//pitch setpoint
-				pitchPositionSetpoint = -DBUS_ReceiveData.mouse.ytotal * pitchPosMultiplier;
-
-				isPitchPositionSetpointIncrease = (bufferedPitchPositionSetpoint < pitchPositionSetpoint);
-				
-				if(isPitchPositionSetpointIncrease) {
-					bufferedPitchPositionSetpoint += 70;
-
-					if (bufferedPitchPositionSetpoint > pitchPositionSetpoint)
-						bufferedPitchPositionSetpoint = pitchPositionSetpoint;
-				}
-				else {
-					bufferedPitchPositionSetpoint -= 70;
-
-					if(bufferedPitchPositionSetpoint < pitchPositionSetpoint) 
-						bufferedPitchPositionSetpoint = pitchPositionSetpoint;
-				}
+				gimbal_pitch_control();
 						
 				/*******************************************************
 				************ Yaw & Pitch velocity control **************
 				*******************************************************/			
 				
-				gimbalPositionFeedback = GMYawEncoder.ecd_angle;
-				gimbalSpeedSetpoint = (int32_t)fpid_process(&gimbalPositionState, &bufferedGimbalPositionSetpoint, &gimbalPositionFeedback, kp_gimbalPosition, ki_gimbalPosition, kd_gimbalPosition);
-
-				pitchPositionFeedback = GMPitchEncoder.ecd_angle;
-				pitchSpeedSetpoint = (int32_t)fpid_process(&pitchPositionState, &pitchPositionSetpoint, &pitchPositionFeedback, kp_pitchPosition, ki_pitchPosition, kd_pitchPosition);
-
+				
+				
 				cameraPositionFeedback = GMCameraEncoder.ecd_angle;
 
-				//Limit the output
-				windowLimit(&gimbalSpeedSetpoint, 80, -80);
-				windowLimit(&pitchSpeedSetpoint, 80, -80);
+				
+				
 				//mock speed here
 				//gimbalSpeedSetpoint = DBUS_ReceiveData.rc.ch2 * 0.5;
 
-				//Get the speed here
-				incPIDsetpoint(&gimbalSpeedMoveState, gimbalSpeedSetpoint);
-				gimbalSpeedMoveOutput += incPIDcalc(&gimbalSpeedMoveState, GMYawEncoder.filter_rate);
+								
 				
-				incPIDsetpoint(&pitchSpeedMoveState, pitchSpeedSetpoint);
-				pitchSpeedMoveOutput += incPIDcalc(&pitchSpeedMoveState, GMPitchEncoder.filter_rate);
 
 				/*******************************************************
 				******************* Camera control *********************
 				*******************************************************/	
-				cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-				cameraPositionOutput = fpid_process(&cameraPositionState, &cameraPositionSetpoint, &cameraPositionFeedback, kp_cameraPosition, ki_cameraPosition, kd_cameraPosition);
-
-				cameraSpeedSetpoint = (int32_t) cameraPositionOutput;
-
-				windowLimit(&cameraSpeedSetpoint, 100, -100);
-
-				cameraSpeedFeedback = GMCameraEncoder.filter_rate;
-				cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
-
+				camera_position_control();
 				//call the acturater function
 				//if (ticks_msimg % 20 == 0)
 				GUN_PokeControl();
@@ -321,91 +160,13 @@ int main(void)
 			} 
 			*/
 		
-				if(ticks_msimg % 20 == 0){
-			
-					if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
-
-						if(DBUS_CheckPush(KEY_R)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-							DataMonitor_Send(5, 0);
-						}
-						else if(DBUS_CheckPush(KEY_Z)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);
-							DataMonitor_Send(0, LiftingMotorSetpoint[0]);
-						}
-						else if(DBUS_CheckPush(KEY_X)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], false);
-							DataMonitor_Send(0, LiftingMotorSetpoint[0]);
-						}
-						else if(DBUS_CheckPush(KEY_C)){
-							LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[2], true);
-							DataMonitor_Send(2, LiftingMotorSetpoint[2]);
-						}
-						else if(DBUS_CheckPush(KEY_V)){
-							LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[2], false);
-							DataMonitor_Send(2, LiftingMotorSetpoint[2]);
-						}
-						else if(!lower_pneumatic_prev && DBUS_CheckPush(KEY_F)){
-							//pneumatic
-							lower_pneumatic_state = !lower_pneumatic_state;
-							pneumatic_control(1, lower_pneumatic_state);
-							pneumatic_control(2, lower_pneumatic_state);
-						}
-						else if(!upper_pneumatic_prev && DBUS_CheckPush(KEY_E)){
-							//pneumatic
-							if(upper_pneumatic_state == 0){
-								DataMonitor_Send(16, 0);
-								upper_pneumatic_state = 1;
-								pneumatic_control(3, true);
-							}
-							else if(upper_pneumatic_state == 1){
-								DataMonitor_Send(17, 0);
-								upper_pneumatic_state = 2;
-							}
-							else if(upper_pneumatic_state == 2){
-								DataMonitor_Send(18,0);
-								upper_pneumatic_state = 0;
-								pneumatic_control(3, false);
-							}
-						}
+				if(ticks_msimg % 20 == 0)
+						transmit();
 					
-					}
-
-					else { //SHIFT is not pressed
-						if(DBUS_CheckPush(KEY_R)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-							DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
-						}
-						else if(DBUS_CheckPush(KEY_F)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-							LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = MID_SETPOINT/8;
-							DataMonitor_Send(0xFE, LiftingMotorSetpoint[0]);        //GO_DOWN_STAGE_ONE_KEY
-						}
-						//else if(DBUS_CheckPush(KEY_A)){
-							//DataMonitor_Send(0xFD,LiftingMotorSetpoint[0]);   //BREAK
-						//}
-						else if(DBUS_CheckPush(KEY_X)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
-							DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
-						}
-						else if(DBUS_CheckPush(KEY_V)){
-							LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-							DataMonitor_Send(0xFB, LiftingMotorSetpoint[2]);		//ONE_KEY_DOWN_BACK					
-						}
-						else if(DBUS_CheckPush(KEY_Z)){
-							LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-							DataMonitor_Send(0xFA, LiftingMotorSetpoint[0]);		//ONE_KEY_UP_FRONT						
-						}
-						else if(DBUS_CheckPush(KEY_C)){
-							LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-							DataMonitor_Send(0xF9, LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK					
-						}	
 					
-					}
+				
 					
-					lower_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F);
-					upper_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_E);
-					
+										
 					//for(uint8_t i=2; i<12; i++)
 					//	tft_clear_line(i);
 					//for(uint8_t i=0; i<4; i++){
