@@ -91,7 +91,8 @@ void GUN_Init(void) {
     GUN_BSP_Init();
 
     memset((char*)&GUN_Data, 0, sizeof(GUN_Data));
-
+		//FRIC_SET_THRUST_L(0);
+		//FRIC_SET_THRUST_R(0);
     
 		
 		

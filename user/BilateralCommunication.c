@@ -120,6 +120,15 @@ void USART3_IRQHandler(void)
 		else if(getID()==0x03){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=8*getPositionSetpoint();
 		}
+		else if(getID()==16){
+			FRICTION_WHEEL_STATE=false;
+		}
+		else if(getID()==17){
+			FRICTION_WHEEL_STATE=false;
+		}
+		else if(getID()==18){
+			FRICTION_WHEEL_STATE=true;
+		}
 		
 
 		
