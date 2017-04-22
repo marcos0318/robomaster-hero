@@ -57,6 +57,14 @@ void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit) {
 		*dst = lowerLimit;
 }
 
+void windowLimitFloat(float* dst, int32_t upperLimit, int32_t lowerLimit) {
+
+	if(*dst > upperLimit)
+		*dst = upperLimit;
+	else if(*dst < lowerLimit)
+		*dst = lowerLimit;
+}
+
 int32_t buffer[4][BUFFER_LENGTH];
 
 //int32_t inverse = 1;//if inv == 1, move forward, else if inv == -1, move backward
@@ -134,18 +142,21 @@ int main(void)
 				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1){ //keyboard-mouse mode, chasis will turn if mouse go beyong the boundary
 				
 					xtotal =  DBUS_ReceiveData.mouse.xtotal;
+
  					//direction not move when the difference is large
 					if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
 						direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
-					else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
-						direction = outsideLimit - output_angle * upperTotal/3600;			
-					else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
-						direction = -outsideLimit - output_angle * upperTotal / 3600;
 
-					gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
+					else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
+						direction =   outsideLimit - output_angle * upperTotal / 3600;			
+
+					else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
+						direction = - outsideLimit - output_angle * upperTotal / 3600;
+
+					gimbalPositionSetpoint = direction +  output_angle*upperTotal / 3600;
 
 					if(DBUS_ReceiveData.mouse.press_right || abs(DBUS_ReceiveData.rc.ch2)>3){
-						setpoint_angle = -direction * 3600/upperTotal;
+						setpoint_angle = -direction * 3600 / upperTotal;
 					}
 
 					//Used for protection				
@@ -289,6 +300,8 @@ int main(void)
 				cameraPositionOutput = fpid_process(&cameraPositionState, &cameraPositionSetpoint, &cameraPositionFeedback, kp_cameraPosition, ki_cameraPosition, kd_cameraPosition);
 
 				cameraSpeedSetpoint = (int32_t) cameraPositionOutput;
+
+				windowLimit(&cameraSpeedSetpoint, 100, -100);
 
 				cameraSpeedFeedback = GMCameraEncoder.filter_rate;
 				cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
