@@ -1,3 +1,6 @@
+#ifndef __JUDGE_H
+#define __JUDGE_H
+
 #include "stm32f4xx.h"
 
 #define JudgeBufferLength       150
@@ -18,7 +21,7 @@ typedef struct
     uint8_t LastHartID;                 //上次收到伤害的装甲板ID号
     float LastShotSpeed;                //上次射击速度
 
-}InfantryJudge_Struct;
+} InfantryJudge_Struct;
 
 //格式转换联合体
 typedef union
@@ -26,8 +29,10 @@ typedef union
     uint8_t U[4];
     float F;
     int I;
-}FormatTrans;
+} FormatTrans;
 
 
 //the data will be stored in the following struct
 extern InfantryJudge_Struct InfantryJudge;
+
+#endif

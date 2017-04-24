@@ -1,23 +1,25 @@
 #ifndef GIMBAL_CONTROL_H
 #define GIMBAL_CONTROL_H
 #include "function_list.h"
+#include "stdbool.h"
+#include "hero_param.h"
 /****************************************************************/
 /***** Gimbal Yaw Control (Position loop and velocity loop) *****/
 /****************************************************************/
 
 //position control
-float gimbalPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
-float bufferedGimbalPositionSetpoint = 0;
-float gimbalPositionFeedback = 0;
-bool isGimbalPositionSetpointIncrease = true;
-struct fpid_control_states gimbalPositionState = {0,0,0};
-int32_t yawPosMultiplier = 3;		//DBUS mouse yaw control
+extern float gimbalPositionSetpoint;// prevGimbalPositionSetpoint = 0;
+extern float bufferedGimbalPositionSetpoint;
+extern float gimbalPositionFeedback;
+extern bool isGimbalPositionSetpointIncrease;
+extern struct fpid_control_states gimbalPositionState;
+extern int32_t yawPosMultiplier;		//DBUS mouse yaw control
 
 //velocity control
-struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
-int32_t gimbalSpeedSetpoint = 0;
-int32_t gimbalSpeedMoveOutput = 0;
-int32_t outsideLimit = 670;
+extern struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
+extern int32_t gimbalSpeedSetpoint;
+extern int32_t gimbalSpeedMoveOutput;
+extern int32_t outsideLimit;
 
 
 /********************************/
@@ -25,18 +27,18 @@ int32_t outsideLimit = 670;
 /********************************/
 
 //position control
-float pitchPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
-float bufferedPitchPositionSetpoint = 0;
-float pitchPositionFeedback= 0;
-bool isPitchPositionSetpointIncrease = true;
-int32_t storedPitch = 0;
-struct fpid_control_states pitchPositionState = {0,0,0};
+extern float pitchPositionSetpoint;// prevGimbalPositionSetpoint = 0;
+extern float bufferedPitchPositionSetpoint;
+extern float pitchPositionFeedback;
+extern bool isPitchPositionSetpointIncrease;
+extern int32_t storedPitch;
+extern struct fpid_control_states pitchPositionState;
 
 //velocity control
-struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
-int32_t pitchSpeedSetpoint = 0;
-int32_t pitchSpeedMoveOutput = 0;
-int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
+extern struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
+extern int32_t pitchSpeedSetpoint;
+extern int32_t pitchSpeedMoveOutput;
+extern int32_t pitchPosMultiplier;       //DBUS mouse pitch control
 
 void gimbal_yaw_control();
 void gimbal_pitch_control();

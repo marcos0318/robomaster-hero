@@ -1,4 +1,5 @@
-
+#ifndef __DBUS_H
+#define __DBUS_H
 
 #include "stm32f4xx.h"
 
@@ -57,7 +58,7 @@ typedef struct {
 		
 	}mouse;
 	
-	struct 
+ struct 
 	{
 /**********************************************************************************
    * ����ͨ��:15   14   13   12   11   10   9   8   7   6     5     4   3   2   1
@@ -75,3 +76,5 @@ extern DBUSDecoding_Type DBUS_ReceiveData, LASTDBUS_ReceiveData;
 uint8_t DBUS_CheckPush(uint16_t Key);
 extern u8 connected_timer;
 void Dbus_init(void);
+
+#endif

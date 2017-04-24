@@ -1,4 +1,6 @@
 #include "chasis_control.h"
+#include "gimbal_control.h"
+
 void camera_position_control(){
 	if (cameraPositionId == 0 && DBUS_CheckPush(KEY_CTRL) == 0) 
 		filter_rate_limit = 600;
@@ -59,7 +61,7 @@ void keyboard_mouse_control(){
 	pre_xtotal = xtotal;
 }
 
-void turning_speed_limit_control(){
+void turning_speed_limit_control(uint32_t ticks_msimg){
 	feedback_angle = output_angle;
 				
 	output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);

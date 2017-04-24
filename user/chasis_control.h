@@ -1,5 +1,5 @@
-#ifndef CHASIS_CONTROL_H
-#define CHASIS_CONTROL_H
+#ifndef __CHASIS_CONTROL_H
+#define __CHASIS_CONTROL_H
 #include "hero_param.h"
 #include "function_list.h"
 

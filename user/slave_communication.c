@@ -1,6 +1,25 @@
 #ifndef SLAVE_COMMUNICATION_H
 #define SLAVE_COMMUNICATION_H
+
 #include "slave_communication.h"
+#include "pneumatic.h"
+
+volatile uint8_t upper_pneumatic_state = false ;
+volatile bool lower_pneumatic_state = false ;
+bool lower_pneumatic_prev = false ;
+bool upper_pneumatic_prev = false ;
+
+
+void pneumatic_state_init(){
+	upper_pneumatic_state = 0;
+	lower_pneumatic_state = false;
+	lower_pneumatic_prev = false;
+	upper_pneumatic_prev = false;
+}
+
+
+
+
 int16_t checkSetpoint(int16_t a, bool dir){
 
 	if(dir) 
@@ -98,8 +117,8 @@ void transmit(){
 			upper_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_E);
 
 			
+			}
 }
-
 
 
 #endif

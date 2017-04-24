@@ -10,7 +10,7 @@
       <TargetName>HKUST_RM2017_Mainboard</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F407ZG</Device>
@@ -638,6 +638,11 @@
               <FileName>gimbal_control.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\gimbal_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>hero_param.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hero_param.c</FilePath>
             </File>
           </Files>
         </Group>
