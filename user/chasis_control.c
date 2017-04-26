@@ -1,27 +1,9 @@
 #include "chasis_control.h"
-void camera_position_control(){
-	if (cameraPositionId == 0 && DBUS_CheckPush(KEY_CTRL) == 0) 
-		filter_rate_limit = 600;
-	else 
-		filter_rate_limit = 200;
+#include "gimbal_control.h"
 
-	if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_Q)){
-		cameraPositionId++;
-		if (cameraPositionId == 6)
-			cameraPositionId = 0;
-		cameraPositionSetpoint = cameraArray[cameraPositionId];
-	}
-	cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-	cameraPositionOutput = fpid_process(&cameraPositionState, &cameraPositionSetpoint, &cameraPositionFeedback, kp_cameraPosition, ki_cameraPosition, kd_cameraPosition);
 
-	cameraSpeedSetpoint = (int32_t) cameraPositionOutput;
 
-	cameraSpeedFeedback = GMCameraEncoder.filter_rate;
-	cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
-
-}																													
-
-void Dbus_data_analysis(){
+void DBUS_data_analysis(){
 	speed_limitor  = 660;
 	speed_multiplier = filter_rate_limit;
 	angular_speed_limitor = 200;
@@ -30,36 +12,8 @@ void Dbus_data_analysis(){
 
 }
 
-void keyboard_mouse_control(){
-	xtotal =  DBUS_ReceiveData.mouse.xtotal;
-	//direction not move when the difference is large
-	if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
-		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
-	else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
-		direction = outsideLimit - output_angle * upperTotal/3600;			
-	else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
-		direction = -outsideLimit - output_angle * upperTotal / 3600;
 
-	gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
-
-	if(DBUS_ReceiveData.mouse.press_right || abs(DBUS_ReceiveData.rc.ch2)>3){
-		setpoint_angle = -direction * 3600/upperTotal;
-	}
-
-	//Used for protection				
-	
-	//windowLimit(&gimbalPositionSetpoint, 700, -700); //problem with overloading, write another function
-	if(gimbalPositionSetpoint > 700)
-		gimbalPositionSetpoint = 700;
-	else if (gimbalPositionSetpoint < -700)
-		gimbalPositionSetpoint = -700;
-	
-	// else gimbalPositionSetpoint=-DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier;
-
-	pre_xtotal = xtotal;
-}
-
-void turning_speed_limit_control(){
+void turning_speed_limit_control(uint32_t ticks_msimg){
 	feedback_angle = output_angle;
 				
 	output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);

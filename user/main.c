@@ -1,13 +1,13 @@
 #include "main.h"
 #include "slave_communication.h"
 #include "chasis_control.h"
-volatile u32 ticks_msimg = (u32) - 1;
+#include "gimbal_control.h"
 
-int16_t LiftingMotorSetpoint[4] = {0};
+u32 ticks_msimg = (u32) - 1;
+
 enum State{StaticState, MovingState};
 bool SetpointStatic = false;
 enum State GimbalState; 	
-
 
 void init(){
 
@@ -29,25 +29,16 @@ void init(){
 	DataMonitor_Init();
 	ENCODER_Init();
 	GUN_Init();
+  TIM7_Int_Init(83,999);
 }
 
- 
-
-
-
-
-int32_t buffer[4][BUFFER_LENGTH];
 
 //int32_t inverse = 1;//if inv == 1, move forward, else if inv == -1, move backward
 
 //The coorperation of gimbal and the chasis
 //The direction is from 0 to 8192
 //The gyro of chasis is ranged from 0 to 3600, so we need conversion
-int32_t direction = 0;
-int32_t upperTotal = 360 * 27;
 
-int32_t xtotal = 0;
-int32_t pre_xtotal = 0;
 
 int main(void)
 {	
@@ -84,7 +75,7 @@ int main(void)
 
 				//Analyse the data received from DBUS and transfer moving command					
 				
-				Dbus_data_analysis();
+				DBUS_data_analysis();
 				//direction = -DBUS_ReceiveData.rc.ch2*2 + -DBUS_ReceiveData.mouse.xtotal*4 ;
 				/*
 				if(DBUS_ReceiveData.rc.switch_left == 1) {		//auto follow mode
@@ -95,8 +86,8 @@ int main(void)
 					if (gimbalPositionSetpoint < -1500) gimbalPositionSetpoint = -1500;
 				}
 				*/
-				if(DBUS_ReceiveData.rc.switch_left == 3 || DBUS_ReceiveData.rc.switch_left == 1) //keyboard-mouse mode, chasis will turn if mouse go beyong the boundary				
-					keyboard_mouse_control();
+				//keyboard-mouse mode, chasis will turn if mouse go beyong the boundary				
+
 				
 
 				/*******************************************************
@@ -108,7 +99,7 @@ int main(void)
 				******************** Power Control *********************
 				*******************************************************/
 				
-				turning_speed_limit_control();
+				turning_speed_limit_control(ticks_msimg);
 				/*******************************************************
 				******** Chasis turing speed limit control ends ********
 				*******************************************************/
@@ -116,23 +107,20 @@ int main(void)
 				
 				//position setpoint is done above
 									
-					gimbal_yaw_control();
-													
+
 
 				/*******************************************************
 				*************** Pitch setpoint control *****************
 				*******************************************************/
 
-				gimbal_pitch_control();
-						
+
 				/*******************************************************
 				************ Yaw & Pitch velocity control **************
 				*******************************************************/			
 				
 				
 				
-				cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-
+				
 				
 				
 				//mock speed here
@@ -144,14 +132,12 @@ int main(void)
 				/*******************************************************
 				******************* Camera control *********************
 				*******************************************************/	
-				camera_position_control();
-				//call the acturater function
+								//call the acturater function
 				//if (ticks_msimg % 20 == 0)
-				GUN_PokeControl();
+				
 
-		  	Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);						 
-				Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);
-			}	
+		  						 
+				Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
 			
 			/*
 			else if (DBUS_ReceiveData.rc.switch_left == 3) { //Also the stop mode now
@@ -160,8 +146,8 @@ int main(void)
 			} 
 			*/
 		
-				if(ticks_msimg % 20 == 0)
-						transmit();
+				if(ticks_msimg % 20 == 0){
+						state_control();
 					
 					
 				
@@ -205,10 +191,10 @@ int main(void)
 				//tft_update();
 			}
 
-			pressCameraChangePrev = DBUS_CheckPush(KEY_Q);	
+			
 			
 		} //main loop with ticks	
+	
 	}
-	
-	
+	}
 } //main
