@@ -8,11 +8,12 @@ volatile uint8_t upper_pneumatic_state = 0 ;
 volatile bool lower_pneumatic_state = false ;
 bool lower_pneumatic_prev = false ;
 bool upper_pneumatic_prev = false ;
-bool KEY_G_PREV = false;
-bool KEY_F_PREV = false;
+volatile bool KEY_G_PREV = false;
+volatile bool KEY_F_PREV = false;
 
-
+/*
 enum modeControl{
+	
 	RUNNING_MODE,
 	INTO_RI_MODE,
 	ON_RI_MODE,
@@ -23,10 +24,8 @@ enum modeControl{
 	CATCH_GOLF,
 	LOADED
 } HERO = 0;
-
-
-
-
+*/
+enum modeControl HERO = RUNNING_MODE;
 
 
 int16_t checkSetpoint(int16_t a, bool dir){
@@ -43,16 +42,18 @@ int16_t checkSetpoint(int16_t a, bool dir){
 }
 
 void state_control(){
-	if(!DBUS_CheckPush(KEY_G)){
+	if(!DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_F)){
+		KEY_G_PREV=DBUS_CheckPush(KEY_G);
+		KEY_F_PREV=DBUS_CheckPush(KEY_F);
 		transmit();
 		return;
 	}
-	if(DBUS_CheckPush(KEY_G)&&!KEY_G_PREV){
+	if(DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
 			if(HERO!=LOADED)
 				HERO+=1;
 			else HERO=RUNNING_MODE;
 	}
-	if(DBUS_CheckPush(KEY_F)&&!KEY_F_PREV){
+	if(DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
 			if(HERO!=RUNNING_MODE)
 				HERO-=1;
 			else HERO=LOADED;		
@@ -63,7 +64,7 @@ void state_control(){
 	switch(HERO){
 		case RUNNING_MODE:
 			filter_rate_limit = 600;
-			speed_multiplier=abs(speed_multiplier);
+			speed_multiplier= 600;
 			break;
 		case INTO_RI_MODE:
 			//LiftingMotors go up
@@ -77,7 +78,7 @@ void state_control(){
 			cameraPositionId = 1;
 			cameraPositionSetpoint = cameraArray[cameraPositionId];
 			//reverse QWEASD
-			speed_multiplier = -speed_multiplier;
+			speed_multiplier = -200;
 			break;
 		case ON_RI_MODE:
 			
@@ -88,8 +89,8 @@ void state_control(){
 			DataMonitor_Send(0xFB, LiftingMotorSetpoint[2]);		//ONE_KEY_DOWN_BACK			
 			break;
 		case FRONT_WHEEL_UP:
-			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFA, LiftingMotorSetpoint[0]);		//ONE_KEY_UP_FRONT						
+			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
+				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
 			break;
 		case SPEED_LIMITATION:
 			filter_rate_limit = 200;
@@ -149,7 +150,7 @@ void transmit(){
 				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[2], false);
 				DataMonitor_Send(2, LiftingMotorSetpoint[2]);
 			}
-			else if(!lower_pneumatic_prev && DBUS_CheckPush(KEY_F)){
+			else if(!lower_pneumatic_prev && DBUS_CheckPush(KEY_Q)){
 				//pneumatic
 				lower_pneumatic_state = !lower_pneumatic_state;
 				pneumatic_control(1, lower_pneumatic_state);
@@ -209,7 +210,7 @@ void transmit(){
 			
 		}
 
-		lower_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F);
+		lower_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_Q);
 		upper_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_E);
 }
 

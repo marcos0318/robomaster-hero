@@ -8,6 +8,7 @@ u32 ticks_msimg = (u32) - 1;
 enum State{StaticState, MovingState};
 bool SetpointStatic = false;
 enum State GimbalState; 	
+extern enum modeControl HERO;
 
 void init(){
 
@@ -172,6 +173,7 @@ int main(void)
 					tft_prints(1, 6, "camSpf:%d", GMCameraEncoder.filter_rate);
 					tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
 					tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
+					tft_prints(1, 9, "state:%d", (int)HERO);
 
 					tft_update();
 					

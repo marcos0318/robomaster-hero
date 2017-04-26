@@ -5,7 +5,7 @@
 
 void DBUS_data_analysis(){
 	speed_limitor  = 660;
-	speed_multiplier = filter_rate_limit;
+	//speed_multiplier = filter_rate_limit;
 	angular_speed_limitor = 200;
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;

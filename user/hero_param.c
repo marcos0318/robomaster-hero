@@ -60,7 +60,7 @@ int32_t output_angle_speed = 0;
 /*****************************/
 
 int32_t speed_limitor = 660;
-int32_t speed_multiplier;
+int32_t speed_multiplier = 300;
 int32_t angular_speed_limitor = 200;
 int32_t forward_speed;
 int32_t right_speed;

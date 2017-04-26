@@ -8,7 +8,19 @@ extern volatile bool lower_pneumatic_state ;
 extern bool lower_pneumatic_prev ;
 extern bool upper_pneumatic_prev ;
 
-
+//extern enum modeControl HERO;
+extern enum modeControl{
+	
+	RUNNING_MODE,
+	INTO_RI_MODE,
+	ON_RI_MODE,
+	BACK_WHEEL_UP,
+	FRONT_WHEEL_UP,
+	SPEED_LIMITATION,
+	PRE_CATCH_GOLF,
+	CATCH_GOLF,
+	LOADED
+} HERO;
 //1. prepare to go into the resource island mode
 //	a. in front of timber pile
 //	b. four LiftingMotors go up

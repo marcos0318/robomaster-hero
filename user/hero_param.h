@@ -167,5 +167,6 @@ extern void heroParamInit();// Haven't implemented yet
 extern int16_t LiftingMotorSetpoint[4];
 extern int32_t buffer[4][BUFFER_LENGTH];
 
+
 #endif /* __HERO_H */
 
