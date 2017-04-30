@@ -72,7 +72,7 @@ int main(void)
 			readFeedback();
 			
 			setSetpoint();
-			
+			broken_time=ticks_msimg;
 			if((broken_time-receive_time)>200)
 			{
 				BROKEN_CABLE=true;
@@ -97,7 +97,7 @@ int main(void)
 			}
 			if(ticks_msimg % 50 ==0) {
 				tft_clear();
-				tft_prints(1,0,"Broken %d", BROKEN_CABLE);
+				tft_prints(1,3,"Broken %d", BROKEN_CABLE);
 				for(uint8_t i=0;i<4;i++) 
           tft_prints(1,i+6,"ecd %d %f", i+1, LiftingMotorPositionFeedback[i]); 
         //for (int i=0;i<4;i++) 
