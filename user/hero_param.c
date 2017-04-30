@@ -1,6 +1,13 @@
 #include"hero_param.h"
 
 
+int32_t GimbalFlag = 1;  
+int32_t ChasisFlag = 1;
+int32_t CameraFlag = 1;
+
+int32_t ChasisFlag_Prev = 1;
+
+
 int32_t kp_chassisAngle = 1;
 int32_t ki_chassisAngle = 0;
 int32_t kd_chassisAngle = 1;

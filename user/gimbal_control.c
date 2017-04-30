@@ -1,5 +1,6 @@
 #include "gimbal_control.h"
 
+
 //position control
 float gimbalPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
 float bufferedGimbalPositionSetpoint = 0;
@@ -35,54 +36,72 @@ int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
 void camera_position_control(){
     cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-    if (cameraPositionId == 0 && DBUS_CheckPush(KEY_CTRL) == 0)
-        filter_rate_limit = 600;
-    else
-        filter_rate_limit = 200;
-    
     if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_Q)){
         cameraPositionId++;
         if (cameraPositionId == 6)
             cameraPositionId = 0;
         cameraPositionSetpoint = cameraArray[cameraPositionId];
     }
+
+
     cameraPositionFeedback = GMCameraEncoder.ecd_angle;
+    fpidLimitI(&cameraPositionState, 20000);
     cameraPositionOutput = fpid_process(&cameraPositionState, &cameraPositionSetpoint, &cameraPositionFeedback, kp_cameraPosition, ki_cameraPosition, kd_cameraPosition);
     
     cameraSpeedSetpoint = (int32_t) cameraPositionOutput;
-    
     cameraSpeedFeedback = GMCameraEncoder.filter_rate;
+
+    pidLimitI(&cameraSpeedState, 20000);
     cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
     pressCameraChangePrev = DBUS_CheckPush(KEY_Q);
     
 }
 void keyboard_mouse_control(){
-		xtotal =  DBUS_ReceiveData.mouse.xtotal;
-	//direction not move when the difference is large
+	xtotal =  DBUS_ReceiveData.mouse.xtotal;
+
+	//move in the window
 	if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
 		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
+
+  //Not move
 	else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
 		direction = outsideLimit - output_angle * upperTotal/3600;			
 	else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
 		direction = -outsideLimit - output_angle * upperTotal / 3600;
 
-	gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
+	
+  //restart the gimbal, clear the setpoint of the gimbal
+  if(ChasisFlag_Prev == 3 && (ChasisFlag == 1 || ChasisFlag == 2)) {
+    direction = - output_angle*upperTotal/3600;
+  }
 
-	if(DBUS_ReceiveData.mouse.press_right || abs(DBUS_ReceiveData.rc.ch2)>3){
+  
+
+	if(ChasisFlag == 1) {
 		setpoint_angle = -direction * 3600/upperTotal;
+    gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
 	}
+  else if (ChasisFlag == 2) {
+    gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
+  }
+  else if (ChasisFlag == 3) {
+    gimbalPositionSetpoint = 0;
+		setpoint_angle = output_angle;
+    //The close of the gimbal is not here, but in the chasis control part
+    //We directly bypass the setpoint_angle. 
+  }
+
+
+  
 
 	//Used for protection				
-	
-	//windowLimit(&gimbalPositionSetpoint, 700, -700); //problem with overloading, write another function
 	if(gimbalPositionSetpoint > 700)
 		gimbalPositionSetpoint = 700;
 	else if (gimbalPositionSetpoint < -700)
 		gimbalPositionSetpoint = -700;
-	
-	// else gimbalPositionSetpoint=-DBUS_ReceiveData.mouse.xtotal*yawPosMultiplier;
-
+  //Update data
 	pre_xtotal = xtotal;
+  ChasisFlag_Prev = ChasisFlag;
 }
 
 void gimbal_yaw_control(){
@@ -198,7 +217,7 @@ void TIM7_IRQHandler(void){
         gimbal_yaw_control();
         gimbal_pitch_control();
         GUN_PokeControl();
-        Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+        //Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
     

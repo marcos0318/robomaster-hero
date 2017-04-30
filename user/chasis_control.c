@@ -10,6 +10,15 @@ void DBUS_data_analysis(){
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
 
+	if (DBUS_ReceiveData.rc.switch_left == 1) {
+		if (DBUS_ReceiveData.mouse.press_right) 
+			GimbalFlag = 2;
+		else 
+			GimbalFlag = 1;
+	}
+	else if (DBUS_ReceiveData.rc.switch_left == 3) {
+		GimbalFlag = 3;
+	}
 }
 
 
@@ -33,9 +42,9 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 		buffer_in(buffer[i], BUFFER_LENGTH, ticks_msimg , wheel_setpoints[i]);
 		wheel_setpoints[i] = buffer_out(buffer[i], BUFFER_LENGTH, ticks_msimg);
 
-		if(cameraPositionId == 0)
+		if(ChasisFlag == 1 || ChasisFlag == 2)
 			wheel_setpoints[i] += output_angle_speed;
-		else 
+		if (ChasisFlag  == 3)
 			wheel_setpoints[i] += DBUS_ReceiveData.mouse.x * 6;
 	}	
 	

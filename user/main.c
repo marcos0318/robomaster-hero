@@ -10,6 +10,8 @@ bool SetpointStatic = false;
 enum State GimbalState; 	
 extern enum modeControl HERO;
 
+
+
 void init(){
 
 	SysTick_Init();  
@@ -33,12 +35,6 @@ void init(){
   TIM7_Int_Init(83,999);
 }
 
-
-//int32_t inverse = 1;//if inv == 1, move forward, else if inv == -1, move backward
-
-//The coorperation of gimbal and the chasis
-//The direction is from 0 to 8192
-//The gyro of chasis is ranged from 0 to 3600, so we need conversion
 
 
 int main(void)
@@ -77,126 +73,54 @@ int main(void)
 				//Analyse the data received from DBUS and transfer moving command					
 				
 				DBUS_data_analysis();
-				//direction = -DBUS_ReceiveData.rc.ch2*2 + -DBUS_ReceiveData.mouse.xtotal*4 ;
-				/*
-				if(DBUS_ReceiveData.rc.switch_left == 1) {		//auto follow mode
-					direction += (-DBUS_ReceiveData.rc.ch2/300 + -DBUS_ReceiveData.mouse.x);
-					setpoint_angle = -direction * 3600/upperTotal;
-					gimbalPositionSetpoint = direction + output_angle*upperTotal/3600;
-					if (gimbalPositionSetpoint > 1500) gimbalPositionSetpoint = 1500;
-					if (gimbalPositionSetpoint < -1500) gimbalPositionSetpoint = -1500;
-				}
-				*/
-				//keyboard-mouse mode, chasis will turn if mouse go beyong the boundary				
-
-				
-
-				/*******************************************************
-				*********** Chasis turing speed limit control **********
-				*******************************************************/				
-				
-				
-				/*******************************************************
-				******************** Power Control *********************
-				*******************************************************/
-				
+		
 				turning_speed_limit_control(ticks_msimg);
-				/*******************************************************
-				******** Chasis turing speed limit control ends ********
-				*******************************************************/
-
-				
-				//position setpoint is done above
-									
-
-
-				/*******************************************************
-				*************** Pitch setpoint control *****************
-				*******************************************************/
-
-
-				/*******************************************************
-				************ Yaw & Pitch velocity control **************
-				*******************************************************/			
-				
-				
-				
-				
-				
-				
-				//mock speed here
-				//gimbalSpeedSetpoint = DBUS_ReceiveData.rc.ch2 * 0.5;
-
-								
-				
-
-				/*******************************************************
-				******************* Camera control *********************
-				*******************************************************/	
-								//call the acturater function
-				//if (ticks_msimg % 20 == 0)
-				
-
-		  						 
+				  						 
 				Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
 			
-			/*
-			else if (DBUS_ReceiveData.rc.switch_left == 3) { //Also the stop mode now
-				Set_CM_Speed(CAN1,0,0,0,0);
-				Set_CM_Speed(CAN2,0,0,0,0);
-			} 
-			*/
 		
 				if(ticks_msimg % 20 == 0){
 						state_control();
 					
 					
-				
-					
-										
-					//for(uint8_t i=2; i<12; i++)
-					//	tft_clear_line(i);
-					//for(uint8_t i=0; i<4; i++){
-					//	tft_prints(1, i+2, "LMP %d %d", i, LiftingMotorSetpoint[i]);
-					//}
-					
 					tft_clear();
-					for(uint8_t i=0; i<4; i++)
+					/*for(uint8_t i=0; i<4; i++)
 						tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
-
+					*/
 					//tft_prints(1, 6, "yback=%.1f", gimbalPositionFeedback);
 					//tft_prints(1, 7, "pback=%.1f", pitchPositionFeedback);
 					//tft_prints(1, 8, "cback-%.1f", cameraPositionFeedback);
 					//tft_prints(1, 7, "gyro:%d", output_angle);
-
+					/*
 					tft_prints(1, 5, "camSpS: %d", cameraSpeedSetpoint);
 					tft_prints(1, 6, "camSpf:%d", GMCameraEncoder.filter_rate);
 					tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
 					tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
 					tft_prints(1, 9, "state:%d", (int)HERO);
-
+					*/
+					
+					tft_prints(1,2, "dir:%d", direction);
+					tft_prints(1,3, "gyro:%d", output_angle);
+					tft_prints(1,4, "chsAgl: %d", setpoint_angle);
+					tft_prints(1,5, "yawSp: %.1f", gimbalPositionSetpoint);
+					
 					tft_update();
 					
 				}
-				
-				//Set_CM_Speed(CAN1, 0, 0, 0, 0);
-				//Set_CM_Speed(CAN2, 0, 0, 0, 0);
-			//}		
+			
 
-			if(DBUS_ReceiveData.rc.switch_left == 2){
-				Set_CM_Speed(CAN1,0,0,0,0);
-				Set_CM_Speed(CAN2,0,0,0,0);
-			}
+				if(DBUS_ReceiveData.rc.switch_left == 2){
+					Set_CM_Speed(CAN1,0,0,0,0);
+					Set_CM_Speed(CAN2,0,0,0,0);
+				}
 			
-			if ( ticks_msimg % 20 == 0 ){
-				//tft_prints(1,9,"mode:%d", DBUS_ReceiveData.rc.switch_left );
-				//tft_update();
-			}
+				if ( ticks_msimg % 20 == 0 ){
+					//tft_clear();
+					
 
-			
-			
-		} //main loop with ticks	
-	
+					//tft_update();
+				}
+			} 	
+		}
 	}
-	}
-} //main
+} 

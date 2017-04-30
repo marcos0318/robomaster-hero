@@ -21,6 +21,28 @@
 #define TOTALLY_DOWN_SETPOINT 1000
 #define CAMERA_ARRAY_MULTIPLIER = 2430;
 
+
+
+/***************************/
+/***** Global Flags   ******/
+/***************************/
+extern int32_t GimbalFlag;  
+//Gimbal Flag: 1. All release and PID clear to 0
+//             2. Return to Center
+//             3. Contril Mode
+
+extern int32_t ChasisFlag;
+//Chasis Flag: 1. Follow mode
+//             2. Separate mode, mouse control the gimbal along
+//             3. Follow mode, without gimbal
+extern int32_t CameraFlag;
+//Camera Flag: 1. pos 1
+//             2. pos 2
+//             3. gimbal following
+//             4. middle position
+
+extern int32_t ChasisFlag_Prev;
+
 /***************************/
 /***** PID Parameters ******/
 /***************************/
