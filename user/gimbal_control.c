@@ -90,6 +90,9 @@ void keyboard_mouse_control(){
     //The close of the gimbal is not here, but in the chasis control part
     //We directly bypass the setpoint_angle. 
   }
+  else if (ChasisFlag == 4) {
+    gimbalPositionSetpoint += -(xtotal - pre_xtotal)*7;
+  }
 
 
   
@@ -217,7 +220,7 @@ void TIM7_IRQHandler(void){
         gimbal_yaw_control();
         gimbal_pitch_control();
         GUN_PokeControl();
-        //Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+        Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
     

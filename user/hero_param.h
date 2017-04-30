@@ -34,7 +34,9 @@ extern int32_t GimbalFlag;
 extern int32_t ChasisFlag;
 //Chasis Flag: 1. Follow mode
 //             2. Separate mode, mouse control the gimbal along
-//             3. Follow mode, without gimbal
+//             3. Follow mode, without gyro
+//             4. Separate mode, without gyro
+
 extern int32_t CameraFlag;
 //Camera Flag: 1. pos 1
 //             2. pos 2

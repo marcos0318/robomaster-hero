@@ -17,7 +17,10 @@ void DBUS_data_analysis(){
 			ChasisFlag = 1;
 	}
 	else if (DBUS_ReceiveData.rc.switch_left == 3) {
-		ChasisFlag = 3;
+		if (DBUS_ReceiveData.mouse.press_right) 
+			ChasisFlag = 4;
+		else
+			ChasisFlag = 3;
 	}
 }
 
