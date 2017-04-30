@@ -2,6 +2,8 @@
 static DMA_InitTypeDef Bilateral_DMA_InitStruct;
 #define BilateralCommunication_buffer 3
 int8_t BilateralBuffer[BilateralCommunication_buffer];
+u32 receive_time=0;
+u32 broken_time=0;
 void Bilateral_Init(void) {
 	
 	
@@ -86,49 +88,68 @@ void USART3_IRQHandler(void)
 		BREAK=false;
 		if(getID()==0x05){
 			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=0;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFF){
 			GO_ON_STAGE_ONE_KEY=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFE){
 			GO_DOWN_STAGE_ONE_KEY=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFD){
 			BREAK=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFC){
 			ONE_KEY_DOWN_FRONT=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFB){
 			ONE_KEY_DOWN_BACK=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFA){
 			ONE_KEY_UP_FRONT=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xF9){
 			ONE_KEY_UP_BACK=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){
 			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=8*getPositionSetpoint();
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x01){
 			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=8*getPositionSetpoint();
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x02){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=8*getPositionSetpoint();
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x03){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=8*getPositionSetpoint();
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==16){
 			FRICTION_WHEEL_STATE=false;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==17){
 			FRICTION_WHEEL_STATE=false;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==18){
 			FRICTION_WHEEL_STATE=true;
+			broken_time=receive_time=get_ms_ticks();
 		}
+		else if(getID()==0x55) {
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else broken_time=get_ms_ticks();
 		
 
 		

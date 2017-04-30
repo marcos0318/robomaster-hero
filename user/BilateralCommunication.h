@@ -7,4 +7,6 @@
 #include "Lifting_Motor_Control.h"
 void Bilateral_Init();
 //volatile int32_t LiftingMotorPositionSetpoint[4];
+extern u32 receive_time;
+extern u32 broken_time;
 #endif

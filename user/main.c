@@ -8,12 +8,13 @@
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
-#define SPEED_SETPOINT_LIMIT 800
+#define SPEED_SETPOINT_LIMIT 1000
 #define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 164000
 #define TOTALLY_DOWN_SETPOINT 1000
 static u32 ticks_msimg = (u32)-1;
+bool BROKEN_CABLE = false;
 
 void init(){
 //	InfantryJudge.LastBlood = 1500;
@@ -72,7 +73,15 @@ int main(void)
 			
 			setSetpoint();
 			
-			speedProcess();
+			if((broken_time-receive_time)>200)
+			{
+				BROKEN_CABLE=true;
+				Set_CM_Speed(CAN2,0,0,0,0);
+			}
+			else{
+				BROKEN_CABLE=false;
+				speedProcess();
+			}
 			
 			
 			
@@ -88,10 +97,11 @@ int main(void)
 			}
 			if(ticks_msimg % 50 ==0) {
 				tft_clear();
+				tft_prints(1,0,"Broken %d", BROKEN_CABLE);
 				for(uint8_t i=0;i<4;i++) 
           tft_prints(1,i+6,"ecd %d %f", i+1, LiftingMotorPositionFeedback[i]); 
-        for (int i=0;i<4;i++) 
-          tft_prints(1,i+2,"bfdSP%d %d",i+1, LiftingMotorSpeedSetpointBuffered[i]); 
+        //for (int i=0;i<4;i++) 
+          //tft_prints(1,i+2,"bfdSP%d %d",i+1, LiftingMotorSpeedSetpointBuffered[i]); 
 				tft_update();
 			}
 	
