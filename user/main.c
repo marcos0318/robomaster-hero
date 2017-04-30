@@ -14,7 +14,7 @@
 #define MID_SETPOINT 164000
 #define TOTALLY_DOWN_SETPOINT 1000
 static u32 ticks_msimg = (u32)-1;
-bool BROKEN_CABLE = false;
+uint8_t BROKEN_CABLE = 0;
 
 void init(){
 //	InfantryJudge.LastBlood = 1500;
@@ -75,11 +75,11 @@ int main(void)
 			broken_time=ticks_msimg;
 			if((broken_time-receive_time)>200)
 			{
-				BROKEN_CABLE=true;
+				BROKEN_CABLE=1;
 				Set_CM_Speed(CAN2,0,0,0,0);
 			}
 			else{
-				BROKEN_CABLE=false;
+				BROKEN_CABLE=0;
 				speedProcess();
 			}
 			
@@ -98,6 +98,8 @@ int main(void)
 			if(ticks_msimg % 50 ==0) {
 				tft_clear();
 				tft_prints(1,3,"Broken %d", BROKEN_CABLE);
+				tft_prints(1,4,"btime %d", broken_time);
+				tft_prints(1,5,"rtime %d", receive_time);
 				for(uint8_t i=0;i<4;i++) 
           tft_prints(1,i+6,"ecd %d %f", i+1, LiftingMotorPositionFeedback[i]); 
         //for (int i=0;i<4;i++) 
