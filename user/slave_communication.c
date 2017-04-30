@@ -10,6 +10,8 @@ bool lower_pneumatic_prev = false ;
 bool upper_pneumatic_prev = false ;
 volatile bool KEY_G_PREV = false;
 volatile bool KEY_F_PREV = false;
+volatile bool KEY_SHIFT_G_PREV = false;
+volatile bool KEY_SHIFT_F_PREV = false;
 
 /*
 enum modeControl{
@@ -45,26 +47,37 @@ void state_control(){
 	if(!DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_F)){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
+		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT);
 		transmit();
 		return;
 	}
-	if(DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
 			if(HERO!=LOADED)
 				HERO+=1;
 			else HERO=RUNNING_MODE;
 	}
-	if(DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
 			if(HERO!=RUNNING_MODE)
 				HERO-=1;
 			else HERO=LOADED;		
+	}
+	if(DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
+		  HERO=RUNNING_MODE;  		
+	}
+	if(DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
+
+			HERO=PRE_CATCH_GOLF;
 	}
 	//What's the condition to execute this switch???
 	//may be press G or press the key to switch back state, and of course, prev is needed
 	if((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV)){
 	switch(HERO){
 		case RUNNING_MODE:
+			ChasisFlag=1;
 			filter_rate_limit = 600;
 			speed_multiplier= 600;
+			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case INTO_RI_MODE:
 			//LiftingMotors go up
@@ -81,8 +94,9 @@ void state_control(){
 			speed_multiplier = -200;
 			break;
 		case ON_RI_MODE:
-			
+			ChasisFlag=3;
 			//turn off gyro
+			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case BACK_WHEEL_UP:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
@@ -94,13 +108,14 @@ void state_control(){
 			break;
 		case SPEED_LIMITATION:
 			filter_rate_limit = 200;
-		
+			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case PRE_CATCH_GOLF:
 			//extend gripper pneumatic
 			//camera towards ... where???
 			cameraPositionId = 1;
 			cameraPositionSetpoint = cameraArray[cameraPositionId];
+			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case CATCH_GOLF:
 			DataMonitor_Send(18,0);
@@ -112,7 +127,7 @@ void state_control(){
 			DataMonitor_Send(16, 0);	// turn off friction wheel
 			upper_pneumatic_state = 1;
 			pneumatic_control(3, true);
-				
+			ChasisFlag=4;	
 			break;
 	}
 	}	
@@ -120,11 +135,9 @@ void state_control(){
 	
 	KEY_G_PREV=DBUS_CheckPush(KEY_G);
 	KEY_F_PREV=DBUS_CheckPush(KEY_F);
-	if(HERO==ON_RI_MODE) {
-		
-		
-		
-	}
+	KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT);
+	KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT);
+
 }
 
 void transmit(){
@@ -172,6 +185,8 @@ void transmit(){
 					upper_pneumatic_state = 0;
 					pneumatic_control(3, false);	//withdraw pneumatic
 				}
+				else
+					DataMonitor_Send(0x55, 0);	//keep communication
 			}
 		
 		}
@@ -205,6 +220,8 @@ void transmit(){
 				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
 				DataMonitor_Send(0xF9, LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK					
 			}	
+			else 
+				DataMonitor_Send(0x55, 0);	//keep communication
 			
 
 			
