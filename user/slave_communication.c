@@ -47,8 +47,8 @@ void state_control(){
 	if(!DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_F)){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
-		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT);
-		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
 		transmit();
 		return;
 	}
@@ -62,10 +62,10 @@ void state_control(){
 				HERO-=1;
 			else HERO=LOADED;		
 	}
-	if(DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
+	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
 		  HERO=RUNNING_MODE;  		
 	}
-	if(DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
+	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
 
 			HERO=PRE_CATCH_GOLF;
 	}
@@ -135,8 +135,8 @@ void state_control(){
 	
 	KEY_G_PREV=DBUS_CheckPush(KEY_G);
 	KEY_F_PREV=DBUS_CheckPush(KEY_F);
-	KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DUBS_CheckPush(KEY_SHIFT);
-	KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DUBS_CheckPush(KEY_SHIFT);
+	KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+	KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
 
 }
 
