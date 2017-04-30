@@ -12,12 +12,12 @@ void DBUS_data_analysis(){
 
 	if (DBUS_ReceiveData.rc.switch_left == 1) {
 		if (DBUS_ReceiveData.mouse.press_right) 
-			GimbalFlag = 2;
+			ChasisFlag = 2;
 		else 
-			GimbalFlag = 1;
+			ChasisFlag = 1;
 	}
 	else if (DBUS_ReceiveData.rc.switch_left == 3) {
-		GimbalFlag = 3;
+		ChasisFlag = 3;
 	}
 }
 

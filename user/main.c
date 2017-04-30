@@ -103,6 +103,7 @@ int main(void)
 					tft_prints(1,3, "gyro:%d", output_angle);
 					tft_prints(1,4, "chsAgl: %d", setpoint_angle);
 					tft_prints(1,5, "yawSp: %.1f", gimbalPositionSetpoint);
+					tft_prints(1,6, "chF:%d", ChasisFlag);
 					
 					tft_update();
 					
