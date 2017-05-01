@@ -19,22 +19,26 @@ extern enum modeControl{
 	SPEED_LIMITATION,
 	PRE_CATCH_GOLF,
 	CATCH_GOLF,
-	LOADED
+	LOADED,
+	LIFTING_MOTOR_DOWN,
+	DOWN_FRONT_WHEEL,
+	DOWN_BACK_WHEEL
 } HERO;
 //1. prepare to go into the resource island mode
 //	a. in front of timber pile
 //	b. four LiftingMotors go up
-//	c. pneumatic extended
-//	d. camera towards timber pile
-//	e. press control in order to reverse QWEASD
+//	c. camera towards timber pile
+//	d. press control in order to reverse QWEASD
 //2. prepare to go on the resource island mode
-//	gyro open-looped
+//	a.gyro open-looped
+//	b. pneumatic extended
 //3. back wheels go on the stage
 //	a. back wheels LiftingMotors go up
 //4. back wheels and pneumatic have already gone up
 //	a. front wheels LiftingMotors go up
 //5. all wheels on stage
 //	a. set speed limit for the wheels
+//  b. all lifting motors go up
 //6. ready to inhale (WTF...) Golf
 //	a. extend gripper pneumatic
 //	b. readjust camera position
@@ -44,7 +48,11 @@ extern enum modeControl{
 //	b. friction wheel on
 //8. already loaded
 //	a. friction wheel off	
-//	b. withdraw pneumatic
+//	b. withdraw upper pneumatic
+//	c. extend lower pneumatic
+//9. all Lifting Motors go down
+//10.
+//11.
 
 
 	

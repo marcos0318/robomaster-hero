@@ -116,12 +116,12 @@ int main(void)
 					Set_CM_Speed(CAN2,0,0,0,0);
 				}
 			
-				if ( ticks_msimg % 20 == 0 ){
+				//if ( ticks_msimg % 20 == 0 ){
 					//tft_clear();
 					
 
 					//tft_update();
-				}
+				//}
 			} 	
 		}
 	}

@@ -15,6 +15,10 @@ int32_t gimbalSpeedSetpoint = 0;
 int32_t gimbalSpeedMoveOutput = 0;
 int32_t outsideLimit = 670;
 
+//key control for chasis turning
+bool KEY_Q_PREV = false;
+bool KEY_E_PREV = false;
+
 
 /********************************/
 /***** Gimbal Pitch Control *****/
@@ -36,7 +40,7 @@ int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
 void camera_position_control(){
     cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-    if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_Q)){
+    if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_R)){
         cameraPositionId++;
         if (cameraPositionId == 6)
             cameraPositionId = 0;
@@ -53,7 +57,7 @@ void camera_position_control(){
 
     pidLimitI(&cameraSpeedState, 20000);
     cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
-    pressCameraChangePrev = DBUS_CheckPush(KEY_Q);
+    pressCameraChangePrev = DBUS_CheckPush(KEY_R);
     
 }
 void keyboard_mouse_control(){
@@ -80,18 +84,42 @@ void keyboard_mouse_control(){
 	if(ChasisFlag == 1) {
 		setpoint_angle = -direction * 3600/upperTotal;
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
+		/*
+		if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
+				setpoint_angle+=900;
+		if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
+				setpoint_angle-=900;
+		*/
 	}
   else if (ChasisFlag == 2) {
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
+		/*
+		if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
+				setpoint_angle+=900;
+		if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
+				setpoint_angle-=900;
+		*/
   }
   else if (ChasisFlag == 3) {
     gimbalPositionSetpoint = 0;
 		setpoint_angle = output_angle;
     //The close of the gimbal is not here, but in the chasis control part
     //We directly bypass the setpoint_angle. 
+		/*
+		if(DBUS_CheckPush(KEY_Q))
+			setpoint_angle+=1;
+		if(DBUS_CheckPush(KEY_E))
+			setpoint_angle-=1;
+		*/
   }
   else if (ChasisFlag == 4) {
     gimbalPositionSetpoint += -(xtotal - pre_xtotal)*7;
+		/*
+		if(DBUS_CheckPush(KEY_Q))
+			setpoint_angle+=1;
+		if(DBUS_CheckPush(KEY_E))
+			setpoint_angle-=1;
+		*/
   }
 
 
@@ -105,6 +133,8 @@ void keyboard_mouse_control(){
   //Update data
 	pre_xtotal = xtotal;
   ChasisFlag_Prev = ChasisFlag;
+	KEY_Q_PREV=DBUS_CheckPush(KEY_Q);
+	KEY_E_PREV=DBUS_CheckPush(KEY_E);
 }
 
 void gimbal_yaw_control(){
