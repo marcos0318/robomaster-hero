@@ -60,19 +60,33 @@ void setSetpoint(){
     if(!GO_ON_STAGE_ONE_KEY_PREV && GO_ON_STAGE_ONE_KEY) {
         //ticks_msimg_on_prev=ticks_msimg;			//starting counting time for the procedure
         for(uint8_t i=0;i<4;i++)
-            LiftingMotorPositionSetpoint[i]=UP_SETPOINT;
+            LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i]+UP_SETPOINT;
         GO_ON_STAGE_ONE_KEY=false;
     }
     if(!GO_DOWN_STAGE_ONE_KEY_PREV && GO_DOWN_STAGE_ONE_KEY) {
         //ticks_msimg_down_prev=ticks_msimg;			//starting counting time for the procedure
-        LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=MID_SETPOINT;
-        LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=UP_SETPOINT;
+        LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+MID_SETPOINT;
+				LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+MID_SETPOINT;
+        LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+UP_SETPOINT;
+				LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
         GO_DOWN_STAGE_ONE_KEY=false;
     }
-    if(ONE_KEY_UP_FRONT){LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=UP_SETPOINT;}
-    else if(ONE_KEY_DOWN_FRONT){LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=DOWN_SETPOINT;}
-    if(ONE_KEY_UP_BACK){LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=UP_SETPOINT;}
-    else if(ONE_KEY_DOWN_BACK){LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=DOWN_SETPOINT;}
+    if(ONE_KEY_UP_FRONT){
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+UP_SETPOINT;
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
+		}
+    else if(ONE_KEY_DOWN_FRONT){
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
+		}
+    if(ONE_KEY_UP_BACK){
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+UP_SETPOINT;
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+UP_SETPOINT;
+		}
+    else if(ONE_KEY_DOWN_BACK){
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+DOWN_SETPOINT;
+		}
 				
     
     GO_ON_STAGE_ONE_KEY_PREV=GO_ON_STAGE_ONE_KEY;			//don't forget to update

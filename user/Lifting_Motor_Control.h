@@ -23,6 +23,9 @@ extern int32_t LiftingMotorSpeedSetpointBuffered[4];
 extern volatile int32_t LiftingMotorPositionSetpoint[4];
 extern int32_t LiftingMotorSpeedSetpointBuffered[4];
 
+extern int32_t LiftingMotorBias[4];		//actually its the lower limit
+extern int32_t LiftingMotorUpperLimit[4];
+
 extern volatile bool ONE_KEY_UP_FRONT;
 extern volatile bool ONE_KEY_UP_BACK;
 extern volatile bool ONE_KEY_DOWN_FRONT;

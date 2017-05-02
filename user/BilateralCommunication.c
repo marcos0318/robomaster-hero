@@ -74,6 +74,21 @@ int16_t getPositionSetpoint(){
 	return (BilateralBuffer[1]<<8)+BilateralBuffer[2];
 }
 
+void modifyingBias(uint8_t i){
+	LiftingMotorPositionSetpoint[i]-=200;
+	if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]){
+			LiftingMotorBias[i]=LiftingMotorPositionSetpoint[i];
+			LiftingMotorUpperLimit[i]=LiftingMotorBias[i]+UP_SETPOINT;
+	}
+}
+
+void modifyingUpperLimit(uint8_t i){
+	LiftingMotorPositionSetpoint[i]+=200;
+	if(LiftingMotorPositionSetpoint[i] > LiftingMotorUpperLimit[i]){
+			LiftingMotorUpperLimit[i]=LiftingMotorPositionSetpoint[i];
+			LiftingMotorBias[i]=LiftingMotorUpperLimit[i]-UP_SETPOINT;
+	}
+}
 u8 UARTtemp1;
 void USART3_IRQHandler(void)
 {
@@ -87,7 +102,8 @@ void USART3_IRQHandler(void)
 		ONE_KEY_UP_BACK=false;
 		BREAK=false;
 		if(getID()==0x05){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=0;
+			for(uint8_t i = 0; i < 4; i++)
+				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFF){
@@ -119,19 +135,71 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x01){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorPositionSetpoint[1]=8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x02){
-			LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x03){
-			LiftingMotorPositionSetpoint[2]=LiftingMotorPositionSetpoint[3]=8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x10){														
+			//Ctrl F
+			//LiftingMotor[0] draws back
+			modifyingBias(0);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x11){
+			//Ctrl G
+			//LiftingMotor[1] draws back
+			modifyingBias(1);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x12){
+			//Ctrl C
+			//LiftingMotor[3] draws back
+			modifyingBias(3);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x13){
+			//Ctrl V
+			//LiftingMotor[2] draws back
+			modifyingBias(2);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x14){
+			//Ctrl Shift F
+			//LiftingMotor[0] expands
+			modifyingUpperLimit(0);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x15){
+			//Ctrl Shift G
+			//LiftingMotor[1] expands
+			modifyingUpperLimit(1);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x16){
+			//Ctrl Shift C
+			//LiftingMotor[3] expands
+			modifyingUpperLimit(3);
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0x17){
+			//Ctrl Shift V
+			//LiftingMotor[2] expands
+			modifyingUpperLimit(2);
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==16){
