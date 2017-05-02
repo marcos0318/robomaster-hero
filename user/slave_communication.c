@@ -48,6 +48,14 @@ int16_t checkSetpoint(int16_t a, bool dir){
 }
 
 void state_control(){
+	if(DBUS_CheckPush(KEY_CTRL)){
+		KEY_G_PREV=DBUS_CheckPush(KEY_G);
+		KEY_F_PREV=DBUS_CheckPush(KEY_F);
+		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
+		transmit();
+		return;
+	}
 	if(DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
 	if(KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
 		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
@@ -157,7 +165,7 @@ void state_control(){
 			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case CATCH_GOLF:
-			DataMonitor_Send(18,0);			//turn on friciton wheel
+			DataMonitor_Send(28,0);			//turn on friciton wheel
 			upper_pneumatic_state = 0;
 			pneumatic_control(3, true);
 			lower_pneumatic_state=false;
@@ -166,7 +174,7 @@ void state_control(){
 		
 			break;
 		case LOADED:
-			DataMonitor_Send(16, 0);	// turn off friction wheel
+			DataMonitor_Send(26, 0);	// turn off friction wheel
 			upper_pneumatic_state = 1;
 			pneumatic_control(3, false);
 			lower_pneumatic_state=true;
@@ -203,21 +211,21 @@ void state_control(){
 
 void transmit(){
 		if (DBUS_CheckPush(KEY_CTRL)) {
-			if(DBUS_CheckPush(KEY_F)){
+			if(DBUS_CheckPush(KEY_F) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
-				DataMonitor_Send(16,0);
+				DataMonitor_Send(0x10,0);
 			}
-			else if(DBUS_CheckPush(KEY_G)){
+			else if(DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
-				DataMonitor_Send(17,0);
+				DataMonitor_Send(0x11,0);
 			} 
-			else if(DBUS_CheckPush(KEY_C)){
+			else if(DBUS_CheckPush(KEY_C) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
-				DataMonitor_Send(18,0);
+				DataMonitor_Send(0x12,0);
 			}
-			else if(DBUS_CheckPush(KEY_V)){
+			else if(DBUS_CheckPush(KEY_V) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
-				DataMonitor_Send(19,0);
+				DataMonitor_Send(0x13,0);
 			}
 		}
 		
@@ -229,19 +237,19 @@ void transmit(){
 			}
 			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_F)){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
-				DataMonitor_Send(20,0);
+				DataMonitor_Send(0x14,0);
 			}
 			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_G)){
 				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], true);
-				DataMonitor_Send(21,0);
+				DataMonitor_Send(0x15,0);
 			} 
 			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_C)){
 				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], true);
-				DataMonitor_Send(22,0);
+				DataMonitor_Send(0x16,0);
 			}
 			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_V)){
 				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], true);
-				DataMonitor_Send(23,0);
+				DataMonitor_Send(0x17,0);
 			}
 			else if(DBUS_CheckPush(KEY_Z)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);
