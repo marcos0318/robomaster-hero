@@ -202,15 +202,15 @@ void USART3_IRQHandler(void)
 			modifyingUpperLimit(2);
 			broken_time=receive_time=get_ms_ticks();
 		}
-		else if(getID()==16){
+		else if(getID()==26){
 			FRICTION_WHEEL_STATE=false;
 			broken_time=receive_time=get_ms_ticks();
 		}
-		else if(getID()==17){
+		else if(getID()==27){
 			FRICTION_WHEEL_STATE=false;
 			broken_time=receive_time=get_ms_ticks();
 		}
-		else if(getID()==18){
+		else if(getID()==28){
 			FRICTION_WHEEL_STATE=true;
 			broken_time=receive_time=get_ms_ticks();
 		}

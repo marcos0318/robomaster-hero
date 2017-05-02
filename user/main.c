@@ -101,9 +101,9 @@ int main(void)
 				tft_prints(1,4,"btime %d", broken_time);
 				tft_prints(1,5,"rtime %d", receive_time);
 				for(uint8_t i=0;i<4;i++) 
-          tft_prints(1,i+6,"ecd %d %f", i+1, LiftingMotorPositionFeedback[i]); 
+          tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]); 
         for (int i=0;i<4;i++) 
-          tft_prints(1,i+2,"bfdSP%d %d",i+1, LiftingMotorBias[i]); 
+          tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				tft_update();
 			}
 	
