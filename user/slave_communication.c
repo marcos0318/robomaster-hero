@@ -202,11 +202,46 @@ void state_control(){
 }
 
 void transmit(){
+		if (DBUS_CheckPush(KEY_CTRL)) {
+			if(DBUS_CheckPush(KEY_F)){
+				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
+				DataMonitor_Send(16,0);
+			}
+			else if(DBUS_CheckPush(KEY_G)){
+				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
+				DataMonitor_Send(17,0);
+			} 
+			else if(DBUS_CheckPush(KEY_C)){
+				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
+				DataMonitor_Send(18,0);
+			}
+			else if(DBUS_CheckPush(KEY_V)){
+				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
+				DataMonitor_Send(19,0);
+			}
+		}
+		
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
 
 			if(DBUS_CheckPush(KEY_R)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
+			}
+			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_F)){
+				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
+				DataMonitor_Send(20,0);
+			}
+			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_G)){
+				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], true);
+				DataMonitor_Send(21,0);
+			} 
+			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_C)){
+				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], true);
+				DataMonitor_Send(22,0);
+			}
+			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_V)){
+				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], true);
+				DataMonitor_Send(23,0);
 			}
 			else if(DBUS_CheckPush(KEY_Z)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);
@@ -233,16 +268,16 @@ void transmit(){
 			else if(!upper_pneumatic_prev && DBUS_CheckPush(KEY_E)){
 				//pneumatic
 				if(upper_pneumatic_state == 0){
-					DataMonitor_Send(16, 0);	// turn off friction wheel
+					DataMonitor_Send(26, 0);	// turn off friction wheel
 					upper_pneumatic_state = 1;
 					pneumatic_control(3, true);	//extend the pneumatic
 				}
 				else if(upper_pneumatic_state == 1){
-					DataMonitor_Send(17, 0);	//friction wheel still off
+					DataMonitor_Send(27, 0);	//friction wheel still off
 					upper_pneumatic_state = 2;	//pneumatic still extended
 				}
 				else if(upper_pneumatic_state == 2){
-					DataMonitor_Send(18,0);		//turn on friction wheel
+					DataMonitor_Send(28,0);		//turn on friction wheel
 					upper_pneumatic_state = 0;
 					pneumatic_control(3, false);	//withdraw pneumatic
 				}
