@@ -15,6 +15,7 @@ int32_t gimbalSpeedSetpoint = 0;
 int32_t gimbalSpeedMoveOutput = 0;
 int32_t outsideLimit = 670;
 
+int32_t turningConst = upperTotal/4;
 //key control for chasis turning
 bool KEY_Q_PREV = false;
 bool KEY_E_PREV = false;
@@ -83,9 +84,9 @@ void keyboard_mouse_control(){
 
 	if(ChasisFlag == 1) {
     if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
-        direction += outsideLimit;
+        direction += turningConst;
     if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
-        direction -= outsideLimit;
+        direction -= turningConst;
 		setpoint_angle = -direction * 3600/upperTotal;
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
 		
@@ -93,12 +94,12 @@ void keyboard_mouse_control(){
 	}
   else if (ChasisFlag == 2) {
     if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV) {
-      direction += outsideLimit;
-      setpoint_angle -= outsideLimit * 3600 / upperTotal;
+      direction += turningConst;
+      setpoint_angle -= turningConst * 3600 / upperTotal;
     }
     if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV) {
-      direction -= outsideLimit;
-      setpoint_angle += outsideLimit * 3600 / upperTotal;
+      direction -= turningConst;
+      setpoint_angle += turningConst * 3600 / upperTotal;
     }
     
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
