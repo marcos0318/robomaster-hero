@@ -62,10 +62,16 @@ extern int32_t kd_power;
 
 //DBUS for gimbal
 extern int32_t direction;
+extern int32_t direction_buffered;
 extern int32_t upperTotal;
 
 extern int32_t xtotal;
 extern int32_t pre_xtotal;
+
+
+//Dbus for chasis
+extern int32_t xtotal_chasis;
+extern int32_t xtotal_chasis_prev;
 
 //float gimbalPositionPID[3] = {0.5, 0.00032, 22};
 extern float kp_gimbalPosition;

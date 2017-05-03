@@ -9,7 +9,7 @@ void DBUS_data_analysis(){
 	angular_speed_limitor = 200;
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
-	/*
+	
 	if (DBUS_ReceiveData.rc.switch_left == 1) {
 		if (DBUS_ReceiveData.mouse.press_right) 
 			ChasisFlag = 2;
@@ -22,11 +22,13 @@ void DBUS_data_analysis(){
 		else
 			ChasisFlag = 3;
 	}
-	*/
+	
 }
 
 
 void turning_speed_limit_control(uint32_t ticks_msimg){
+	xtotal_chasis = DBUS_ReceiveData.mouse.xtotal;
+
 	feedback_angle = output_angle;
 				
 	output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);
@@ -46,10 +48,21 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 		buffer_in(buffer[i], BUFFER_LENGTH, ticks_msimg , wheel_setpoints[i]);
 		wheel_setpoints[i] = buffer_out(buffer[i], BUFFER_LENGTH, ticks_msimg);
 
-		if(ChasisFlag == 1 || ChasisFlag == 2)
+		if (ChasisFlag == 1 || ChasisFlag == 2)
 			wheel_setpoints[i] += output_angle_speed;
 		if (ChasisFlag  == 3)
-			wheel_setpoints[i] += DBUS_ReceiveData.mouse.x * 6;
+			wheel_setpoints[i] += DBUS_ReceiveData.mouse.x * 15;
+
+		//Use Q and E to control direction
+		if (ChasisFlag == 4 || ChasisFlag == 3) {
+			if(DBUS_CheckPush(KEY_Q))
+				wheel_setpoints[i]+=2;
+			if(DBUS_CheckPush(KEY_E))
+				wheel_setpoints[i]-=2;
+		}
+
+		xtotal_chasis_prev = xtotal_chasis;
+
 	}	
 	
 	for(int i=0; i<4; i++)

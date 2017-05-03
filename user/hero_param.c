@@ -19,10 +19,15 @@ int32_t kd_power = 0;
 
 //DBUS for gimbal
 int32_t direction = 0;
+int32_t direction_buffered = 0;
 int32_t upperTotal = 360 * 27;
 
 int32_t xtotal = 0;
 int32_t pre_xtotal = 0;
+
+//Dbus for chasis
+int32_t xtotal_chasis = 0;
+int32_t xtotal_chasis_prev = 0;
 
 //float gimbalPositionPID[3] = {0.5, 0.00032, 22};
 float kp_gimbalPosition = 0.5;

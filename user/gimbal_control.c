@@ -82,29 +82,36 @@ void keyboard_mouse_control(){
   
 
 	if(ChasisFlag == 1) {
+    if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
+        direction += outsideLimit;
+    if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
+        direction -= outsideLimit;
 		setpoint_angle = -direction * 3600/upperTotal;
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
-		/*
-		if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
-				setpoint_angle+=900;
-		if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
-				setpoint_angle-=900;
-		*/
+		
+
 	}
   else if (ChasisFlag == 2) {
+    if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV) {
+      direction += outsideLimit;
+      setpoint_angle -= outsideLimit * 3600 / upperTotal;
+    }
+    if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV) {
+      direction -= outsideLimit;
+      setpoint_angle += outsideLimit * 3600 / upperTotal;
+    }
+    
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
-		/*
-		if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
-				setpoint_angle+=900;
-		if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
-				setpoint_angle-=900;
-		*/
+
   }
   else if (ChasisFlag == 3) {
     gimbalPositionSetpoint = 0;
 		setpoint_angle = output_angle;
     //The close of the gimbal is not here, but in the chasis control part
     //We directly bypass the setpoint_angle. 
+
+    //Change setpoint angle here is not useful because there are not gimbal control
+
 		/*
 		if(DBUS_CheckPush(KEY_Q))
 			setpoint_angle+=1;
