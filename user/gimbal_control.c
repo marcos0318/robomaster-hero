@@ -15,7 +15,7 @@ int32_t gimbalSpeedSetpoint = 0;
 int32_t gimbalSpeedMoveOutput = 0;
 int32_t outsideLimit = 670;
 
-int32_t turningConst = upperTotal/4;
+int32_t turningConst = 2430;
 //key control for chasis turning
 bool KEY_Q_PREV = false;
 bool KEY_E_PREV = false;
