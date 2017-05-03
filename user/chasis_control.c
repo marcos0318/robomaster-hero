@@ -32,6 +32,7 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	feedback_angle = output_angle;
 				
 	output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);
+	
 	windowLimit(&output_angle_speed, CHASSIS_ANGULAR_VELOCITY_LIMIT, -CHASSIS_ANGULAR_VELOCITY_LIMIT);
 
 	int32_t max_wheel_setpoint = abs(forward_speed) + abs(right_speed);	
@@ -65,8 +66,6 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 
 	}	
 	
-	for(int i=0; i<4; i++)
-			wheel_setpoints[i] = wheel_setpoints[i] * wheel_setpoint_coefficient / 1000;
 		
 		
 	wheel_setpoints_adjust(&wheel_setpoints[0], &wheel_setpoints[1],&wheel_setpoints[2],&wheel_setpoints[3] , filter_rate_limit);

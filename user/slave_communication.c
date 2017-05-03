@@ -112,8 +112,8 @@ void state_control(){
 			pneumatic_control(2, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 			DataMonitor_Send(5, 0);
-			filter_rate_limit = 500;
-			speed_multiplier= 500;
+			filter_rate_limit = 800;
+			speed_multiplier= 800;
 			//DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case INTO_RI_MODE:

@@ -20,7 +20,7 @@ int32_t turningConst = 2430;
 bool KEY_Q_PREV = false;
 bool KEY_E_PREV = false;
 
-
+bool is_qe_turning = false;
 /********************************/
 /***** Gimbal Pitch Control *****/
 /********************************/
@@ -68,12 +68,14 @@ void keyboard_mouse_control(){
 	if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
 		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
 
-  //Not move
-	else if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
-		direction = outsideLimit - output_angle * upperTotal/3600;			
-	else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
-		direction = -outsideLimit - output_angle * upperTotal / 3600;
-
+  //if is in the qe turnning state, just do not correct the direction
+	//direction correction 
+	if ( ! is_qe_turning ) { 
+		if ((direction + output_angle*upperTotal / 3600) > outsideLimit)
+			direction = outsideLimit - output_angle * upperTotal/3600;			
+		else if ((direction + output_angle * upperTotal / 3600) < - outsideLimit)
+			direction = -outsideLimit - output_angle * upperTotal / 3600;
+	}
 	
   //restart the gimbal, clear the setpoint of the gimbal
   if(ChasisFlag_Prev == 3 && (ChasisFlag == 1 || ChasisFlag == 2)) {
@@ -83,10 +85,14 @@ void keyboard_mouse_control(){
   
 
 	if(ChasisFlag == 1) {
-    if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV)
+    if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV) {
+				is_qe_turning = true;
         direction += turningConst;
-    if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV)
+		}
+    if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV) {
+				is_qe_turning = true;
         direction -= turningConst;
+		}
 		setpoint_angle = -direction * 3600/upperTotal;
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
 		
@@ -96,10 +102,12 @@ void keyboard_mouse_control(){
     if(DBUS_CheckPush(KEY_Q) && !KEY_Q_PREV) {
       direction += turningConst;
       setpoint_angle -= turningConst * 3600 / upperTotal;
+			is_qe_turning = true;
     }
     if(DBUS_CheckPush(KEY_E) && !KEY_E_PREV) {
       direction -= turningConst;
       setpoint_angle += turningConst * 3600 / upperTotal;
+			is_qe_turning = true;
     }
     
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
@@ -130,7 +138,10 @@ void keyboard_mouse_control(){
 		*/
   }
 
-
+	//if is qe turning the gimbalsestpint is zero
+	if (is_qe_turning) {
+		gimbalPositionSetpoint = 0;
+	}
   
 
 	//Used for protection				
@@ -143,6 +154,9 @@ void keyboard_mouse_control(){
   ChasisFlag_Prev = ChasisFlag;
 	KEY_Q_PREV=DBUS_CheckPush(KEY_Q);
 	KEY_E_PREV=DBUS_CheckPush(KEY_E);
+	if ( abs(setpoint_angle - output_angle) < 100) {
+		is_qe_turning = false;
+	}
 }
 
 void gimbal_yaw_control(){

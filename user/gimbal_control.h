@@ -8,6 +8,9 @@
 /***** Gimbal Yaw Control (Position loop and velocity loop) *****/
 /****************************************************************/
 
+extern bool is_qe_turning;
+
+
 //position control
 extern float gimbalPositionSetpoint;// prevGimbalPositionSetpoint = 0;
 extern float bufferedGimbalPositionSetpoint;

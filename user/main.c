@@ -105,6 +105,7 @@ int main(void)
 					tft_prints(1,4, "chsAgl: %d", setpoint_angle);
 					tft_prints(1,5, "yawSp: %.1f", gimbalPositionSetpoint);
 					tft_prints(1,6, "chF:%d", ChasisFlag);
+					tft_prints(1,7, "qe_tn:%d", is_qe_turning);
 					
 					tft_update();
 					

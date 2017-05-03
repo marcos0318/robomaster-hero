@@ -9,9 +9,9 @@
 #include <stdbool.h> 
 #include <math.h>
 
-#define BUFFER_LENGTH 300	
+#define BUFFER_LENGTH 500	
 #define POWER_BUFFER_LENGTH 20
-#define CHASSIS_ANGULAR_VELOCITY_LIMIT 500
+#define CHASSIS_ANGULAR_VELOCITY_LIMIT 800
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
 #define LiftingMotorSetpointLimit 31999
