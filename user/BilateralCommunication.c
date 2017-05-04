@@ -154,53 +154,59 @@ void USART3_IRQHandler(void)
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
-		else if(getID()==0x10){														
-			//Ctrl F
-			//LiftingMotor[0] draws back
-			modifyingBias(0);
-			broken_time=receive_time=get_ms_ticks();
+		else if(getID() == 0x10){
+			int16_t key_bit = getPositionSetpoint();
+			if((key_bit>>0) & 1){														
+				//Ctrl F
+				//LiftingMotor[0] draws back
+				modifyingBias(0);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>1) & 1){
+				//Ctrl G
+				//LiftingMotor[1] draws back
+				modifyingBias(1);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>2) & 1){
+				//Ctrl C
+				//LiftingMotor[3] draws back
+				modifyingBias(3);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>3) & 1){
+				//Ctrl V
+				//LiftingMotor[2] draws back
+				modifyingBias(2);
+				broken_time=receive_time=get_ms_ticks();
+			}
 		}
-		else if(getID()==0x11){
-			//Ctrl G
-			//LiftingMotor[1] draws back
-			modifyingBias(1);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x12){
-			//Ctrl C
-			//LiftingMotor[3] draws back
-			modifyingBias(3);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x13){
-			//Ctrl V
-			//LiftingMotor[2] draws back
-			modifyingBias(2);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x14){
-			//Ctrl Shift F
-			//LiftingMotor[0] expands
-			modifyingUpperLimit(0);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x15){
-			//Ctrl Shift G
-			//LiftingMotor[1] expands
-			modifyingUpperLimit(1);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x16){
-			//Ctrl Shift C
-			//LiftingMotor[3] expands
-			modifyingUpperLimit(3);
-			broken_time=receive_time=get_ms_ticks();
-		}
-		else if(getID()==0x17){
-			//Ctrl Shift V
-			//LiftingMotor[2] expands
-			modifyingUpperLimit(2);
-			broken_time=receive_time=get_ms_ticks();
+		else if(getID() == 0x14){
+			int16_t key_bit = getPositionSetpoint();
+			if((key_bit>>0) & 1){
+				//Ctrl Shift F
+				//LiftingMotor[0] expands
+				modifyingUpperLimit(0);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>1) & 1){
+				//Ctrl Shift G
+				//LiftingMotor[1] expands
+				modifyingUpperLimit(1);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>2) & 1){
+				//Ctrl Shift C
+				//LiftingMotor[3] expands
+				modifyingUpperLimit(3);
+				broken_time=receive_time=get_ms_ticks();
+			}
+			if((key_bit>>3) & 1){
+				//Ctrl Shift V
+				//LiftingMotor[2] expands
+				modifyingUpperLimit(2);
+				broken_time=receive_time=get_ms_ticks();
+			}
 		}
 		else if(getID()==26){
 			FRICTION_WHEEL_STATE=false;
