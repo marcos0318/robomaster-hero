@@ -1,12 +1,29 @@
 #include "chasis_control.h"
 #include "gimbal_control.h"
-
+#include "slave_communication.h"
 
 
 void DBUS_data_analysis(){
 	speed_limitor  = 660;
 	//speed_multiplier = filter_rate_limit;
-	angular_speed_limitor = 200;
+	angular_speed_limitor = FOR_JOHN_MAX_TURNING_SPEED;
+	if(HERO == RUNNING_MODE){
+		if(DBUS_CheckPush(KEY_W)||DBUS_CheckPush(KEY_A)||DBUS_CheckPush(KEY_S)||DBUS_CheckPush(KEY_D)){
+			if(DBUS_CheckPush(KEY_CTRL)){	//control
+				filter_rate_limit = FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
+				speed_multiplier= FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
+			}
+			else if(!DBUS_CheckPush(KEY_SHIFT)){	//normal
+				filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+				speed_multiplier= FOR_JOHN_MAX_RUNNING_SPEED;
+			}
+			else if(DBUS_CheckPush(KEY_SHIFT)){	//shift
+				filter_rate_limit = FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;
+				speed_multiplier= FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;
+			}
+		}
+			
+	}
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
 	

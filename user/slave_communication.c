@@ -48,7 +48,7 @@ int16_t checkSetpoint(int16_t a, bool dir){
 }
 
 void state_control(){
-	if(DBUS_CheckPush(KEY_CTRL)){
+	if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT))){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
 		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
@@ -106,15 +106,13 @@ void state_control(){
 	switch(HERO){
 		case RUNNING_MODE:
 			ChasisFlag=1;
-			//withdraw lowewr pneumatic
+			//withdraw lower pneumatic
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 			DataMonitor_Send(5, 0);
-			filter_rate_limit = 800;
-			speed_multiplier= 800;
-			//DataMonitor_Send(0x55, 0);	//keep communication
+			//speed limit in chasis control
 			break;
 		case INTO_RI_MODE:
 			//LiftingMotors go up
@@ -124,8 +122,8 @@ void state_control(){
 			cameraPositionId = 1;
 			cameraPositionSetpoint = cameraArray[cameraPositionId];
 			//reverse QWEASD
-			filter_rate_limit = 200;
-			speed_multiplier = -200;
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case ON_RI_MODE:
 			//turn off gyro
@@ -146,8 +144,8 @@ void state_control(){
 				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
 			break;
 		case SPEED_LIMITATION:
-			filter_rate_limit = 200;
-			speed_multiplier = -200;
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 		  //all lifting motor go up 
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
 			DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
@@ -171,7 +169,8 @@ void state_control(){
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
-		
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case LOADED:
 			DataMonitor_Send(26, 0);	// turn off friction wheel
@@ -181,8 +180,8 @@ void state_control(){
 			pneumatic_control(1, 1);
 			pneumatic_control(2, 1);
 			ChasisFlag=4;	
-			filter_rate_limit = 200;
-			speed_multiplier = 200;
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case LIFTING_MOTOR_DOWN:
 			//Lifting Motors go down
@@ -211,22 +210,24 @@ void state_control(){
 
 void transmit(){
 		if (DBUS_CheckPush(KEY_CTRL)) {
+			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
-				DataMonitor_Send(0x10,0);
+				key_bit |= 1<<0; 
 			}
-			else if(DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
-				DataMonitor_Send(0x11,0);
+				key_bit |= 1<<1;
 			} 
-			else if(DBUS_CheckPush(KEY_C) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_C) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
-				DataMonitor_Send(0x12,0);
+				key_bit |= 1<<2;
 			}
-			else if(DBUS_CheckPush(KEY_V) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_V) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
-				DataMonitor_Send(0x13,0);
+				key_bit |= 1<<3;
 			}
+			DataMonitor_Send(0x10, key_bit);
 		}
 		
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
@@ -235,21 +236,25 @@ void transmit(){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
 			}
-			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_F)){
-				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
-				DataMonitor_Send(0x14,0);
-			}
-			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_G)){
-				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], true);
-				DataMonitor_Send(0x15,0);
-			} 
-			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_C)){
-				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], true);
-				DataMonitor_Send(0x16,0);
-			}
-			else if(DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_V)){
-				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], true);
-				DataMonitor_Send(0x17,0);
+			else if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))){
+				int16_t key_bit = 0;
+				if(DBUS_CheckPush(KEY_F)){
+					LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
+					key_bit |= 1<<0;
+				}
+				if(DBUS_CheckPush(KEY_G)){
+					LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], true);
+					key_bit |= 1<<1;
+				} 
+				if(DBUS_CheckPush(KEY_C)){
+					LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], true);
+					key_bit |= 1<<2;
+				}
+				if(DBUS_CheckPush(KEY_V)){
+					LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], true);
+					key_bit |= 1<<3;
+				}
+				DataMonitor_Send(0x14, key_bit);
 			}
 			else if(DBUS_CheckPush(KEY_Z)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);

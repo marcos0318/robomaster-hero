@@ -72,8 +72,7 @@ int32_t output_angle_speed = 0;
 /*****************************/
 
 int32_t speed_limitor = 660;
-int32_t speed_multiplier = 500;
-int32_t angular_speed_limitor = 700;
+int32_t angular_speed_limitor = FOR_JOHN_MAX_TURNING_SPEED;
 int32_t forward_speed;
 int32_t right_speed;
 int32_t increment_of_angle;
@@ -89,7 +88,8 @@ bool Fprev = false;
 
 // NOT intend to use pid control, but still consider using close-loop control
 
-int32_t filter_rate_limit = 900;
+int32_t filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+int32_t speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
 //int32_t power_buffer[POWER_BUFFER_LENGTH];
 float feedback_current = 0;
 float feedback_voltage = 0;
