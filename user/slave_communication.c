@@ -209,7 +209,7 @@ void state_control(){
 }
 
 void transmit(){
-		if (DBUS_CheckPush(KEY_CTRL)) {
+		if (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))) {
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) && !DBUS_CheckPush(KEY_SHIFT)){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
