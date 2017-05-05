@@ -66,7 +66,7 @@ void keyboard_mouse_control(){
 
 	//move in the window
 	if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
-		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*7);
+		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*14);
 
   //if is in the qe turnning state, just do not correct the direction
 	//direction correction 

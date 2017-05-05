@@ -9,7 +9,7 @@
 #include <stdbool.h> 
 #include <math.h>
 
-#define BUFFER_LENGTH 500	
+#define BUFFER_LENGTH 300	
 #define POWER_BUFFER_LENGTH 20
 //#define CHASSIS_ANGULAR_VELOCITY_LIMIT 800
 #define MOVING_BOUND_1 200
@@ -20,9 +20,9 @@
 #define DOWN_SETPOINT 1000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define TOTALLY_DOWN_SETPOINT 1000
 #define CAMERA_ARRAY_MULTIPLIER = 2430
-#define FOR_JOHN_MAX_TURNING_SPEED 800
-#define FOR_JOHN_MAX_RUNNING_SPEED 600
-#define FOR_JOHN_SHIFT_MAX_RUNNING_SPEED 900
+#define FOR_JOHN_MAX_TURNING_SPEED 900
+#define FOR_JOHN_MAX_RUNNING_SPEED 700
+#define FOR_JOHN_SHIFT_MAX_RUNNING_SPEED 1000
 #define FOR_JOHN_CTRL_MAX_RUNNING_SPEED 300		//Ctrl has higher precedence than Shift
 #define FOR_JOHN_INTO_RI_MAX_SPEED 300		//Shift and Control are meaningless here
 
