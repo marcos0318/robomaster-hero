@@ -1,4 +1,4 @@
-#include"hero_param.h"
+#include "hero_param.h"
 
 
 int32_t GimbalFlag = 1;  
@@ -8,7 +8,7 @@ int32_t CameraFlag = 1;
 int32_t ChasisFlag_Prev = 1;
 
 
-int32_t kp_chassisAngle = 1;
+int32_t kp_chassisAngle = 2;
 int32_t ki_chassisAngle = 0;
 int32_t kd_chassisAngle = 1;
 
@@ -152,5 +152,23 @@ int16_t LiftingMotorSetpoint[4] = {0};
 int32_t buffer[4][BUFFER_LENGTH];
 
 
+/**********************************/
+/***** Broken line protection *****/
+/**********************************/
+volatile uint8_t CAN1BrokenLine = 1;
+volatile uint8_t CAN2BrokenLine = 1;
+volatile uint8_t DBUSBrokenLine = 1;
 
+volatile uint32_t CAN1BrokenLineCounter = 0;
+volatile uint32_t CAN2BrokenLineCounter = 0;
+volatile uint32_t DBUSBrokenLineCounter = 0;
 
+volatile uint8_t Wheel1EncoderBrokenLine = 1;
+volatile uint8_t Wheel2EncoderBrokenLine = 1;
+volatile uint8_t Wheel3EncoderBrokenLine = 1;
+volatile uint8_t Wheel4EncoderBrokenLine = 1;
+
+volatile uint8_t YawEncoderBrokenLine = 1;
+volatile uint8_t PitchEncoderBrokenLine = 1;
+volatile uint8_t GunEncoderBrokenLine = 1;
+volatile uint8_t CameraBrokenLine = 1;

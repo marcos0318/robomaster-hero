@@ -129,7 +129,7 @@ void keyboard_mouse_control(){
 		*/
   }
   else if (ChasisFlag == 4) {
-    gimbalPositionSetpoint += -(xtotal - pre_xtotal)*7;
+    gimbalPositionSetpoint += -(xtotal - pre_xtotal)*14;
 		/*
 		if(DBUS_CheckPush(KEY_Q))
 			setpoint_angle+=1;
@@ -260,19 +260,39 @@ void TIM7_IRQHandler(void){
     
     if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
     {
-        
+        if(DBUSBrokenLine == 0){
 				if(DBUS_ReceiveData.rc.switch_left == 2){
 					Set_CM_Speed(CAN1,0,0,0,0);
 					Set_CM_Speed(CAN2,0,0,0,0);
 					TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
 					return;
 				}
-				keyboard_mouse_control();
-        camera_position_control();
-        gimbal_yaw_control();
-        gimbal_pitch_control();
-        GUN_PokeControl();
-        Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+				
+				if(CAN1BrokenLine == 0){
+					keyboard_mouse_control();
+					camera_position_control();
+					gimbal_yaw_control();
+					gimbal_pitch_control();
+					GUN_PokeControl();
+					Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+				}
+				else{
+					//cameraPositionState
+					PIDClearError(&cameraSpeedState);
+					//pitchPositionState
+					incPIDClearError(&pitchSpeedMoveState);
+					//gimbalPositionState
+					incPIDClearError(&gimbalSpeedMoveState);
+					//gunPositionState
+					PIDClearError(&gunSpeedMoveState);
+					
+					
+					Set_CM_Speed(CAN1, 0, 0, 0, 0);
+				}
+				}
+				else {
+					Set_CM_Speed(CAN1, 0, 0, 0, 0);
+				}
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
     

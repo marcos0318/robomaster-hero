@@ -7,6 +7,7 @@
 #include "PID.h"
 #include <string.h>
 #include <stdbool.h>
+
 static PID_Controller PokeSpeedController;
 static PID_Controller PokeAngleController;
 static struct fpid_control_states gunPositionState = {0,0,0};
@@ -18,7 +19,7 @@ int32_t gunSpeedSetpoint=0;
 float gunPositionSetpoint=0;
 int32_t targetAngleBuffer=0;
 float curr_angle=0;
-static struct pid_control_states gunSpeedMoveState={0,0,0};// gimbalSpeedStaticState;
+struct pid_control_states gunSpeedMoveState={0,0,0};// gimbalSpeedStaticState;
 int32_t gunSpeedMoveOutput = 0;
 int32_t gunSpeed=0;
 bool dir=true;

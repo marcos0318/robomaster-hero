@@ -62,8 +62,14 @@ int main(void)
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 
 			//filter_rate limit control
-			
-
+			if(ticks_msimg % 20 == 0){
+				if(((ticks_msimg-DBUSBrokenLineCounter) > 40) || ((ticks_msimg-DBUSBrokenLineCounter) < -40))
+				{
+					DBUSBrokenLine = 1;
+				}
+				else DBUSBrokenLine = 0;
+			}
+			if (DBUSBrokenLine == 0){
 			if (DBUS_ReceiveData.rc.switch_left == 1 || DBUS_ReceiveData.rc.switch_left == 3){ 
 
 				/*******************************************************
@@ -71,17 +77,36 @@ int main(void)
 				*******************************************************/
 
 				//Analyse the data received from DBUS and transfer moving command					
-				
-				DBUS_data_analysis();
+				if(DBUSBrokenLine == 0){
+					DBUS_data_analysis();
 		
-				turning_speed_limit_control(ticks_msimg);
+					turning_speed_limit_control(ticks_msimg);
 				  						 
-				Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
-			
+					Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
+				}
+				else
+				{
+					for (int i=0; i<4; i++)
+						PIDClearError(&states[i]);
+					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
+				}
 		
 				if(ticks_msimg % 20 == 0){
 						state_control();
-					
+						if(((ticks_msimg-CAN1BrokenLineCounter) > 40) || ((ticks_msimg-CAN1BrokenLineCounter) < -40))
+						{
+							CAN1BrokenLine = 1;
+						}
+						else CAN1BrokenLine = 0;
+						
+						if(((ticks_msimg-CAN2BrokenLineCounter) > 40) || ((ticks_msimg-CAN1BrokenLineCounter) < -40))
+						{
+							CAN2BrokenLine = 1;
+						}
+						else CAN2BrokenLine = 0;
+						
+						
+							
 					
 					tft_clear();
 					/*for(uint8_t i=0; i<4; i++)
@@ -116,14 +141,19 @@ int main(void)
 					Set_CM_Speed(CAN1,0,0,0,0);
 					Set_CM_Speed(CAN2,0,0,0,0);
 				}
-			
+			}
 				//if ( ticks_msimg % 20 == 0 ){
 					//tft_clear();
 					
 
 					//tft_update();
 				//}
-			} 	
+			}
+			else		
+			{
+				Set_CM_Speed(CAN1,0,0,0,0);
+				Set_CM_Speed(CAN2,0,0,0,0);
+			}				
 		}
 	}
 } 

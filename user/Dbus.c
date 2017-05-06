@@ -1,6 +1,7 @@
 #include "Dbus.h"
 #include "Driver_Gun.h"
-
+#include "hero_param.h"
+#include "ticks.h"
 
 DBUSDecoding_Type DBUS_ReceiveData, LASTDBUS_ReceiveData;
 uint8_t DBUSBuffer[DBUSLength + DBUSBackLength];	
@@ -66,7 +67,7 @@ void Dbus_init(void){
     DMA_InitStructure.DMA_PeripheralBurst   =   DMA_PeripheralBurst_Single;
     DMA_Init(DMA2_Stream5, &DMA_InitStructure);
     DMA_Cmd(DMA2_Stream5, ENABLE);
-			
+		DBUSBrokenLineCounter = 0;	
 }
 
 /**
@@ -149,6 +150,7 @@ uint8_t UARTtemp;
 
 void USART1_IRQHandler(void)
 {
+			DBUSBrokenLineCounter = get_ms_ticks();
 			UARTtemp = USART1->DR;
 			UARTtemp = USART1->SR;
 			

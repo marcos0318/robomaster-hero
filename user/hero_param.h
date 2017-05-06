@@ -202,6 +202,26 @@ extern void heroParamInit();// Haven't implemented yet
 extern int16_t LiftingMotorSetpoint[4];
 extern int32_t buffer[4][BUFFER_LENGTH];
 
+/**********************************/
+/***** Broken line protection *****/
+/**********************************/
+extern volatile uint8_t CAN1BrokenLine;
+extern volatile uint8_t CAN2BrokenLine;
+extern volatile uint8_t DBUSBrokenLine;
+
+extern volatile uint32_t CAN1BrokenLineCounter;
+extern volatile uint32_t CAN2BrokenLineCounter;
+extern volatile uint32_t DBUSBrokenLineCounter;
+
+extern volatile uint8_t Wheel1EncoderBrokenLine;
+extern volatile uint8_t Wheel2EncoderBrokenLine;
+extern volatile uint8_t Wheel3EncoderBrokenLine;
+extern volatile uint8_t Wheel4EncoderBrokenLine;
+
+extern volatile uint8_t YawEncoderBrokenLine;
+extern volatile uint8_t PitchEncoderBrokenLine;
+extern volatile uint8_t GunEncoderBrokenLine;
+extern volatile uint8_t CameraBrokenLine;
 
 #endif /* __HERO_H */
 

@@ -100,9 +100,20 @@ void incPIDClearError(struct inc_pid_states * state_ptr) {
 	state_ptr->sum_error = 0;
 	state_ptr->last_error = 0;
 	state_ptr->prev_error = 0;
+	state_ptr->setpoint = 0;
+	
 }
 
-
+void fPIDClearError(struct fpid_control_states * state_ptr){
+	state_ptr->cummulated_error = 0;
+	state_ptr->last_error = 0;
+	state_ptr->current_error = 0;
+}
+void PIDClearError(struct pid_control_states * state_ptr){
+	state_ptr->cummulated_error = 0;
+	state_ptr->last_error = 0;
+	state_ptr->current_error = 0;
+}
 
 
 

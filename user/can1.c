@@ -1,5 +1,6 @@
 #include "can.h"
-
+#include "hero_param.h"
+#include "ticks.h"
 /*----CAN1_TX-----PA12----*/
 /*----CAN1_RX-----PA11----*/
 
@@ -61,6 +62,7 @@ void CAN1_Configuration(void)
     
     CAN_ITConfig(CAN1,CAN_IT_FMP0,ENABLE);
     CAN_ITConfig(CAN1,CAN_IT_TME,ENABLE); 
+		CAN1BrokenLineCounter = 0;
 }
 
 void CAN1_TX_IRQHandler(void) //CAN TX
@@ -77,6 +79,7 @@ void CAN1_TX_IRQHandler(void) //CAN TX
 *************************************************************************/
 void CAN1_RX0_IRQHandler(void)
 {   
+		CAN1BrokenLineCounter = get_ms_ticks();
 	  CanRxMsg rx_message;	
     if (CAN_GetITStatus(CAN1,CAN_IT_FMP0)!= RESET)
 	{
