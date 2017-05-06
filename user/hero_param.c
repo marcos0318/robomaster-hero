@@ -157,7 +157,7 @@ int32_t buffer[4][BUFFER_LENGTH];
 /**********************************/
 volatile uint8_t CAN1BrokenLine = 1;
 volatile uint8_t CAN2BrokenLine = 1;
-volatile uint8_t DBUSBrokenLine = 1;
+volatile uint8_t DBUSBrokenLine = 0;
 
 volatile uint32_t CAN1BrokenLineCounter = 0;
 volatile uint32_t CAN2BrokenLineCounter = 0;
