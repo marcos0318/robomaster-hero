@@ -99,9 +99,9 @@ int main(void)
 			}
 			if(ticks_msimg % 50 ==0) {
 				tft_clear();
-				tft_prints(1,3,"Broken %d", BROKEN_CABLE);
-				tft_prints(1,4,"btime %d", broken_time);
-				tft_prints(1,5,"rtime %d", receive_time);
+				//tft_prints(1,3,"Broken %d", BROKEN_CABLE);
+				//tft_prints(1,4,"btime %d", broken_time);
+				//tft_prints(1,5,"rtime %d", receive_time);
 				for(uint8_t i=0;i<4;i++) 
           tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]); 
         for (int i=0;i<4;i++) 
