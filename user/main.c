@@ -76,6 +76,8 @@ int main(void)
 			if((broken_time-receive_time)>200)
 			{
 				BROKEN_CABLE=1;
+				for(uint8_t i=0; i<4; i++)
+					PIDClearError(&LiftingMotorState[i]);
 				Set_CM_Speed(CAN2,0,0,0,0);
 			}
 			else{

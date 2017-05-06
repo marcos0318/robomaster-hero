@@ -67,5 +67,6 @@ extern float incPIDcalc (struct inc_pid_states * state_ptr, signed int nextpoint
 extern void incPIDsetpoint (struct inc_pid_states * state_ptr, signed int setvalue);
 
 extern void incPIDClearError(struct inc_pid_states * state_ptr);
+extern void PIDClearError(struct pid_control_states * state_ptr);
 
 #endif
