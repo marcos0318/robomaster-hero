@@ -64,6 +64,7 @@ int main(void)
 			//filter_rate limit control
 			if(ticks_msimg % 20 == 0){
 				DBUSBrokenLine = checkBrokenLine(ticks_msimg, DBUSBrokenLineCounter);
+				//DBUSBrokenLine = 0;
 				
 				CAN1BrokenLine = checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter)
@@ -73,8 +74,16 @@ int main(void)
 											|| checkBrokenLine(ticks_msimg, PitchBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
-				
-						
+				if(CAN1BrokenLine_prev == 1 && CAN1BrokenLine == 0){
+					//setpoint_angle = 0;
+					//GimbalFlag=2;
+					direction = - output_angle*upperTotal/3600;
+					GimbalFlag=3;
+				}
+				//CAN1BrokenLine = checkBrokenLine(ticks_msimg, CAN1BrokenLineCounter);
+				//CAN2BrokenLine = checkBrokenLine(ticks_msimg, CAN2BrokenLineCounter);
+				CAN1BrokenLine_prev = CAN1BrokenLine;
+				CAN2BrokenLine_prev = CAN2BrokenLine;
 			}
 			if (DBUSBrokenLine == 0){
 				//Gimbal Flag update
@@ -101,6 +110,8 @@ int main(void)
 
 					if(GimbalFlag == 1 || CAN1BrokenLine == 1){
 						ChasisFlag = 2;
+						FRIC_SET_THRUST_L(0);
+						FRIC_SET_THRUST_R(0);
 						keyboard_mouse_control();
 					}
 					DBUS_data_analysis();

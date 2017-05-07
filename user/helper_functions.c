@@ -64,6 +64,7 @@ void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit) {
 
 uint8_t checkBrokenLine(uint32_t ticks, uint32_t counter)
 {
-	if((ticks-counter)<80 && (ticks-counter)>-80) return 0;
+	//if((ticks-counter)<80 && (ticks-counter)>-80) return 0;
+	if((ticks-counter)<80) return 0;
 	else return 1;
 }

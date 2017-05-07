@@ -306,7 +306,8 @@ void TIM7_IRQHandler(void){
 						incPIDClearError(&gimbalSpeedMoveState);
 						//gunPositionState
 						PIDClearError(&gunSpeedMoveState);
-						
+						FRIC_SET_THRUST_L(0);
+						FRIC_SET_THRUST_R(0);
 						
 						Set_CM_Speed(CAN1, 0, 0, 0, 0);
 					}
@@ -322,7 +323,9 @@ void TIM7_IRQHandler(void){
 						incPIDClearError(&gimbalSpeedMoveState);
 						//gunPositionState
 						PIDClearError(&gunSpeedMoveState);
-						direction = - output_angle*upperTotal/3600;
+						//direction = - output_angle*upperTotal/3600;
+						FRIC_SET_THRUST_L(0);
+						FRIC_SET_THRUST_R(0);
 						
 						Set_CM_Speed(CAN1, 0, 0, 0, 0);
 				}
