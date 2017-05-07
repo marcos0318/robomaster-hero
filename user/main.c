@@ -63,24 +63,32 @@ int main(void)
 
 			//filter_rate limit control
 			if(ticks_msimg % 20 == 0){
-				if(((ticks_msimg-DBUSBrokenLineCounter) < 40) && ((ticks_msimg-DBUSBrokenLineCounter) > -40))
-				{
-					DBUSBrokenLine = 0;
-				}
-				else DBUSBrokenLine = 0;
+				DBUSBrokenLine = checkBrokenLine(ticks_msimg, DBUSBrokenLineCounter);
+				
+				CAN1BrokenLine = checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter);
+				CAN2BrokenLine = checkBrokenLine(ticks_msimg, YawBrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, PitchBrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter)
+											|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
+				
+						
 			}
 			if (DBUSBrokenLine == 0){
 				//Gimbal Flag update
-				if (DBUS_ReceiveData.rc.switch_right == 1) {
-					GimbalFlag = 1;
+				if (CAN1BrokenLine == 0){
+					if (DBUS_ReceiveData.rc.switch_right == 1) {
+						GimbalFlag = 1;
+					}
+					else if (DBUS_ReceiveData.rc.switch_right == 3) {
+						GimbalFlag = 2;
+					}
+					else if (DBUS_ReceiveData.rc.switch_right == 2) {
+						GimbalFlag = 3;
+					}
 				}
-				else if (DBUS_ReceiveData.rc.switch_right == 3) {
-					GimbalFlag = 2;
-				}
-				else if (DBUS_ReceiveData.rc.switch_right == 2) {
-					GimbalFlag = 3;
-				}
-				
 				
 			if (DBUS_ReceiveData.rc.switch_left == 1 || DBUS_ReceiveData.rc.switch_left == 3){ 
 
@@ -90,7 +98,8 @@ int main(void)
 
 				//Analyse the data received from DBUS and transfer moving command					
 				if(CAN2BrokenLine == 0){
-					if(GimbalFlag == 1){
+
+					if(GimbalFlag == 1 || CAN1BrokenLine == 1){
 						ChasisFlag = 2;
 						keyboard_mouse_control();
 					}
@@ -102,24 +111,18 @@ int main(void)
 				}
 				else
 				{
+					//chassis broken line
+					//gimbal working
+					//chassis state=4
+					ChasisFlag = 4;
 					for (int i=0; i<4; i++)
 						PIDClearError(&states[i]);
+					PIDClearError(&state_angle);
 					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 		
 				if(ticks_msimg % 20 == 0){
 						state_control();
-						if(((ticks_msimg-CAN1BrokenLineCounter) < 40) && ((ticks_msimg-CAN1BrokenLineCounter) > -40))
-						{
-							CAN1BrokenLine = 0;
-						}
-						else CAN1BrokenLine = 0;
-						
-						if(((ticks_msimg-CAN2BrokenLineCounter) < 40) && ((ticks_msimg-CAN2BrokenLineCounter) > -40))
-						{
-							CAN2BrokenLine = 0;
-						}
-						else CAN2BrokenLine = 0;
 						
 						
 							
@@ -140,16 +143,16 @@ int main(void)
 					*/
 					tft_prints(1, 9, "state:%d", (int)HERO);
 					tft_prints(1,2, "ticks:%d", ticks_msimg);
-					tft_prints(1,3, "DBUS:%d", DBUSBrokenLineCounter);
-					tft_prints(1,4, "CAN1:%d", CAN1BrokenLineCounter);
-					tft_prints(1,5, "CAN2:%d", CAN2BrokenLineCounter);
+					tft_prints(1,3, "DBUS:%d %d", DBUSBrokenLineCounter, DBUSBrokenLine);
+					tft_prints(1,4, "CAN1:%d %d", CAN1BrokenLineCounter, CAN1BrokenLine);
+					tft_prints(1,5, "CAN2:%d %d", CAN2BrokenLineCounter, CAN2BrokenLine);
 					//tft_prints(1,2, "dir:%d", direction);
 					//tft_prints(1,3, "gyro:%d", output_angle);
 					//tft_prints(1,4, "chsAgl: %d", setpoint_angle);
 					//tft_prints(1,5, "yawSp: %.1f", gimbalPositionSetpoint);
-					tft_prints(1,6, "chF:%d", ChasisFlag);
-					tft_prints(1,7, "qe_tn:%d", is_qe_turning);
-					tft_prints(1,8,	"Gflag:%d", GimbalFlag);
+//					tft_prints(1,6, "chF:%d", ChasisFlag);
+//					tft_prints(1,7, "qe_tn:%d", is_qe_turning);
+//					tft_prints(1,8,	"Gflag:%d", GimbalFlag);
 					
 					tft_update();
 					

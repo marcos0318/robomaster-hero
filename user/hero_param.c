@@ -159,16 +159,20 @@ volatile uint8_t CAN1BrokenLine = 1;
 volatile uint8_t CAN2BrokenLine = 1;
 volatile uint8_t DBUSBrokenLine = 0;
 
+volatile uint8_t CAN1BrokenLine_prev = 1;
+volatile uint8_t CAN2BrokenLine_prev = 1;
+volatile uint8_t DBUSBrokenLine_prev = 0;
+
 volatile uint32_t CAN1BrokenLineCounter = 0;
 volatile uint32_t CAN2BrokenLineCounter = 0;
 volatile uint32_t DBUSBrokenLineCounter = 0;
 
-volatile uint8_t Wheel1EncoderBrokenLine = 1;
-volatile uint8_t Wheel2EncoderBrokenLine = 1;
-volatile uint8_t Wheel3EncoderBrokenLine = 1;
-volatile uint8_t Wheel4EncoderBrokenLine = 1;
+volatile uint32_t Wheel1BrokenLineCounter = 1;
+volatile uint32_t Wheel2BrokenLineCounter = 1;
+volatile uint32_t Wheel3BrokenLineCounter = 1;
+volatile uint32_t Wheel4BrokenLineCounter = 1;
 
-volatile uint8_t YawEncoderBrokenLine = 1;
-volatile uint8_t PitchEncoderBrokenLine = 1;
-volatile uint8_t GunEncoderBrokenLine = 1;
-volatile uint8_t CameraBrokenLine = 1;
+volatile uint32_t YawBrokenLineCounter = 1;
+volatile uint32_t PitchBrokenLineCounter = 1;
+volatile uint32_t GunBrokenLineCounter = 1;
+volatile uint32_t CameraBrokenLineCounter = 1;

@@ -2,7 +2,8 @@
 #include "stdio.h"
 #include "canBusProcess.h"
 #include "judge.h"
-
+#include "hero_param.h"
+#include "ticks.h"
 static uint32_t can_count = 0;
 
 volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};//201
@@ -115,19 +116,23 @@ void CanReceiveMsgProcess_for_chassis(CanRxMsg * msg)
 		{
 				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
 				{
+					Wheel1BrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //»ñÈ¡µ½±àÂëÆ÷µÄ³õÊ¼Æ«²îÖµ            
                     
 				}break;
 				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
 				{
+					Wheel2BrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&CM2Encoder ,msg):EncoderProcess(&CM2Encoder ,msg);
 				}break;
 				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
 				{
+					Wheel3BrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&CM3Encoder ,msg):EncoderProcess(&CM3Encoder ,msg);   
 				}break;
 				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
 				{
+					Wheel4BrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&CM4Encoder ,msg):EncoderProcess(&CM4Encoder ,msg);
 				}break;
 				
@@ -142,18 +147,22 @@ void CanReceiveMsgProcess_for_gimbal(CanRxMsg * msg)
 		{
 				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
 				{
+					YawBrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&GMYawEncoder,msg):  EncoderProcess(&GMYawEncoder,msg);       //»ñÈ¡µ½±àÂëÆ÷µÄ³õÊ¼Æ«²îÖµ                 
 				}break;
 				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
 				{
+					PitchBrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&GMPitchEncoder,msg):EncoderProcess(&GMPitchEncoder,msg);
 				}break;				
 				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
 				{
+					GunBrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&GMballfeedEncoder,msg):EncoderProcess(&GMballfeedEncoder,msg);
 				}break;
 				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
 				{
+					CameraBrokenLineCounter=get_ms_ticks();
 					(can_count<=50) ? GetEncoderBias(&GMCameraEncoder,msg):EncoderProcess(&GMCameraEncoder ,msg);
 				}break;			
 				

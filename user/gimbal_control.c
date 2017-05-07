@@ -312,7 +312,19 @@ void TIM7_IRQHandler(void){
 					}
 				}
 				else {
-					Set_CM_Speed(CAN1, 0, 0, 0, 0);
+						fPIDClearError(&gimbalPositionState);
+						fPIDClearError(&pitchPositionState);
+						//cameraPositionState
+						PIDClearError(&cameraSpeedState);
+						//pitchPositionState
+						incPIDClearError(&pitchSpeedMoveState);
+						//gimbalPositionState
+						incPIDClearError(&gimbalSpeedMoveState);
+						//gunPositionState
+						PIDClearError(&gunSpeedMoveState);
+						direction = - output_angle*upperTotal/3600;
+						
+						Set_CM_Speed(CAN1, 0, 0, 0, 0);
 				}
 				
 			

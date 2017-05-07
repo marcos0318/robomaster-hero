@@ -209,19 +209,23 @@ extern volatile uint8_t CAN1BrokenLine;
 extern volatile uint8_t CAN2BrokenLine;
 extern volatile uint8_t DBUSBrokenLine;
 
+extern volatile uint8_t CAN1BrokenLine_prev;
+extern volatile uint8_t CAN2BrokenLine_prev;
+extern volatile uint8_t DBUSBrokenLine_prev;
+
 extern volatile uint32_t CAN1BrokenLineCounter;
 extern volatile uint32_t CAN2BrokenLineCounter;
 extern volatile uint32_t DBUSBrokenLineCounter;
 
-extern volatile uint8_t Wheel1EncoderBrokenLine;
-extern volatile uint8_t Wheel2EncoderBrokenLine;
-extern volatile uint8_t Wheel3EncoderBrokenLine;
-extern volatile uint8_t Wheel4EncoderBrokenLine;
+extern volatile uint32_t Wheel1BrokenLineCounter;
+extern volatile uint32_t Wheel2BrokenLineCounter;
+extern volatile uint32_t Wheel3BrokenLineCounter;
+extern volatile uint32_t Wheel4BrokenLineCounter;
 
-extern volatile uint8_t YawEncoderBrokenLine;
-extern volatile uint8_t PitchEncoderBrokenLine;
-extern volatile uint8_t GunEncoderBrokenLine;
-extern volatile uint8_t CameraBrokenLine;
+extern volatile uint32_t YawBrokenLineCounter;
+extern volatile uint32_t PitchBrokenLineCounter;
+extern volatile uint32_t GunBrokenLineCounter;
+extern volatile uint32_t CameraBrokenLineCounter;
 
 #endif /* __HERO_H */
 
