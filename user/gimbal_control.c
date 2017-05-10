@@ -276,7 +276,7 @@ void TIM7_Int_Init(u16 period,u16 psc)//make timer interrupt by 1ms interrupt on
 
 void TIM7_IRQHandler(void){
     
-    if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
+    if(TIM_GetITStatus(TIM7,TIM_IT_Update) != RESET)
     {
         if(DBUSBrokenLine == 0){
 					if(DBUS_ReceiveData.rc.switch_left == 2){
@@ -286,32 +286,32 @@ void TIM7_IRQHandler(void){
 						return;
 					}
 					
-					if(CAN1BrokenLine == 0 && GimbalFlag != 1){
-						keyboard_mouse_control();
-						camera_position_control();
-						gimbal_yaw_control();
-						gimbal_pitch_control();
-						GUN_PokeControl();
-						Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-					}
-					else{
-						
-						fPIDClearError(&gimbalPositionState);
-						fPIDClearError(&pitchPositionState);
-						//cameraPositionState
-						PIDClearError(&cameraSpeedState);
-						//pitchPositionState
-						incPIDClearError(&pitchSpeedMoveState);
-						//gimbalPositionState
-						incPIDClearError(&gimbalSpeedMoveState);
-						//gunPositionState
-						PIDClearError(&gunSpeedMoveState);
-						FRIC_SET_THRUST_L(0);
-						FRIC_SET_THRUST_R(0);
-						
-						Set_CM_Speed(CAN1, 0, 0, 0, 0);
-					}
-				}
+  					if(GimbalFlag != 1){
+  						keyboard_mouse_control();
+  						camera_position_control();
+  						gimbal_yaw_control();
+  						gimbal_pitch_control();
+  						GUN_PokeControl();
+  						Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+  					}
+  					else{
+  						
+  						fPIDClearError(&gimbalPositionState);
+  						fPIDClearError(&pitchPositionState);
+  						//cameraPositionState
+  						PIDClearError(&cameraSpeedState);
+  						//pitchPositionState
+  						incPIDClearError(&pitchSpeedMoveState);
+  						//gimbalPositionState
+  						incPIDClearError(&gimbalSpeedMoveState);
+  						//gunPositionState
+  						PIDClearError(&gunSpeedMoveState);
+  						FRIC_SET_THRUST_L(0);
+  						FRIC_SET_THRUST_R(0);
+  						
+  						Set_CM_Speed(CAN1, 0, 0, 0, 0);
+  					}
+  			}
 				else {
 						fPIDClearError(&gimbalPositionState);
 						fPIDClearError(&pitchPositionState);

@@ -161,7 +161,7 @@ volatile uint8_t DBUSBrokenLine = 0;
 
 volatile uint8_t CAN1BrokenLine_prev = 1;
 volatile uint8_t CAN2BrokenLine_prev = 1;
-volatile uint8_t DBUSBrokenLine_prev = 0;
+volatile uint8_t DBUSBrokenLine_prev = 1;
 
 volatile uint32_t CAN1BrokenLineCounter = 0;
 volatile uint32_t CAN2BrokenLineCounter = 0;

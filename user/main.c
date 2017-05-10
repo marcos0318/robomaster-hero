@@ -61,33 +61,39 @@ int main(void)
 		if (ticks_msimg != get_ms_ticks()){
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 
-			//filter_rate limit control
+			//check 
 			if(ticks_msimg % 20 == 0){
 				DBUSBrokenLine = checkBrokenLine(ticks_msimg, DBUSBrokenLineCounter);
-				//DBUSBrokenLine = 0;
 				
-				CAN1BrokenLine = checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter)
+				CAN2BrokenLine = checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter);
-				CAN2BrokenLine = checkBrokenLine(ticks_msimg, YawBrokenLineCounter)
+				CAN1BrokenLine = checkBrokenLine(ticks_msimg, YawBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, PitchBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
+				//TODO: move to somewhere else
 				if(CAN1BrokenLine_prev == 1 && CAN1BrokenLine == 0){
-					//setpoint_angle = 0;
-					//GimbalFlag=2;
 					direction = - output_angle*upperTotal/3600;
-					GimbalFlag=3;
 				}
-				//CAN1BrokenLine = checkBrokenLine(ticks_msimg, CAN1BrokenLineCounter);
-				//CAN2BrokenLine = checkBrokenLine(ticks_msimg, CAN2BrokenLineCounter);
+				if(CAN2BrokenLine_prev == 1 && CAN2BrokenLine == 0){
+					direction = - output_angle*upperTotal/3600;
+				}
+				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
+					direction = - output_angle*upperTotal/3600;
+				}
+				
 				CAN1BrokenLine_prev = CAN1BrokenLine;
 				CAN2BrokenLine_prev = CAN2BrokenLine;
+				DBUSBrokenLine_prev = DBUSBrokenLine;
 			}
+
+
 			if (DBUSBrokenLine == 0){
-				//Gimbal Flag update
+				//DBUS online
 				if (CAN1BrokenLine == 0){
+					//Can1 online
 					if (DBUS_ReceiveData.rc.switch_right == 1) {
 						GimbalFlag = 1;
 					}
@@ -98,14 +104,11 @@ int main(void)
 						GimbalFlag = 3;
 					}
 				}
-				
-			if (DBUS_ReceiveData.rc.switch_left == 1 || DBUS_ReceiveData.rc.switch_left == 3){ 
+				else {
+					GimbalFlag = 1;
+				}
 
-				/*******************************************************
-				******************* DBUS Data Analyze ******************
-				*******************************************************/
 
-				//Analyse the data received from DBUS and transfer moving command					
 				if(CAN2BrokenLine == 0){
 
 					if(GimbalFlag == 1 || CAN1BrokenLine == 1){
@@ -115,9 +118,7 @@ int main(void)
 						keyboard_mouse_control();
 					}
 					DBUS_data_analysis();
-		
 					turning_speed_limit_control(ticks_msimg);
-				  						 
 					Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
 				}
 				else
@@ -128,65 +129,72 @@ int main(void)
 					ChasisFlag = 4;
 					for (int i=0; i<4; i++)
 						PIDClearError(&states[i]);
-					PIDClearError(&state_angle);
-					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
+						PIDClearError(&state_angle);
+						Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
-		
-				if(ticks_msimg % 20 == 0){
-						state_control();
-						
-						
-							
-					
-					tft_clear();
-					/*for(uint8_t i=0; i<4; i++)
-						tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
-					*/
-					//tft_prints(1, 6, "yback=%.1f", gimbalPositionFeedback);
-					//tft_prints(1, 7, "pback=%.1f", pitchPositionFeedback);
-					//tft_prints(1, 8, "cback-%.1f", cameraPositionFeedback);
-					//tft_prints(1, 7, "gyro:%d", output_angle);
-					/*
-					tft_prints(1, 5, "camSpS: %d", cameraSpeedSetpoint);
-					tft_prints(1, 6, "camSpf:%d", GMCameraEncoder.filter_rate);
-					tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
-					tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
-					*/
-					tft_prints(1, 9, "state:%d", (int)HERO);
-					tft_prints(1,2, "ticks:%d", ticks_msimg);
-					tft_prints(1,3, "DBUS:%d %d", DBUSBrokenLineCounter, DBUSBrokenLine);
-					tft_prints(1,4, "CAN1:%d %d", CAN1BrokenLineCounter, CAN1BrokenLine);
-					tft_prints(1,5, "CAN2:%d %d", CAN2BrokenLineCounter, CAN2BrokenLine);
-					//tft_prints(1,2, "dir:%d", direction);
-					//tft_prints(1,3, "gyro:%d", output_angle);
-					//tft_prints(1,4, "chsAgl: %d", setpoint_angle);
-					//tft_prints(1,5, "yawSp: %.1f", gimbalPositionSetpoint);
-//					tft_prints(1,6, "chF:%d", ChasisFlag);
-//					tft_prints(1,7, "qe_tn:%d", is_qe_turning);
-//					tft_prints(1,8,	"Gflag:%d", GimbalFlag);
-					
-					tft_update();
-					
-				}
+
+				if(ticks_msimg % 20 == 0)
+					state_control();
+
+
+			}
+
 			
 
-				if(DBUS_ReceiveData.rc.switch_left == 2){
-					Set_CM_Speed(CAN1,0,0,0,0);
-					Set_CM_Speed(CAN2,0,0,0,0);
-				}
+				
+			
+
+				/*******************************************************
+				******************* DBUS Data Analyze ******************
+				*******************************************************/
+
+				//Analyse the data received from DBUS and transfer moving command					
+				
+		
+			if(ticks_msimg % 20 == 0){
+					state_control();
+					
+					
+						
+				
+				tft_clear();
+				/*for(uint8_t i=0; i<4; i++)
+					tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
+				*/
+				//tft_prints(1, 6, "yback=%.1f", gimbalPositionFeedback);
+				//tft_prints(1, 7, "pback=%.1f", pitchPositionFeedback);
+				//tft_prints(1, 8, "cback-%.1f", cameraPositionFeedback);
+				//tft_prints(1, 7, "gyro:%d", output_angle);
+				/*
+				tft_prints(1, 5, "camSpS: %d", cameraSpeedSetpoint);
+				tft_prints(1, 6, "camSpf:%d", GMCameraEncoder.filter_rate);
+				tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
+				tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
+				*/
+				tft_prints(1, 9, "state:%d", (int)HERO);
+				tft_prints(1,2, "ticks:%d", ticks_msimg);
+				tft_prints(1,3, "DBUS:%d %d", DBUSBrokenLineCounter, DBUSBrokenLine);
+				tft_prints(1,4, "CAN1:%d %d", CAN1BrokenLineCounter, CAN1BrokenLine);
+				tft_prints(1,5, "CAN2:%d %d", CAN2BrokenLineCounter, CAN2BrokenLine);
+		
+				tft_update();
+				
 			}
+		
+
+			if(DBUS_ReceiveData.rc.switch_left == 2){
+				Set_CM_Speed(CAN1,0,0,0,0);
+				Set_CM_Speed(CAN2,0,0,0,0);
+			}
+			
 				//if ( ticks_msimg % 20 == 0 ){
 					//tft_clear();
 					
 
 					//tft_update();
 				//}
-			}
-			else		
-			{
-				Set_CM_Speed(CAN1,0,0,0,0);
-				Set_CM_Speed(CAN2,0,0,0,0);
-			}				
+			
+			
 		}
 	}
 } 
