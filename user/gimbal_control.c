@@ -61,7 +61,7 @@ void camera_position_control(){
     pressCameraChangePrev = DBUS_CheckPush(KEY_R);
     
 }
-void keyboard_mouse_control(){
+void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
 
 	//move in the window
@@ -278,57 +278,35 @@ void TIM7_IRQHandler(void){
     
     if(TIM_GetITStatus(TIM7,TIM_IT_Update) != RESET)
     {
-        if(DBUSBrokenLine == 0){
-					if(DBUS_ReceiveData.rc.switch_left == 2){
-						Set_CM_Speed(CAN1,0,0,0,0);
-						Set_CM_Speed(CAN2,0,0,0,0);
-						TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
-						return;
-					}
-					
-  					if(GimbalFlag != 1){
-  						keyboard_mouse_control();
-  						camera_position_control();
-  						gimbal_yaw_control();
-  						gimbal_pitch_control();
-  						GUN_PokeControl();
-  						Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-  					}
-  					else{
-  						
-  						fPIDClearError(&gimbalPositionState);
-  						fPIDClearError(&pitchPositionState);
-  						//cameraPositionState
-  						PIDClearError(&cameraSpeedState);
-  						//pitchPositionState
-  						incPIDClearError(&pitchSpeedMoveState);
-  						//gimbalPositionState
-  						incPIDClearError(&gimbalSpeedMoveState);
-  						//gunPositionState
-  						PIDClearError(&gunSpeedMoveState);
-  						FRIC_SET_THRUST_L(0);
-  						FRIC_SET_THRUST_R(0);
-  						
-  						Set_CM_Speed(CAN1, 0, 0, 0, 0);
-  					}
-  			}
-				else {
-						fPIDClearError(&gimbalPositionState);
-						fPIDClearError(&pitchPositionState);
-						//cameraPositionState
-						PIDClearError(&cameraSpeedState);
-						//pitchPositionState
-						incPIDClearError(&pitchSpeedMoveState);
-						//gimbalPositionState
-						incPIDClearError(&gimbalSpeedMoveState);
-						//gunPositionState
-						PIDClearError(&gunSpeedMoveState);
-						//direction = - output_angle*upperTotal/3600;
-						FRIC_SET_THRUST_L(0);
-						FRIC_SET_THRUST_R(0);
-						
-						Set_CM_Speed(CAN1, 0, 0, 0, 0);
-				}
+        
+  					
+//Used in control			
+			
+			keyboard_mouse_control();
+			camera_position_control();
+			gimbal_yaw_control();
+			gimbal_pitch_control();
+			GUN_PokeControl();
+			Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+  					
+  				
+//Used in rest	
+//						fPIDClearError(&gimbalPositionState);
+//						fPIDClearError(&pitchPositionState);
+//						//cameraPositionState
+//						PIDClearError(&cameraSpeedState);
+//						//pitchPositionState
+//						incPIDClearError(&pitchSpeedMoveState);
+//						//gimbalPositionState
+//						incPIDClearError(&gimbalSpeedMoveState);
+//						//gunPositionState
+//						PIDClearError(&gunSpeedMoveState);
+//						//direction = - output_angle*upperTotal/3600;
+//						FRIC_SET_THRUST_L(0);
+//						FRIC_SET_THRUST_R(0);
+//						
+//						Set_CM_Speed(CAN1, 0, 0, 0, 0);
+				
 				
 			
 				

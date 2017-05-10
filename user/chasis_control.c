@@ -27,18 +27,7 @@ void DBUS_data_analysis(){
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
 	
-	if (DBUS_ReceiveData.rc.switch_left == 1) {
-		if (DBUS_ReceiveData.mouse.press_right) 
-			ChasisFlag = 2;
-		else 
-			ChasisFlag = 1;
-	}
-	else if (DBUS_ReceiveData.rc.switch_left == 3) {
-		if (DBUS_ReceiveData.mouse.press_right) 
-			ChasisFlag = 4;
-		else
-			ChasisFlag = 3;
-	}
+	
 	
 	
 	

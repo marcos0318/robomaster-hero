@@ -61,6 +61,9 @@ int main(void)
 		if (ticks_msimg != get_ms_ticks()){
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 
+			
+			
+			DBUS_data_analysis();		
 			//check 
 			if(ticks_msimg % 20 == 0){
 				DBUSBrokenLine = checkBrokenLine(ticks_msimg, DBUSBrokenLineCounter);
@@ -115,9 +118,8 @@ int main(void)
 						ChasisFlag = 2;
 						FRIC_SET_THRUST_L(0);
 						FRIC_SET_THRUST_R(0);
-						keyboard_mouse_control();
 					}
-					DBUS_data_analysis();
+					
 					turning_speed_limit_control(ticks_msimg);
 					Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
 				}
@@ -127,36 +129,44 @@ int main(void)
 					//gimbal working
 					//chassis state=4
 					ChasisFlag = 4;
-					for (int i=0; i<4; i++)
+					for (int i=0; i<4; i++) {
 						PIDClearError(&states[i]);
-						PIDClearError(&state_angle);
-						Set_CM_Speed(CAN2, 0, 0, 0, 0);	
+						wheel_setpoints[i] = 0;
+					}
+					PIDClearError(&state_angle);
+					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
 				if(ticks_msimg % 20 == 0)
 					state_control();
-
-
+			}
+			else {
+				//Dbus Offline
+				for (int i=0; i<4; i++) {
+					PIDClearError(&states[i]);
+					wheel_setpoints[i] = 0;
+				}
+				PIDClearError(&state_angle);
+				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
+				
+			}
+			
+			
+			if (DBUS_ReceiveData.rc.switch_left == 1) {
+				if (DBUS_ReceiveData.mouse.press_right) 
+					ChasisFlag = 2;
+				else 
+					ChasisFlag = 1;
+			}
+			else if (DBUS_ReceiveData.rc.switch_left == 3) {
+				if (DBUS_ReceiveData.mouse.press_right) 
+					ChasisFlag = 4;
+				else
+					ChasisFlag = 3;
 			}
 
+
 			
-
-				
-			
-
-				/*******************************************************
-				******************* DBUS Data Analyze ******************
-				*******************************************************/
-
-				//Analyse the data received from DBUS and transfer moving command					
-				
-		
-			if(ticks_msimg % 20 == 0){
-					state_control();
-					
-					
-						
-				
 				tft_clear();
 				/*for(uint8_t i=0; i<4; i++)
 					tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
@@ -179,7 +189,7 @@ int main(void)
 		
 				tft_update();
 				
-			}
+			
 		
 
 			if(DBUS_ReceiveData.rc.switch_left == 2){
