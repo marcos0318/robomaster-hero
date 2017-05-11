@@ -77,15 +77,25 @@ int main(void)
 											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
 				//TODO: move to somewhere else
+				
 				if(CAN1BrokenLine_prev == 1 && CAN1BrokenLine == 0){
-					direction = - output_angle*upperTotal/3600;
+					CAN1BrokenLineRecover = 1;
+				}
+				else {
+					CAN1BrokenLineRecover = 0;
 				}
 				if(CAN2BrokenLine_prev == 1 && CAN2BrokenLine == 0){
-					direction = - output_angle*upperTotal/3600;
+					CAN2BrokenLineRecover = 1;
+				}
+				else {
+					CAN2BrokenLineRecover = 0;
 				}
 				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
-					direction = - output_angle*upperTotal/3600;
+					DBUSBrokenLineRecover = 0;
+				} else {
+					DBUSBrokenLineRecover = 1;
 				}
+
 				
 				CAN1BrokenLine_prev = CAN1BrokenLine;
 				CAN2BrokenLine_prev = CAN2BrokenLine;
@@ -93,7 +103,7 @@ int main(void)
 			}
 
 
-			if (DBUSBrokenLine == 0){
+			if (DBUSBrokenLine == 0) {
 				//DBUS online
 				if (CAN1BrokenLine == 0){
 					//Can1 online
@@ -187,6 +197,10 @@ int main(void)
 				tft_prints(1,4, "CAN1:%d %d", CAN1BrokenLineCounter, CAN1BrokenLine);
 				tft_prints(1,5, "CAN2:%d %d", CAN2BrokenLineCounter, CAN2BrokenLine);
 		
+				tft_prints(1,6,"dir:%d    ", direction);
+				tft_prints(1,7,"spA:%d", setpoint_angle);
+				tft_prints(1,8,"gyro:%d", output_angle);
+
 				tft_update();
 				
 			

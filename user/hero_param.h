@@ -50,6 +50,11 @@ extern int32_t CameraFlag;
 
 extern int32_t ChasisFlag_Prev;
 
+extern int32_t DBUSBrokenLineRecover;
+extern int32_t CAN1BrokenLineRecover;
+extern int32_t CAN2BrokenLineRecover;
+
+
 /***************************/
 /***** PID Parameters ******/
 /***************************/

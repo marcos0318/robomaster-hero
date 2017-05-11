@@ -1,6 +1,11 @@
 #include "hero_param.h"
 
 
+int32_t DBUSBrokenLineRecover = 0;
+int32_t CAN1BrokenLineRecover = 0;
+int32_t CAN2BrokenLineRecover = 0;
+
+
 int32_t GimbalFlag = 1;  
 int32_t ChasisFlag = 1;
 int32_t CameraFlag = 1;

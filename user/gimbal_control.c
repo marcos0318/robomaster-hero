@@ -39,7 +39,8 @@ int32_t pitchSpeedSetpoint = 0;
 int32_t pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
-void camera_position_control(){
+//This function is nolonger used 
+/*void camera_position_control() {
     cameraPositionFeedback = GMCameraEncoder.ecd_angle;
     if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_R)){
         cameraPositionId++;
@@ -61,6 +62,7 @@ void camera_position_control(){
     pressCameraChangePrev = DBUS_CheckPush(KEY_R);
     
 }
+*/
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
 
@@ -151,7 +153,31 @@ void keyboard_mouse_control() {
 	} 
 	
 	
+
+	//Correction accorind to broke lines
+	//Dynamic Detection
+	if ( DBUSBrokenLineRecover ) {
+		direction = - output_angle*upperTotal/3600;
+	}
+	if ( CAN1BrokenLineRecover ) {
+		direction = - output_angle*upperTotal/3600;
+		setpoint_angle = -direction * 3600/upperTotal;
+	}
+	if ( CAN2BrokenLineRecover ) {
+		direction = - output_angle*upperTotal/3600;
+		setpoint_angle = -direction * 3600/upperTotal;
+	}
+
+	//Static Detection
+	if ( DBUSBrokenLine == 1 ) {
+		direction = - output_angle*upperTotal/3600;
+	}
+
 	
+
+
+
+
 
 	//Used for protection				
 	if(gimbalPositionSetpoint > 700)
@@ -160,7 +186,7 @@ void keyboard_mouse_control() {
 		gimbalPositionSetpoint = -700;
   //Update data
 	pre_xtotal = xtotal;
-  ChasisFlag_Prev = ChasisFlag;
+ 	ChasisFlag_Prev = ChasisFlag;
 	KEY_Q_PREV=DBUS_CheckPush(KEY_Q);
 	KEY_E_PREV=DBUS_CheckPush(KEY_E);
 	if ( abs(setpoint_angle - output_angle) < 100) {
@@ -194,7 +220,17 @@ void gimbal_yaw_control(){
 	//Get the speed here
 	incPIDsetpoint(&gimbalSpeedMoveState, gimbalSpeedSetpoint);
 	gimbalSpeedMoveOutput += incPIDcalc(&gimbalSpeedMoveState, GMYawEncoder.filter_rate);
+	// Direction Protection
+	if ( DBUSBrokenLineRecover ) {
+		//Do nothing
+	}
 
+	//Static Detection
+	if ( DBUSBrokenLine == 1 || GimbalFlag == 1 || CAN1BrokenLine == 1 ) {
+		fPIDClearError(&gimbalPositionState);
+		incPIDClearError(&gimbalSpeedMoveState);
+		gimbalSpeedMoveOutput = 0;
+	}
 }
 
 void gimbal_pitch_control() {
@@ -202,31 +238,30 @@ void gimbal_pitch_control() {
 	if (GimbalFlag == 2 || GimbalFlag == 1 ) {
 		DBUS_ReceiveData.mouse.ytotal = 0;
 	}
+	//Dynamic Detection
+	if (DBUSBrokenLineRecover) {
+		DBUS_ReceiveData.mouse.ytotal = 0;
+	}
+	if (CAN2BrokenLineRecover) {
+		DBUS_ReceiveData.mouse.ytotal = 0;
+	}
+	if (CAN1BrokenLineRecover) {
+		DBUS_ReceiveData.mouse.ytotal = 0;
+	}
+	//Static Detection
+	if ( DBUSBrokenLine == 1 ) {
+		DBUS_ReceiveData.mouse.ytotal = 0;
+	}
+
+
+
 	//limit pitch position
 	windowLimit(&DBUS_ReceiveData.mouse.ytotal, -460/pitchPosMultiplier, -1100/pitchPosMultiplier);
 	//pitch setpoint
+
+
+
 	pitchPositionSetpoint = -DBUS_ReceiveData.mouse.ytotal * pitchPosMultiplier;
-	
-	
-	//Check the gimbal flag and set Setpoint 
-	
-	
-
-	isPitchPositionSetpointIncrease = (bufferedPitchPositionSetpoint < pitchPositionSetpoint);
-	
-	if(isPitchPositionSetpointIncrease) {
-		bufferedPitchPositionSetpoint += 70;
-
-		if (bufferedPitchPositionSetpoint > pitchPositionSetpoint)
-			bufferedPitchPositionSetpoint = pitchPositionSetpoint;
-	}
-	else {
-		bufferedPitchPositionSetpoint -= 70;
-
-		if(bufferedPitchPositionSetpoint < pitchPositionSetpoint) 
-			bufferedPitchPositionSetpoint = pitchPositionSetpoint;
-	}
-	
 	pitchPositionFeedback = GMPitchEncoder.ecd_angle;
 	pitchSpeedSetpoint = (int32_t)fpid_process(&pitchPositionState, &pitchPositionSetpoint, &pitchPositionFeedback, kp_pitchPosition, ki_pitchPosition, kd_pitchPosition);
 	
@@ -234,6 +269,22 @@ void gimbal_pitch_control() {
 	
 	incPIDsetpoint(&pitchSpeedMoveState, pitchSpeedSetpoint);
 	pitchSpeedMoveOutput += incPIDcalc(&pitchSpeedMoveState, GMPitchEncoder.filter_rate);
+
+	//Dynamic Detection
+	if (DBUSBrokenLineRecover) {
+		incPIDClearError(&pitchSpeedMoveState);
+		fPIDClearError(&pitchPositionState);
+		pitchSpeedMoveOutput = 0;
+	}
+	//Static Detection
+	if ( DBUSBrokenLine == 1 || GimbalFlag ==1 || CAN1BrokenLine ==1 ) {
+		incPIDClearError(&pitchSpeedMoveState);
+		fPIDClearError(&pitchPositionState);
+		pitchSpeedMoveOutput = 0;
+	}
+
+
+
 }
 
 
@@ -281,9 +332,9 @@ void TIM7_IRQHandler(void){
         
   					
 //Used in control			
-			
+			//what ever the state is, these control functions are always running
 			keyboard_mouse_control();
-			camera_position_control();
+			//camera_position_control();
 			gimbal_yaw_control();
 			gimbal_pitch_control();
 			GUN_PokeControl();
