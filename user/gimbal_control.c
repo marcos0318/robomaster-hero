@@ -222,7 +222,9 @@ void gimbal_yaw_control(){
 	gimbalSpeedMoveOutput += incPIDcalc(&gimbalSpeedMoveState, GMYawEncoder.filter_rate);
 	// Direction Protection
 	if ( DBUSBrokenLineRecover ) {
-		//Do nothing
+		fPIDClearError(&gimbalPositionState);
+		incPIDClearError(&gimbalSpeedMoveState);
+		gimbalSpeedMoveOutput = 0;
 	}
 
 	//Static Detection
@@ -276,8 +278,9 @@ void gimbal_pitch_control() {
 		fPIDClearError(&pitchPositionState);
 		pitchSpeedMoveOutput = 0;
 	}
+
 	//Static Detection
-	if ( DBUSBrokenLine == 1 || GimbalFlag ==1 || CAN1BrokenLine ==1 ) {
+	if ( DBUSBrokenLine == 1 || GimbalFlag == 1 || CAN1BrokenLine == 1 ) {
 		incPIDClearError(&pitchSpeedMoveState);
 		fPIDClearError(&pitchPositionState);
 		pitchSpeedMoveOutput = 0;

@@ -91,9 +91,9 @@ int main(void)
 					CAN2BrokenLineRecover = 0;
 				}
 				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
-					DBUSBrokenLineRecover = 0;
-				} else {
 					DBUSBrokenLineRecover = 1;
+				} else {
+					DBUSBrokenLineRecover = 0;
 				}
 
 				
@@ -104,6 +104,8 @@ int main(void)
 
 
 			if (DBUSBrokenLine == 0) {
+				tft_clear_line(6);
+				tft_prints(1,6,"DBUSWORKING");
 				//DBUS online
 				if (CAN1BrokenLine == 0){
 					//Can1 online
@@ -123,13 +125,8 @@ int main(void)
 
 
 				if(CAN2BrokenLine == 0){
-
-					if(GimbalFlag == 1 || CAN1BrokenLine == 1){
-						ChasisFlag = 2;
-						FRIC_SET_THRUST_L(0);
-						FRIC_SET_THRUST_R(0);
-					}
-					
+					tft_clear_line(2);
+					tft_prints(1,2,"CAN2WORKING");
 					turning_speed_limit_control(ticks_msimg);
 					Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
 				}
@@ -138,10 +135,13 @@ int main(void)
 					//chassis broken line
 					//gimbal working
 					//chassis state=4
-					ChasisFlag = 4;
+					//tft_clear_line(2);
+					tft_clear_line(2);
+					tft_prints(1,2,"CAN2NOTWORKING");
 					for (int i=0; i<4; i++) {
 						PIDClearError(&states[i]);
 						wheel_setpoints[i] = 0;
+						wheel_outputs[i]=0;
 					}
 					PIDClearError(&state_angle);
 					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
@@ -152,9 +152,12 @@ int main(void)
 			}
 			else {
 				//Dbus Offline
+				tft_clear_line(6);
+				tft_prints(1,6,"DBUSNOTWORKING");
 				for (int i=0; i<4; i++) {
 					PIDClearError(&states[i]);
 					wheel_setpoints[i] = 0;
+					wheel_outputs[i]=0;
 				}
 				PIDClearError(&state_angle);
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
@@ -177,7 +180,7 @@ int main(void)
 
 
 			
-				tft_clear();
+				
 				/*for(uint8_t i=0; i<4; i++)
 					tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
 				*/
@@ -191,25 +194,34 @@ int main(void)
 				tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
 				tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
 				*/
+			if(ticks_msimg%20==0){
+				//tft_clear();
+				tft_clear_line(9);
 				tft_prints(1, 9, "state:%d", (int)HERO);
-				tft_prints(1,2, "ticks:%d", ticks_msimg);
-				tft_prints(1,3, "DBUS:%d %d", DBUSBrokenLineCounter, DBUSBrokenLine);
-				tft_prints(1,4, "CAN1:%d %d", CAN1BrokenLineCounter, CAN1BrokenLine);
-				tft_prints(1,5, "CAN2:%d %d", CAN2BrokenLineCounter, CAN2BrokenLine);
+				//tft_prints(1,2, "ticks:%d", ticks_msimg);
+				tft_clear_line(3);
+				tft_clear_line(4);
+				tft_clear_line(5);
+				tft_prints(1,3, "DBUS:%d %d %d", DBUSBrokenLineCounter, DBUSBrokenLine, DBUSBrokenLineRecover);
+				tft_prints(1,4, "CAN1:%d %d %d", CAN1BrokenLineCounter, CAN1BrokenLine, CAN1BrokenLineRecover);
+				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
 		
-				tft_prints(1,6,"dir:%d    ", direction);
-				tft_prints(1,7,"spA:%d", setpoint_angle);
-				tft_prints(1,8,"gyro:%d", output_angle);
-
+				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
+				tft_clear_line(7);
+				tft_clear_line(8);
+				tft_clear_line(10);
+				tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
+				tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
+				tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
 				tft_update();
-				
+			}	
 			
 		
 
-			if(DBUS_ReceiveData.rc.switch_left == 2){
-				Set_CM_Speed(CAN1,0,0,0,0);
-				Set_CM_Speed(CAN2,0,0,0,0);
-			}
+			// if(DBUS_ReceiveData.rc.switch_left == 2){
+			// 	Set_CM_Speed(CAN1,0,0,0,0);
+			// 	Set_CM_Speed(CAN2,0,0,0,0);
+			// }
 			
 				//if ( ticks_msimg % 20 == 0 ){
 					//tft_clear();
