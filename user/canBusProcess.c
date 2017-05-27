@@ -4,6 +4,8 @@
 #include "judge.h"
 #include "hero_param.h"
 #include "ticks.h"
+volatile uint8_t transmit_return_value_CAN2;
+volatile uint8_t transmit_return_value_CAN1;
 static uint32_t can_count = 0;
 
 volatile Encoder CM1Encoder = {0,0,0,0,0,0,0,0,0};//201
@@ -223,8 +225,10 @@ void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3
  		tx_message.Data[7] = 0;
 	}
 #endif
-	
-    CAN_Transmit(CANx,&tx_message);
+		
+    uint8_t temp = CAN_Transmit(CANx,&tx_message);
+		if(CANx == CAN2)	transmit_return_value_CAN2 = temp;
+		else if(CANx == CAN1)   transmit_return_value_CAN1=temp;
 }
 
 /********************************************************************************

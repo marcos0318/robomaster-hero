@@ -644,16 +644,20 @@
               <FileType>1</FileType>
               <FilePath>.\hero_param.c</FilePath>
             </File>
+            <File>
+              <FileName>BSP_DWT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\BSP_DWT.c</FilePath>
+            </File>
+            <File>
+              <FileName>BSP_DWT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\BSP_DWT.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
-
-  <RTE>
-    <apis/>
-    <components/>
-    <files/>
-  </RTE>
 
 </Project>

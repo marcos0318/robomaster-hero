@@ -80,15 +80,35 @@ int main(void)
 				
 				if(CAN1BrokenLine_prev == 1 && CAN1BrokenLine == 0){
 					CAN1BrokenLineRecover = 1;
+					direction = -output_angle*upperTotal/3600;
+					gimbalPositionSetpoint = bufferedGimbalPositionSetpoint = 0;					//gimbal go back to the middle
+					setpoint_angle = output_angle;		//chassis stay current angle
+					DBUS_ReceiveData.mouse.xtotal=0;
+					xtotal=pre_xtotal=0;
 				}
 				else {
 					CAN1BrokenLineRecover = 0;
 				}
 				if(CAN2BrokenLine_prev == 1 && CAN2BrokenLine == 0){
 					CAN2BrokenLineRecover = 1;
+					CAN2_Configuration();							//may need to reinitialize CAN2 so as to send SPEED message
+					setpoint_angle = output_angle;		//chassis stay current angle
 				}
 				else {
 					CAN2BrokenLineRecover = 0;
+				}
+				
+				if(CAN2BrokenLine_prev == 0 &&CAN2BrokenLine == 1) {
+				
+					tft_clear_line(2);
+					tft_prints(1,2,"CAN2NOTWORKING");
+					for (int i=0; i<4; i++) {
+						PIDClearError(&states[i]);
+						wheel_setpoints[i] = 0;
+						wheel_outputs[i]=0;
+					}
+					PIDClearError(&state_angle);			
+					Set_CM_Speed(CAN2,0,0,0,0);
 				}
 				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
 					DBUSBrokenLineRecover = 1;
@@ -129,6 +149,8 @@ int main(void)
 					tft_prints(1,2,"CAN2WORKING");
 					turning_speed_limit_control(ticks_msimg);
 					Set_CM_Speed(CAN2, wheel_outputs[0], wheel_outputs[1], wheel_outputs[2], wheel_outputs[3]);	
+					tft_clear_line(7);
+					tft_prints(1,7,"CAN1 2:%d %d",transmit_return_value_CAN1, transmit_return_value_CAN2);
 				}
 				else
 				{
@@ -144,10 +166,10 @@ int main(void)
 						wheel_outputs[i]=0;
 					}
 					PIDClearError(&state_angle);
-					Set_CM_Speed(CAN2, 0, 0, 0, 0);	
+					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
-				if(ticks_msimg % 20 == 0)
+				if(ticks_msimg % 50 == 0)
 					state_control();
 			}
 			else {
@@ -207,11 +229,12 @@ int main(void)
 				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
 		
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
-				tft_clear_line(7);
+				//tft_clear_line(7);
 				tft_clear_line(8);
 				tft_clear_line(10);
-				tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
-				tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
+				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
+				//tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
+				tft_prints(1,8,"gimecd:%f", GMYawEncoder.ecd_angle);
 				tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
 				tft_update();
 			}	

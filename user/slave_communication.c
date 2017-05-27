@@ -3,6 +3,7 @@
 
 #include "slave_communication.h"
 #include "pneumatic.h"
+#include "1.8 TFT_display.h"
 
 volatile uint8_t upper_pneumatic_state = 0 ;
 volatile bool lower_pneumatic_state = false ;
@@ -209,27 +210,35 @@ void state_control(){
 }
 
 void transmit(){
-		if (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))) {
+		if (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))) 
+		{
 			int16_t key_bit = 0;
-			if(DBUS_CheckPush(KEY_F) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_F) ){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
-				key_bit |= 1<<0; 
+				key_bit |= 1<<12; 
+				//key_bit += 1;
 			}
-			if(DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_G) ){
 				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
-				key_bit |= 1<<1;
+				key_bit |= 1<<13;
+				//key_bit += 2;
 			} 
-			if(DBUS_CheckPush(KEY_C) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_C) ){
 				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
-				key_bit |= 1<<2;
+				key_bit |= 1<<14;
+				//key_bit += 4;
 			}
-			if(DBUS_CheckPush(KEY_V) && !DBUS_CheckPush(KEY_SHIFT)){
+			if(DBUS_CheckPush(KEY_V) ){
 				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
-				key_bit |= 1<<3;
+				key_bit |= 1<<15;
+				//key_bit += 8;
 			}
-			DataMonitor_Send(0x10, key_bit);
+			//tft_clear_line(11);
+			//tft_prints(1,11,"key:%d",key_bit);
+			DataMonitor_Send(19, key_bit);
+			//DataMonitor_Send(19,512);
 		}
-		
+		else
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
 
 			if(DBUS_CheckPush(KEY_R)){

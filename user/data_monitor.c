@@ -35,11 +35,13 @@ u8 DataMonitor_Send(uint8_t id, int16_t setpoint) {
     while(DMA_GetCmdStatus(DMA1_Stream3) != DISABLE);
 		DataMonitorBuffer[0]=id;
 		DataMonitorBuffer[1]=setpoint>>8;
-		if(setpoint-(setpoint>>8)>127){
-			DataMonitorBuffer[1]++;
-			DataMonitorBuffer[2]=(int16_t)(setpoint)-(int16_t)(DataMonitorBuffer[1]<<8);
-		}
-		else DataMonitorBuffer[2]=setpoint-((setpoint>>8)<<8);
+		DataMonitorBuffer[2]=(u8)setpoint;
+	
+//		if(setpoint-(setpoint>>8)>127){
+//			DataMonitorBuffer[1]++;
+//			DataMonitorBuffer[2]=(int16_t)(setpoint)-(int16_t)(DataMonitorBuffer[1]<<8);
+//		}
+//		else DataMonitorBuffer[2]=setpoint-((setpoint>>8)<<8);
 	
 	
 

@@ -158,19 +158,23 @@ void keyboard_mouse_control() {
 	//Dynamic Detection
 	if ( DBUSBrokenLineRecover ) {
 		direction = - output_angle*upperTotal/3600;
+		gimbalPositionSetpoint = 0;
 	}
 	if ( CAN1BrokenLineRecover ) {
 		direction = - output_angle*upperTotal/3600;
-		setpoint_angle = -direction * 3600/upperTotal;
+		//setpoint_angle = -direction * 3600/upperTotal;
+		gimbalPositionSetpoint = 0;
 	}
 	if ( CAN2BrokenLineRecover ) {
 		direction = - output_angle*upperTotal/3600;
-		setpoint_angle = -direction * 3600/upperTotal;
+		//setpoint_angle = -direction * 3600/upperTotal;
+		gimbalPositionSetpoint = 0;
 	}
 
 	//Static Detection
 	if ( DBUSBrokenLine == 1 ) {
 		direction = - output_angle*upperTotal/3600;
+		gimbalPositionSetpoint = 0;
 	}
 
 	
@@ -341,8 +345,10 @@ void TIM7_IRQHandler(void){
 			gimbal_yaw_control();
 			gimbal_pitch_control();
 			GUN_PokeControl();
-			Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-  					
+			if(CAN1BrokenLine == 0)
+				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+  		//if(CAN1BrokenLine_prev==0 && CAN1BrokenLine == 1)
+					//Set_CM_Speed(CAN1,0,0,0,0);
   				
 //Used in rest	
 //						fPIDClearError(&gimbalPositionState);

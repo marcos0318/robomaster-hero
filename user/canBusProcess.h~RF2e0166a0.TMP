@@ -44,8 +44,8 @@ extern volatile Encoder GMCameraEncoder;
 
 extern volatile Encoder GMxEncoder;
 
-extern volatile uint8_t transmit_return_value_CAN2;
-extern volatile uint8_t transmit_return_value_CAN1;
+extern volatile uint8_t transmit_return_value;
+
 
 
 void GetEncoderBias(volatile Encoder *v, CanRxMsg * msg);
