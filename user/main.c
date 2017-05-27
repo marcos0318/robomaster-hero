@@ -5,7 +5,7 @@
 #include "initialization_process.h"
 
 static u32 ticks_msimg = (u32)-1;
-uint8_t BROKEN_CABLE = 0;
+
 
 void init(){
 //	InfantryJudge.LastBlood = 1500;
@@ -30,6 +30,7 @@ void init(){
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 	LiftingMotorInit();
 	Limit_Switch_init();
+	TIM7_Int_Init(83,999);
 }
 
 
@@ -63,19 +64,6 @@ int main(void)
 			LED_blink(LED1);
 			readFeedback();
 			
-			setSetpoint();
-			broken_time=ticks_msimg;
-			if((broken_time-receive_time)>200)
-			{
-				BROKEN_CABLE=1;
-				for(uint8_t i=0; i<4; i++)
-					PIDClearError(&LiftingMotorState[i]);
-				Set_CM_Speed(CAN2,0,0,0,0);
-			}
-			else{
-				BROKEN_CABLE=0;
-				speedProcess();
-			}
 			
 			
 			
@@ -98,10 +86,12 @@ int main(void)
           tft_clear_line(i+6); 
         for (int i=0;i<4;i++) 
           tft_clear_line(i+2);
-				for(uint8_t i=0;i<4;i++) 
-          tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]); 
-        for (int i=0;i<4;i++) 
-          tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
+				//for(uint8_t i=0;i<4;i++) 
+          //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
+				tft_prints(1, 6, "GPIO_LF: %d", gpio_read_input(LeftFront));
+				tft_prints(1, 7, "num_LF: %d", num_of_touch(LeftFront));
+        //for (int i=0;i<4;i++) 
+          //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				uint8_t temp = getID();
 				tft_clear_line(10);
 				

@@ -6,10 +6,10 @@
 #define RightFront &PB15
 #define RightBack &PB14
 
-extern uint8_t LeftFrontExpand ;
-extern uint8_t RightFrontExpand ;
-extern uint8_t RightBackExpand ;
-extern uint8_t LeftBackExpand ;
+uint8_t LeftFrontExpand = 0;
+uint8_t RightFrontExpand = 0;
+uint8_t RightBackExpand = 0;
+uint8_t LeftBackExpand = 0;
 
 
 void Limit_Switch_init();

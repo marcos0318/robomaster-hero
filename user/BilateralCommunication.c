@@ -99,7 +99,7 @@ void USART3_IRQHandler(void)
     DMA_Cmd(DMA1_Stream1, DISABLE);
 	
 	
-	if(DMA1_Stream1->NDTR == 4){
+	
 		
 		ONE_KEY_DOWN_FRONT=false;
 		ONE_KEY_UP_FRONT=false;
@@ -107,6 +107,8 @@ void USART3_IRQHandler(void)
 		ONE_KEY_UP_BACK=false;
 		BREAK=false;
 		if(getID()==0x05){
+			//shift R
+			//all go to down limit
 			for(uint8_t i = 0; i < 4; i++)
 				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
 			broken_time=receive_time=get_ms_ticks();
@@ -140,29 +142,31 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){
+			//front wheels expanding acoording to the desired position offset sent by master
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x01){
+			//front wheels withdrawing according to the desired position offset specified by master
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x02){
+			//back wheels expanding according to the desired position offset sent by master
 			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x03){
+			//back wheels withdrawing sccording to the desired position offset sent by master
 			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 19){
 			int16_t key_bit = getPositionSetpoint();
-			//tft_clear_line(11);
-			//tft_prints(1,11,"key:%d",key_bit);
 			if((key_bit>>12) & 1){														
 				//Ctrl F
 				//LiftingMotor[0] draws back
@@ -232,7 +236,7 @@ void USART3_IRQHandler(void)
 		}
 		else broken_time=get_ms_ticks();
 		
-	}
+	
 		
 		
 		//????DMA

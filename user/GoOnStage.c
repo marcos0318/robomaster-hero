@@ -1,7 +1,9 @@
 
 #include "GoOnStage.h"
-
-
+static u32 ticks_msimg = 0;
+uint8_t BROKEN_CABLE = 0;
+volatile uint8_t INIT_FLAG = 0;
+uint8_t INIT_FLAG_PREV = 0;
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
 			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
@@ -12,6 +14,59 @@ void readFeedback(){
 			LiftingMotorPositionFeedback[2] = CM3Encoder.ecd_angle;
 			LiftingMotorPositionFeedback[3] = CM4Encoder.ecd_angle;
 }
+
+void update_GPIO_state(){
+	LeftFrontState[LeftFrontIndex] = gpio_read_input(LeftFront);
+	LeftBackState[LeftBackIndex] = gpio_read_input(LeftBack);
+	RightFrontState[RightFrontIndex] = gpio_read_input(RightFront);
+	RightBackState[RightBackIndex] = gpio_read_input(RightBack);
+	++LeftFrontIndex;
+	++LeftBackIndex;
+	++RightFrontIndex;
+	++RightBackIndex;
+	if(LeftFrontIndex >= READ_TIME)
+		LeftFrontIndex = 0;
+	if(LeftBackIndex >= READ_TIME)
+		LeftBackIndex = 0;
+	if(RightFrontIndex >= READ_TIME)
+		RightFrontIndex = 0;
+	if(RightBackIndex >= READ_TIME)
+		RightBackIndex	 = 0;
+}
+
+uint8_t num_of_touch(const GPIO* gpio){
+	uint8_t num = 0;
+	if(gpio == LeftFront){
+		for(uint8_t i = 0; i < READ_TIME; ++i){
+			if(LeftFrontState[i] == 1)
+				++num;
+		}
+		return num;
+	}
+	else if(gpio == LeftBack){
+		for(uint8_t i = 0; i < READ_TIME; ++i){
+			if(LeftBackState[i] == 1)
+				++num;
+		}
+		return num;
+	}
+	else if(gpio == RightFront){
+		for(uint8_t i = 0; i < READ_TIME; ++i){
+			if(RightFrontState[i] == 1)
+				++num;
+		}
+		return num;
+	}
+	else if(gpio == RightBack){
+		for(uint8_t i = 0; i < READ_TIME; ++i){
+			if(RightBackState[i] == 1)
+				++num;
+		}
+		return num;
+	}
+}
+
+
 
 void speedProcess(){
     for(uint8_t i=0;i<4;i++){
@@ -94,3 +149,83 @@ void setSetpoint(){
     
 
 }
+
+
+void TIM7_Int_Init(u16 period,u16 psc)//make timer interrupt by 1ms interrupt one time
+{
+  
+
+    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
+    
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7 , ENABLE);
+    
+    TIM_TimeBaseStructure.TIM_Period = period;
+    TIM_TimeBaseStructure.TIM_Prescaler =psc;
+    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;
+    TIM_TimeBaseStructure.TIM_CounterMode =TIM_CounterMode_Up;
+    TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure);
+    
+    //TIM_SelectOutputTrigger(TIM3,TIM_TRGOSource_Update);
+    /*—°‘Òupdate event?˜Œ™TRGO,¿°”vTIM3¥•?¢ADCÕ®µ¿ */
+    //vø?ˆ?® ±÷‹?/O· ¯?Û¥•?¢“ª¥Œ
+    TIM_ClearFlag(TIM7, TIM_FLAG_Update);
+    TIM_ITConfig(TIM7,TIM_IT_Update,ENABLE);
+    TIM_Cmd(TIM7, ENABLE);
+    
+    //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+    NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7 , ENABLE);
+    /*œ»pÿ±’µ»¥? p”v*/
+    
+}
+
+
+void TIM7_IRQHandler(void){
+    
+    if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
+    {
+        ticks_msimg = get_ms_ticks();
+				update_GPIO_state();	//always update the GPIO state array
+			/*
+			To do here:
+			if not in init state, still need to detect
+			if touch the GPIO switch for a long time
+			then unconditionally stop
+			And I will need to update the bias, lower_limit and upeer_limit
+			*/
+				if(INIT_FLAG){
+					if(!INIT_FLAG && INIT_FLAG){
+					}
+				}
+				if(!INIT_FLAG)
+					setSetpoint();
+				broken_time=ticks_msimg;
+				if((broken_time-receive_time)>200)
+				{
+					BROKEN_CABLE=1;
+					for(uint8_t i=0; i<4; i++)
+					PIDClearError(&LiftingMotorState[i]);
+					Set_CM_Speed(CAN2,0,0,0,0);
+				}
+				else{
+					BROKEN_CABLE=0;
+					speedProcess();
+				}
+		
+			INIT_FLAG_PREV = INIT_FLAG;
+				
+    }
+    TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
+    
+    
+    
+}
+
+
+

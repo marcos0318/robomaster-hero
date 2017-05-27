@@ -6,7 +6,20 @@ int32_t LiftingMotorSpeedSetpoint[4]={0};
 int32_t LiftingMotorSpeedSetpointBuffered[4]={0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
 int32_t LiftingMotorUpperLimit[4] = {UP_SETPOINT, UP_SETPOINT, UP_SETPOINT, UP_SETPOINT};
-int32_t LiftingMotorPositionLimit[4] = {
+int32_t LiftingMotorPositionLimit[4] = {UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE};
+//Index indices which element in the array should I store current GPIO state
+uint8_t LeftFrontIndex = 0;
+uint8_t LeftBackIndex = 0;
+uint8_t RightFrontIndex = 0;
+uint8_t RightBackIndex = 0;
+//GPIO state buffer
+uint8_t LeftFrontState[READ_TIME] = {0};
+uint8_t LeftBackState[READ_TIME] = {0};
+uint8_t RightFrontState[READ_TIME] = {0};
+uint8_t RightBackState[READ_TIME] = {0};
+
+
+
 volatile bool ONE_KEY_UP_FRONT;
 volatile bool ONE_KEY_UP_BACK;
 volatile bool ONE_KEY_DOWN_FRONT;

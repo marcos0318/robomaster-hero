@@ -2,6 +2,7 @@
 #define LIFTING_MOTOR_CONTROL_H
 #include "main.h"
 #include "function_list.h"
+#define READ_TIME 50								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
 #define POWER_BUFFER_LENGTH 20
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
@@ -12,6 +13,7 @@
 #define MID_SETPOINT 164000
 #define TOTALLY_DOWN_SETPOINT 1000
 #define UP_DOWN_DISTANCE 280000
+#define RASING_HEIGHT_FOR_INITIALIZATION 300000
 
 extern int32_t LiftingMotorSpeedFeedback[4];
 extern float LiftingMotorPositionFeedback[4];
@@ -25,6 +27,7 @@ extern int32_t LiftingMotorSpeedSetpointBuffered[4];
 
 extern int32_t LiftingMotorBias[4];		//actually its the lower limit
 extern int32_t LiftingMotorUpperLimit[4];
+extern int32_t LiftingMotorPositionLimit[4];
 
 extern volatile bool ONE_KEY_UP_FRONT;
 extern volatile bool ONE_KEY_UP_BACK;
@@ -42,6 +45,23 @@ extern float LMpos_kp;
 extern float LMpos_ki;
 extern float LMpos_kd;
 extern uint16_t friction_wheel_setpoint;
+
+//GPIO control
+
+//Index indices which element in the array should I store current GPIO state
+extern uint8_t LeftFrontIndex;
+extern uint8_t LeftBackIndex;
+extern uint8_t RightFrontIndex;
+extern uint8_t RightBackIndex;
+//GPIO state buffer
+extern uint8_t LeftFrontState[READ_TIME];
+extern uint8_t LeftBackState[READ_TIME];
+extern uint8_t RightFrontState[READ_TIME];
+extern uint8_t RightBackState[READ_TIME];
+
+
+
+
 
 //PID controls
 
