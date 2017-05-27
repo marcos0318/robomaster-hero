@@ -98,14 +98,24 @@ int main(void)
 				FRIC_SET_THRUST_R(friction_wheel_setpoint);
 			}
 			if(ticks_msimg % 50 ==0) {
-				tft_clear();
+				//tft_clear();
 				//tft_prints(1,3,"Broken %d", BROKEN_CABLE);
 				//tft_prints(1,4,"btime %d", broken_time);
 				//tft_prints(1,5,"rtime %d", receive_time);
 				for(uint8_t i=0;i<4;i++) 
+          tft_clear_line(i+6); 
+        for (int i=0;i<4;i++) 
+          tft_clear_line(i+2);
+				for(uint8_t i=0;i<4;i++) 
           tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]); 
         for (int i=0;i<4;i++) 
           tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
+				uint8_t temp = getID();
+				tft_clear_line(10);
+				
+				tft_prints(1,10,"ID:%d",temp);
+				tft_clear_line(11);
+				tft_prints(1,11,"key:%d",getPositionSetpoint());
 				tft_update();
 			}
 	

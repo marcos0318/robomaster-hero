@@ -9,4 +9,6 @@ void Bilateral_Init();
 //volatile int32_t LiftingMotorPositionSetpoint[4];
 extern u32 receive_time;
 extern u32 broken_time;
+extern uint8_t getID();
+extern int16_t getPositionSetpoint();
 #endif

@@ -72,6 +72,7 @@ uint8_t getID(){
 
 int16_t getPositionSetpoint(){
 	return (BilateralBuffer[1]<<8)+BilateralBuffer[2];
+	
 }
 
 void modifyingBias(uint8_t i){
@@ -96,6 +97,10 @@ void USART3_IRQHandler(void)
     UARTtemp1 = USART3->SR;
     
     DMA_Cmd(DMA1_Stream1, DISABLE);
+	
+	
+	if(DMA1_Stream1->NDTR == 4){
+		
 		ONE_KEY_DOWN_FRONT=false;
 		ONE_KEY_UP_FRONT=false;
 		ONE_KEY_DOWN_BACK=false;
@@ -154,27 +159,29 @@ void USART3_IRQHandler(void)
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
-		else if(getID() == 0x10){
+		else if(getID() == 19){
 			int16_t key_bit = getPositionSetpoint();
-			if((key_bit>>0) & 1){														
+			//tft_clear_line(11);
+			//tft_prints(1,11,"key:%d",key_bit);
+			if((key_bit>>12) & 1){														
 				//Ctrl F
 				//LiftingMotor[0] draws back
 				modifyingBias(0);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>1) & 1){
+			if((key_bit>>13) & 1){
 				//Ctrl G
 				//LiftingMotor[1] draws back
 				modifyingBias(1);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>2) & 1){
+			if((key_bit>>14) & 1){
 				//Ctrl C
 				//LiftingMotor[3] draws back
 				modifyingBias(3);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>3) & 1){
+			if((key_bit>>15) & 1){
 				//Ctrl V
 				//LiftingMotor[2] draws back
 				modifyingBias(2);
@@ -225,7 +232,7 @@ void USART3_IRQHandler(void)
 		}
 		else broken_time=get_ms_ticks();
 		
-
+	}
 		
 		
 		//????DMA
