@@ -649,6 +649,16 @@
               <FileType>1</FileType>
               <FilePath>.\Lifting_Motor_Control.c</FilePath>
             </File>
+            <File>
+              <FileName>initialization_process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\initialization_process.c</FilePath>
+            </File>
+            <File>
+              <FileName>initialization_process.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\initialization_process.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

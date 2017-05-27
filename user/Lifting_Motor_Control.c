@@ -6,6 +6,7 @@ int32_t LiftingMotorSpeedSetpoint[4]={0};
 int32_t LiftingMotorSpeedSetpointBuffered[4]={0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
 int32_t LiftingMotorUpperLimit[4] = {UP_SETPOINT, UP_SETPOINT, UP_SETPOINT, UP_SETPOINT};
+int32_t LiftingMotorPositionLimit[4] = {
 volatile bool ONE_KEY_UP_FRONT;
 volatile bool ONE_KEY_UP_BACK;
 volatile bool ONE_KEY_DOWN_FRONT;

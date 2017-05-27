@@ -2,17 +2,8 @@
 #include "function_list.h"
 #include "Lifting_Motor_Control.h"
 #include "GoOnStage.h"
+#include "initialization_process.h"
 
-
-#define POWER_BUFFER_LENGTH 20
-#define ANGLE_PID_LIMIT 500
-#define MOVING_BOUND_1 200
-#define MOVING_BOUND_2 450
-#define SPEED_SETPOINT_LIMIT 1000
-#define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
-#define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define MID_SETPOINT 164000
-#define TOTALLY_DOWN_SETPOINT 1000
 static u32 ticks_msimg = (u32)-1;
 uint8_t BROKEN_CABLE = 0;
 
@@ -38,6 +29,7 @@ void init(){
 	GUN_Init();
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 	LiftingMotorInit();
+	Limit_Switch_init();
 }
 
 

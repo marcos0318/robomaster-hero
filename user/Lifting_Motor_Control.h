@@ -11,7 +11,7 @@
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 164000
 #define TOTALLY_DOWN_SETPOINT 1000
-
+#define UP_DOWN_DISTANCE 280000
 
 extern int32_t LiftingMotorSpeedFeedback[4];
 extern float LiftingMotorPositionFeedback[4];
