@@ -88,8 +88,13 @@ int main(void)
           tft_clear_line(i+2);
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
-				tft_prints(1, 6, "GPIO_LF: %d", gpio_read_input(LeftFront));
-				tft_prints(1, 7, "num_LF: %d", num_of_touch(LeftFront));
+				tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
+				tft_prints(1,4,"LF Bias %d", LiftingMotorBias[0]);
+				tft_prints(1,5,"LF limit %d", LiftingMotorPositionLimit[0]);
+				tft_prints(1,6,"LF ecd %f", CM1Encoder.ecd_angle);
+				tft_prints(1,7,"LF speed %d", LiftingMotorOutput[0]);
+				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
+				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
         //for (int i=0;i<4;i++) 
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				uint8_t temp = getID();

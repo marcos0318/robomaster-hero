@@ -107,7 +107,11 @@ void PIDClearError(struct pid_control_states * state_ptr){
 }
 
 
-
+void fpidClearError(struct fpid_control_states * state_ptr){
+	state_ptr->cummulated_error = 0;
+	state_ptr->last_error = 0;
+	state_ptr->current_error = 0;
+}
 
 
 

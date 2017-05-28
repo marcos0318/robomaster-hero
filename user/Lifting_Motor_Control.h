@@ -2,7 +2,7 @@
 #define LIFTING_MOTOR_CONTROL_H
 #include "main.h"
 #include "function_list.h"
-#define READ_TIME 50								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
+#define READ_TIME 30								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
 #define POWER_BUFFER_LENGTH 20
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
@@ -11,8 +11,8 @@
 #define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 164000
-#define TOTALLY_DOWN_SETPOINT 1000
-#define UP_DOWN_DISTANCE 280000
+#define TOTALLY_DOWN_SETPOINT 10000
+#define UP_DOWN_DISTANCE 270000
 #define RASING_HEIGHT_FOR_INITIALIZATION 300000
 
 extern int32_t LiftingMotorSpeedFeedback[4];
@@ -23,7 +23,7 @@ extern int32_t LiftingMotorSpeedSetpointBuffered[4];
 
 
 extern volatile int32_t LiftingMotorPositionSetpoint[4];
-extern int32_t LiftingMotorSpeedSetpointBuffered[4];
+extern int32_t LiftingMotorPositionSetpointBuffered[4];
 
 extern int32_t LiftingMotorBias[4];		//actually its the lower limit
 extern int32_t LiftingMotorUpperLimit[4];
@@ -66,7 +66,7 @@ extern uint8_t RightBackState[READ_TIME];
 //PID controls
 
 //The control of filter rate of wheels
-// Structure to strore PID data
+// Structure to store PID data
 extern struct pid_control_states LiftingMotorState[4];
 
 extern int32_t LiftingMotorOutput[4];

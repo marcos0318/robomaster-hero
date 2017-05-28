@@ -2,8 +2,8 @@
 #include "GoOnStage.h"
 static u32 ticks_msimg = 0;
 uint8_t BROKEN_CABLE = 0;
-volatile uint8_t INIT_FLAG = 0;
-uint8_t INIT_FLAG_PREV = 0;
+volatile uint8_t INIT_FLAG = 1;
+uint8_t INIT_FLAG_PREV = 1;
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
 			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
@@ -200,8 +200,9 @@ void TIM7_IRQHandler(void){
 			And I will need to update the bias, lower_limit and upeer_limit
 			*/
 				if(INIT_FLAG){
-					if(!INIT_FLAG && INIT_FLAG){
-					}
+					
+						initialization_process_full_init();
+					
 				}
 				if(!INIT_FLAG)
 					setSetpoint();

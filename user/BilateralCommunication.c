@@ -167,25 +167,25 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 19){
 			int16_t key_bit = getPositionSetpoint();
-			if((key_bit>>12) & 1){														
+			if((key_bit>>0) & 1){														
 				//Ctrl F
 				//LiftingMotor[0] draws back
 				modifyingBias(0);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>13) & 1){
+			if((key_bit>>1) & 1){
 				//Ctrl G
 				//LiftingMotor[1] draws back
 				modifyingBias(1);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>14) & 1){
+			if((key_bit>>2) & 1){
 				//Ctrl C
 				//LiftingMotor[3] draws back
 				modifyingBias(3);
 				broken_time=receive_time=get_ms_ticks();
 			}
-			if((key_bit>>15) & 1){
+			if((key_bit>>3) & 1){
 				//Ctrl V
 				//LiftingMotor[2] draws back
 				modifyingBias(2);

@@ -1,9 +1,10 @@
 #include "Lifting_Motor_Control.h"
-int32_t LiftingMotorSpeedFeedback[4]={0};
-float LiftingMotorPositionFeedback[4]={0};
-volatile int32_t LiftingMotorPositionSetpoint[4]={0};
-int32_t LiftingMotorSpeedSetpoint[4]={0};
-int32_t LiftingMotorSpeedSetpointBuffered[4]={0};
+int32_t LiftingMotorSpeedFeedback[4] = {0};
+float LiftingMotorPositionFeedback[4] = {0};
+volatile int32_t LiftingMotorPositionSetpoint[4] = {0};
+int32_t LiftingMotorPositionSetpointBuffered[4] = {0};
+int32_t LiftingMotorSpeedSetpoint[4] = {0};
+int32_t LiftingMotorSpeedSetpointBuffered[4] = {0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
 int32_t LiftingMotorUpperLimit[4] = {UP_SETPOINT, UP_SETPOINT, UP_SETPOINT, UP_SETPOINT};
 int32_t LiftingMotorPositionLimit[4] = {UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE};
