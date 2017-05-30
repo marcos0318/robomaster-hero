@@ -69,37 +69,51 @@ uint8_t num_of_touch(const GPIO* gpio){
 
 
 void speedProcess(){
-    for(uint8_t i=0;i<4;i++){
+		//Control the cumulated error of the position pid process
+		for (int i = 0; i<4; i++) {
+			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 3000000);
+		}
+		
+	
+		//From position return the setpoint of the current speed
+    for (uint8_t i=0;i<4;i++) {
         LiftingMotorSpeedSetpoint[i] = (int32_t)fpid_process(&LiftingMotorPositionState[i], &LiftingMotorPositionSetpoint[i], &LiftingMotorPositionFeedback[i],LMpos_kp,LMpos_ki,LMpos_kd );
-        
+			
     }
     
+
     
-    
-    
+    //to correct the out put to get a reasonable speed
     for(uint8_t i=0;i<4;i++){
         if(LiftingMotorSpeedSetpoint[i]>SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=SPEED_SETPOINT_LIMIT;
         else if(LiftingMotorSpeedSetpoint[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=-SPEED_SETPOINT_LIMIT;
     }
     
-    
+    //to use buffered speed to do the real control 
     for (int i =0;i<4;i++){
         if (LiftingMotorSpeedSetpointBuffered[i]<LiftingMotorSpeedSetpoint[i]) LiftingMotorSpeedSetpointBuffered[i]+=5;
         else if (LiftingMotorSpeedSetpointBuffered[i]>LiftingMotorSpeedSetpoint[i]) LiftingMotorSpeedSetpointBuffered[i]-=5;
     }
     
     
-    
+    //to limit the buffered speed again. Ideally these lines are useless, but just add them to protect
     for(uint8_t i=0;i<4;i++){
         if(LiftingMotorSpeedSetpointBuffered[i]>SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpointBuffered[i]=SPEED_SETPOINT_LIMIT;
         else if(LiftingMotorSpeedSetpointBuffered[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpointBuffered[i]=-SPEED_SETPOINT_LIMIT;
     }
     
-    
+		//Before pid process contrl the cumlated error 
+		for (int i = 0; i < 4; i++) {
+			pid_limit_cumulated_error(&LiftingMotorState[i], 10000);
+		}
+		
+		
+    //from the speed to get the current CM_Speed output
     for (uint8_t i = 0 ; i < 4 ; i++){
         LiftingMotorOutput[i] = pid_process(&LiftingMotorState[i], &LiftingMotorSpeedSetpointBuffered[i], &LiftingMotorSpeedFeedback[i], kp,ki,kd);
     }
     
+		//limit the CM_Speed output to 30000, which is reasonable here. But this number could be adjust later on 
     for (uint8_t i = 0 ; i < 4 ; i++){
         if (LiftingMotorOutput[i]>30000) LiftingMotorOutput[i]=30000;
         if (LiftingMotorOutput[i]<-30000) LiftingMotorOutput[i]=-30000;

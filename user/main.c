@@ -92,7 +92,7 @@ int main(void)
 				tft_prints(1,4,"LF Bias %d", LiftingMotorBias[0]);
 				tft_prints(1,5,"LF limit %d", LiftingMotorPositionLimit[0]);
 				tft_prints(1,6,"LF ecd %f", CM1Encoder.ecd_angle);
-				tft_prints(1,7,"LF speed %d", LiftingMotorOutput[0]);
+				tft_prints(1,7,"RB speed %d", LiftingMotorOutput[3]);
 				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
 				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
         //for (int i=0;i<4;i++) 

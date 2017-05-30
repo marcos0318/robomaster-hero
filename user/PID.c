@@ -1,5 +1,5 @@
 #include "PID.h"
-int16_t pid_process( struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd){
+int32_t pid_process( struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd){
 
 		//first update current state
 	int32_t ceLimit = 200000;
@@ -17,6 +17,26 @@ int16_t pid_process( struct pid_control_states* states, int32_t* setpoint, int32
 	return output;
 	
 }	
+
+
+void pid_limit_cumulated_error(struct pid_control_states* states, int32_t limit) {
+	if ( limit < 0 ) {
+		limit = -limit;
+	}
+	if ( states->cummulated_error > limit ) states->cummulated_error = limit;
+	if ( states->cummulated_error < - limit ) states->cummulated_error = -limit;
+}
+
+void fpid_limit_cumulated_error(struct fpid_control_states* states, int32_t limit) {
+	if ( limit < 0 ) {
+		limit = -limit;
+	}
+	if ( states->cummulated_error > limit ) states->cummulated_error = limit;
+	if ( states->cummulated_error < - limit ) states->cummulated_error = -limit;
+
+} 
+
+
 
 float fpid_process( struct fpid_control_states* states, int32_t* setpoint, float* feedback, float kp, float ki, float kd){
 
@@ -42,7 +62,7 @@ float fpid_process( struct fpid_control_states* states, int32_t* setpoint, float
 
 
 
-int16_t pid_process_gai1( struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd ) {
+int32_t pid_process_gai1( struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd ) {
 	states->last_error	= states->current_error;
 	states->current_error = *setpoint - *feedback;
 	states->cummulated_error *= 0.90;

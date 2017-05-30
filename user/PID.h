@@ -35,13 +35,15 @@ struct fpid_control_states {
 	float last_error;
 };
 
-extern int16_t pid_process(struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd);
+extern int32_t pid_process(struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd);
 
 extern float fpid_process(struct fpid_control_states* states, int32_t* setpoint, float* feedback, float kp, float ki, float kd ); 
 
-extern int16_t pid_process_gai1(struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd);
+extern int32_t pid_process_gai1(struct pid_control_states* states, int32_t* setpoint, int32_t* feedback, int32_t kp, int32_t ki, int32_t kd);
 
+extern void pid_limit_cumulated_error(struct pid_control_states* states, int32_t limit);
 
+extern void fpid_limit_cumulated_error(struct fpid_control_states* states, int32_t limit);
 
 
 

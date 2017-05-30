@@ -7,13 +7,13 @@
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
-#define SPEED_SETPOINT_LIMIT 1000
+#define SPEED_SETPOINT_LIMIT 1200
 #define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 164000
 #define TOTALLY_DOWN_SETPOINT 10000
-#define UP_DOWN_DISTANCE 270000
-#define RASING_HEIGHT_FOR_INITIALIZATION 300000
+#define UP_DOWN_DISTANCE 285000
+#define RASING_HEIGHT_FOR_INITIALIZATION 350000
 
 extern int32_t LiftingMotorSpeedFeedback[4];
 extern float LiftingMotorPositionFeedback[4];

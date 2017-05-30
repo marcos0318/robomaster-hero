@@ -60,8 +60,8 @@ void LF_init(){
 			LiftingMotorSpeedSetpoint[0] = 0;
 			LiftingMotorOutput[0] = 0;
 			//
-			LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle-1000;
-			//LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
+			//LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle-1000;
+			LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 		}
 		else {
 			LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + RASING_HEIGHT_FOR_INITIALIZATION;
@@ -85,7 +85,8 @@ void RF_init(){
 			LiftingMotorSpeedSetpoint[1] = 0;
 			LiftingMotorOutput[1] = 0;
 			//
-			LiftingMotorPositionSetpoint[1] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
+			//LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle-1000;
+			LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 			
 		}
 		else {
@@ -99,8 +100,8 @@ void RF_init(){
 void LB_init(){
 	if(LeftBackExpand){
 		if(num_of_touch(LeftBack)>15){
-			LeftFrontExpand = 0;
-			LeftFrontReach = 1;
+			LeftBackExpand = 0;
+			LeftBackReach = 1;
 			LiftingMotorPositionLimit[3] = CM4Encoder.ecd_angle;
 			LiftingMotorBias[3] = LiftingMotorPositionLimit[3] - UP_DOWN_DISTANCE;
 			LiftingMotorUpperLimit[3] = LiftingMotorBias[3] + UP_SETPOINT;
@@ -111,10 +112,13 @@ void LB_init(){
 			LiftingMotorSpeedSetpoint[3] = 0;
 			LiftingMotorOutput[3] = 0;
 			//
-			LiftingMotorPositionSetpoint[3] = LiftingMotorPositionLimit[3] - 20000;
+			//LiftingMotorPositionSetpoint[3] = LiftingMotorPositionLimit[3] - 20000;
+			//LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle-1000;
+			LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
+			
 		}
 		else {
-			LiftingMotorPositionSetpoint[3] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3] + RASING_HEIGHT_FOR_INITIALIZATION;
 		}
 	}
 	
@@ -135,10 +139,12 @@ void RB_init(){
 			LiftingMotorSpeedSetpoint[2] = 0;
 			LiftingMotorOutput[2] = 0;
 			//
-			LiftingMotorPositionSetpoint[2] = LiftingMotorPositionLimit[2] - 20000;
+			//LiftingMotorPositionSetpoint[2] = LiftingMotorPositionLimit[2] - 20000;
+			//LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle-1000;
+			LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 		}
 		else {
-			LiftingMotorPositionSetpoint[2] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2] + RASING_HEIGHT_FOR_INITIALIZATION;
 		}
 	}
 	
@@ -148,11 +154,11 @@ void RB_init(){
 
 void initialization_process_full_init(){
 	LF_init();
-	//RF_init();
-	//LB_init();
-	//RB_init();
-	//if(LeftFrontReach && LeftBackReach && RightFrontReach && RightBackReach){
-	if(	LeftFrontReach){
+	RF_init();
+	LB_init();
+	RB_init();
+	if(LeftFrontReach && LeftBackReach && RightFrontReach && RightBackReach){
+	//if(	LeftBackReach){
 		INIT_FLAG = 0;
 		LeftFrontExpand = 1;
 		RightFrontExpand = 1;
