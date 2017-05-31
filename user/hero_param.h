@@ -54,6 +54,8 @@ extern int32_t DBUSBrokenLineRecover;
 extern int32_t CAN1BrokenLineRecover;
 extern int32_t CAN2BrokenLineRecover;
 
+extern int32_t LastDBUSLeftSwitch;
+extern int32_t LastDBUSRightSwitch;
 
 /***************************/
 /***** PID Parameters ******/

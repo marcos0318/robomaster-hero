@@ -85,7 +85,15 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	wheel_feedbacks[3] = CM4Encoder.filter_rate;
 
 	//pid process to get the output as the torque
-	for (int i=0; i<4; i++)
-		wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints[i], &wheel_feedbacks[i], kp, ki, kd);
+	if ( GimbalFlag != 1 ) {
+	  for (int i=0; i<4; i++)
+	    wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints[i], &wheel_feedbacks[i], kp, ki, kd);
+	}
+	else {
+	  for (int i=0; i<4; i++)
+	    wheel_outputs[i] = 0;
+	}
+
+
 }
 

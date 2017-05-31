@@ -91,7 +91,7 @@ int main(void)
 				}
 				if(CAN2BrokenLine_prev == 1 && CAN2BrokenLine == 0){
 					CAN2BrokenLineRecover = 1;
-					CAN2_Configuration();							//may need to reinitialize CAN2 so as to send SPEED message
+												//may need to reinitialize CAN2 so as to send SPEED message
 					setpoint_angle = output_angle;		//chassis stay current angle
 				}
 				else {
@@ -129,15 +129,39 @@ int main(void)
 				//DBUS online
 				if (CAN1BrokenLine == 0){
 					//Can1 online
-					if (DBUS_ReceiveData.rc.switch_right == 1) {
-						GimbalFlag = 1;
+					//Check the change of switch
+
+					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left) {
+					  //Goto the state 0
+					  //Hero = RUNNING_MODE;
 					}
-					else if (DBUS_ReceiveData.rc.switch_right == 3) {
-						GimbalFlag = 2;
-					}
-					else if (DBUS_ReceiveData.rc.switch_right == 2) {
+
+
+					if (DBUS_ReceiveData.rc.switch_left == 1 ) {
+					  //Left up mode
+					  if (DBUS_ReceiveData.rc.switch_right == 1) {
+				 	    GimbalFlag = 1;
+					  }
+					  //
+					  else if (DBUS_ReceiveData.rc.switch_right == 3) {
 						GimbalFlag = 3;
+					  }
+					  else if (DBUS_ReceiveData.rc.switch_right == 2) {
+						GimbalFlag = 3;
+					  }
 					}
+					else if (DBUS_ReceiveData.rc.switch_left ==3 ) {
+					  GimbalFlag = 3;
+					  if (DBUS_ReceiveData.rc.switch_right == 1 && LastDBUSRightSwitch != 1) {
+					  	//GoToNextState();
+					  }
+					  if (DBUS_ReceiveData.rc.switch_right == 2 && LastDBUSRightSwitch != 2) {
+					  	//GoToPrecState();
+					  }
+					}
+
+
+					  
 				}
 				else {
 					GimbalFlag = 1;
@@ -185,8 +209,9 @@ int main(void)
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				
 			}
-			
-			
+			LastDBUSLeftSwitch = DBUS_ReceiveData.rc.switch_left;
+			LastDBUSRightSwitch = DBUS_ReceiveData.rc.switch_right;		
+			/*
 			if (DBUS_ReceiveData.rc.switch_left == 1) {
 				if (DBUS_ReceiveData.mouse.press_right) 
 					ChasisFlag = 2;
@@ -199,23 +224,10 @@ int main(void)
 				else
 					ChasisFlag = 3;
 			}
-
+			*/
 
 			
-				
-				/*for(uint8_t i=0; i<4; i++)
-					tft_prints(1, i+2, "%d %d", i,wheel_feedbacks[i]);
-				*/
-				//tft_prints(1, 6, "yback=%.1f", gimbalPositionFeedback);
-				//tft_prints(1, 7, "pback=%.1f", pitchPositionFeedback);
-				//tft_prints(1, 8, "cback-%.1f", cameraPositionFeedback);
-				//tft_prints(1, 7, "gyro:%d", output_angle);
-				/*
-				tft_prints(1, 5, "camSpS: %d", cameraSpeedSetpoint);
-				tft_prints(1, 6, "camSpf:%d", GMCameraEncoder.filter_rate);
-				tft_prints(1, 7, "camPst:%.1f", cameraPositionSetpoint);
-				tft_prints(1, 8, "camPsf:%.1f", GMCameraEncoder.ecd_angle);
-				*/
+			
 			if(ticks_msimg%20==0){
 				//tft_clear();
 				tft_clear_line(9);
@@ -239,6 +251,8 @@ int main(void)
 				tft_update();
 			}	
 			
+
+
 		
 
 			// if(DBUS_ReceiveData.rc.switch_left == 2){

@@ -12,6 +12,8 @@ int32_t CameraFlag = 1;
 
 int32_t ChasisFlag_Prev = 1;
 
+int32_t LastDBUSLeftSwitch = 0;
+int32_t LastDBUSRightSwitch = 0;
 
 int32_t kp_chassisAngle = 2;
 int32_t ki_chassisAngle = 0;
