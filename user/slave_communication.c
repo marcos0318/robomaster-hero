@@ -238,8 +238,11 @@ void transmit(){
 		}
 		else
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
-
-			if(DBUS_CheckPush(KEY_R)){
+			if(DBUS_CheckPush(KEY_R) && DBUS_CheckPush(KEY_CTRL)){
+				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+				DataMonitor_Send(90, 0);
+			}
+			else if(DBUS_CheckPush(KEY_R) && !DBUS_CheckPush(KEY_CTRL)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
 			}

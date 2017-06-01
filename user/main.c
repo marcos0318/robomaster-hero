@@ -74,8 +74,8 @@ int main(void)
 											|| checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter);
 				CAN1BrokenLine = checkBrokenLine(ticks_msimg, YawBrokenLineCounter)
 											|| checkBrokenLine(ticks_msimg, PitchBrokenLineCounter)
-											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter)
-											|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
+											|| checkBrokenLine(ticks_msimg, GunBrokenLineCounter);
+											//|| checkBrokenLine(ticks_msimg, CameraBrokenLineCounter);
 				//TODO: move to somewhere else
 				
 				if(CAN1BrokenLine_prev == 1 && CAN1BrokenLine == 0){
@@ -130,29 +130,9 @@ int main(void)
 				if (CAN1BrokenLine == 0){
 					//Can1 online
 					//Check the change of switch
-/*****************************************************************************************************************************/					
-					if (DBUS_ReceiveData.rc.switch_left == 1 && DBUS_ReceiveData.rc.switch_right == 1)
-						GimbalFlag = 1;
-					else GimbalFlag = 3;
-/*********************************************************************************************************************/
-					  
-				}
-				else {
-					GimbalFlag = 1;
-				}
-
-
-				if(CAN2BrokenLine == 0){
-					
-					
-					/******************************************/
+			
 					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left || LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right){
-					  //if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left) {
-					  //Goto the state 0
-					  //Hero = RUNNING_MODE;
-					  //}
-
-
+					  
 					  if (DBUS_ReceiveData.rc.switch_left == 1 ) {
 					    //Left up mode
 					    if (DBUS_ReceiveData.rc.switch_right == 1) {
@@ -163,10 +143,13 @@ int main(void)
 								GimbalFlag = 3;
 								//Left up, Right down: controlled by keyboard, mouse (competition mode)
 								//all need to go back to initial position
-								//go to th e state 0
+								//go to the state 0
 								HERO = RUNNING_MODE;
+								switch_and_send();
 					    }
+							else GimbalFlag = 3;
 					  }
+						else GimbalFlag = 3;
 					  if (DBUS_ReceiveData.rc.switch_right == 3 ) {
 					    GimbalFlag = 3;
 							//Right middle, control by Remote Controller
@@ -186,9 +169,15 @@ int main(void)
 					    }
 					  }
 					}
-					
-					
-					/********************************************/
+					  
+				}
+				else {
+					GimbalFlag = 1;
+				}
+
+
+				if(CAN2BrokenLine == 0){
+			
 					tft_clear_line(2);
 					tft_prints(1,2,"CAN2WORKING");
 					turning_speed_limit_control(ticks_msimg);

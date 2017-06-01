@@ -29,7 +29,7 @@ bool is_qe_turning = false;
 float pitchPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
 float bufferedPitchPositionSetpoint = 0;
 float pitchPositionFeedback= 0;
-bool isPitchPositionSetpointIncrease = true;
+bool isPitchPositionSetpointIncrease = false;
 int32_t storedPitch = 0;
 struct fpid_control_states pitchPositionState = {0,0,0};
 
@@ -184,10 +184,10 @@ void keyboard_mouse_control() {
 
 
 	//Used for protection				
-	if(gimbalPositionSetpoint > 700)
-		gimbalPositionSetpoint = 700;
-	else if (gimbalPositionSetpoint < -700)
-		gimbalPositionSetpoint = -700;
+	if(gimbalPositionSetpoint > 900)
+		gimbalPositionSetpoint = 900;
+	else if (gimbalPositionSetpoint < -900)
+		gimbalPositionSetpoint = -900;
   //Update data
 	pre_xtotal = xtotal;
  	ChasisFlag_Prev = ChasisFlag;
@@ -262,7 +262,7 @@ void gimbal_pitch_control() {
 
 
 	//limit pitch position
-	windowLimit(&DBUS_ReceiveData.mouse.ytotal, -460/pitchPosMultiplier, -1100/pitchPosMultiplier);
+	windowLimit(&DBUS_ReceiveData.mouse.ytotal, 1000/pitchPosMultiplier, 0/pitchPosMultiplier);
 	//pitch setpoint
 
 
