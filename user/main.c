@@ -130,36 +130,45 @@ int main(void)
 				if (CAN1BrokenLine == 0){
 					//Can1 online
 					//Check the change of switch
-
-					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left) {
+					
+					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left || LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right){
+					  //if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left) {
 					  //Goto the state 0
 					  //Hero = RUNNING_MODE;
-					}
+					  //}
 
 
-					if (DBUS_ReceiveData.rc.switch_left == 1 ) {
-					  //Left up mode
-					  if (DBUS_ReceiveData.rc.switch_right == 1) {
-				 	    GimbalFlag = 1;
+					  if (DBUS_ReceiveData.rc.switch_left == 1 ) {
+					    //Left up mode
+					    if (DBUS_ReceiveData.rc.switch_right == 1) {
+				 	      GimbalFlag = 1;
+								//Left switch and Right switch all up:  release all control
+					    }
+					    else if (DBUS_ReceiveData.rc.switch_right == 2) {
+								GimbalFlag = 3;
+								//Left up, Right down: controlled by keyboard, mouse (competition mode)
+								//all need to go back to initial position
+								//go to th e state 0
+								HERO = RUNNING_MODE;
+					    }
 					  }
-					  //
-					  else if (DBUS_ReceiveData.rc.switch_right == 3) {
-						GimbalFlag = 3;
-					  }
-					  else if (DBUS_ReceiveData.rc.switch_right == 2) {
-						GimbalFlag = 3;
+					  if (DBUS_ReceiveData.rc.switch_right ==3 ) {
+					    GimbalFlag = 3;
+							//Right middle, control by Remote Controller
+							//Left changed from middle to Up, similar to G, go to the next step
+					    if (DBUS_ReceiveData.rc.switch_left == 1 && LastDBUSLeftSwitch == 3) {
+					  	  //go to next state
+								if(HERO!=DOWN_BACK_WHEEL)
+									HERO+=1;
+								else HERO=RUNNING_MODE;
+					    }
+					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
+								//go to prev state
+					  	  if(HERO!=RUNNING_MODE)
+									HERO-=1;	
+					    }
 					  }
 					}
-					else if (DBUS_ReceiveData.rc.switch_left ==3 ) {
-					  GimbalFlag = 3;
-					  if (DBUS_ReceiveData.rc.switch_right == 1 && LastDBUSRightSwitch != 1) {
-					  	//GoToNextState();
-					  }
-					  if (DBUS_ReceiveData.rc.switch_right == 2 && LastDBUSRightSwitch != 2) {
-					  	//GoToPrecState();
-					  }
-					}
-
 
 					  
 				}
@@ -193,7 +202,7 @@ int main(void)
 					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
-				if(ticks_msimg % 50 == 0)
+				if(ticks_msimg % 20 == 0)
 					state_control();
 			}
 			else {
@@ -211,21 +220,7 @@ int main(void)
 			}
 			LastDBUSLeftSwitch = DBUS_ReceiveData.rc.switch_left;
 			LastDBUSRightSwitch = DBUS_ReceiveData.rc.switch_right;		
-			/*
-			if (DBUS_ReceiveData.rc.switch_left == 1) {
-				if (DBUS_ReceiveData.mouse.press_right) 
-					ChasisFlag = 2;
-				else 
-					ChasisFlag = 1;
-			}
-			else if (DBUS_ReceiveData.rc.switch_left == 3) {
-				if (DBUS_ReceiveData.mouse.press_right) 
-					ChasisFlag = 4;
-				else
-					ChasisFlag = 3;
-			}
-			*/
-
+			
 			
 			
 			if(ticks_msimg%20==0){
@@ -251,22 +246,7 @@ int main(void)
 				tft_update();
 			}	
 			
-
-
-		
-
-			// if(DBUS_ReceiveData.rc.switch_left == 2){
-			// 	Set_CM_Speed(CAN1,0,0,0,0);
-			// 	Set_CM_Speed(CAN2,0,0,0,0);
-			// }
-			
-				//if ( ticks_msimg % 20 == 0 ){
-					//tft_clear();
-					
-
-					//tft_update();
-				//}
-			
+	
 			
 		}
 	}

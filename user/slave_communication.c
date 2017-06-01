@@ -215,28 +215,21 @@ void transmit(){
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) ){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
-				key_bit |= 1<<12; 
-				//key_bit += 1;
+				key_bit |= 1<<0; 
 			}
 			if(DBUS_CheckPush(KEY_G) ){
 				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
-				key_bit |= 1<<13;
-				//key_bit += 2;
+				key_bit |= 1<<1;
 			} 
 			if(DBUS_CheckPush(KEY_C) ){
 				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
-				key_bit |= 1<<14;
-				//key_bit += 4;
+				key_bit |= 1<<2;
 			}
 			if(DBUS_CheckPush(KEY_V) ){
 				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
-				key_bit |= 1<<15;
-				//key_bit += 8;
+				key_bit |= 1<<3;				
 			}
-			//tft_clear_line(11);
-			//tft_prints(1,11,"key:%d",key_bit);
 			DataMonitor_Send(19, key_bit);
-			//DataMonitor_Send(19,512);
 		}
 		else
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
