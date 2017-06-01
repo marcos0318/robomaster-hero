@@ -106,7 +106,10 @@ void USART3_IRQHandler(void)
 		ONE_KEY_DOWN_BACK=false;
 		ONE_KEY_UP_BACK=false;
 		BREAK=false;
-		if(getID()==0x05){
+		if(getID() == 90){
+			INIT_FLAG = 1;
+		}
+		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
 			for(uint8_t i = 0; i < 4; i++)

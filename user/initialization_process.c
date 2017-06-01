@@ -158,7 +158,6 @@ void initialization_process_full_init(){
 	LB_init();
 	RB_init();
 	if(LeftFrontReach && LeftBackReach && RightFrontReach && RightBackReach){
-	//if(	LeftBackReach){
 		INIT_FLAG = 0;
 		LeftFrontExpand = 1;
 		RightFrontExpand = 1;
