@@ -48,62 +48,8 @@ int16_t checkSetpoint(int16_t a, bool dir){
 	return a;
 }
 
-void state_control(){
-	if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT))){
-		KEY_G_PREV=DBUS_CheckPush(KEY_G);
-		KEY_F_PREV=DBUS_CheckPush(KEY_F);
-		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
-		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
-		transmit();
-		return;
-	}
-	if(DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
-	if(KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
-		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
-			HERO=INTO_RI_MODE;
-			state_switch=true;
-		}
-		else state_switch=false;
-		G_counter_for_John=0;
-	}
-	else
-	if(!DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_F)){
-		KEY_G_PREV=DBUS_CheckPush(KEY_G);
-		KEY_F_PREV=DBUS_CheckPush(KEY_F);
-		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
-		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
-		transmit();
-		return;
-	}
-	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
-			if(HERO==RUNNING_MODE){
-			}
-			else 
-			{
-				if(HERO!=DOWN_BACK_WHEEL)
-					HERO+=1;
-				else HERO=RUNNING_MODE;
-			}
-	}
-	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
-			if(HERO!=RUNNING_MODE)
-				HERO-=1;	
-	}
-	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
-		  HERO=RUNNING_MODE;  		
-			SHIFT_F=true;
-	}
-	else SHIFT_F=false;
-	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
-
-			HERO=SPEED_LIMITATION;
-			SHIFT_G=true;
-	}
-	else SHIFT_G=false;
-	
-	//What's the condition to execute this switch???
-	//may be press G or press the key to switch back state, and of course, prev is needed
-	if((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch){
+void switch_and_send()
+{
 	switch(HERO){
 		case RUNNING_MODE:
 			ChasisFlag=1;
@@ -199,6 +145,65 @@ void state_control(){
 			break;
 		
 	}
+}
+
+void state_control(){
+	if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT))){
+		KEY_G_PREV=DBUS_CheckPush(KEY_G);
+		KEY_F_PREV=DBUS_CheckPush(KEY_F);
+		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
+		transmit();
+		return;
+	}
+	if(DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
+	if(KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
+		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
+			HERO=INTO_RI_MODE;
+			state_switch=true;
+		}
+		else state_switch=false;
+		G_counter_for_John=0;
+	}
+	else
+	if(!DBUS_CheckPush(KEY_G) && !DBUS_CheckPush(KEY_F)){
+		KEY_G_PREV=DBUS_CheckPush(KEY_G);
+		KEY_F_PREV=DBUS_CheckPush(KEY_F);
+		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+		KEY_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
+		transmit();
+		return;
+	}
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
+			if(HERO==RUNNING_MODE){
+			}
+			else 
+			{
+				if(HERO!=DOWN_BACK_WHEEL)
+					HERO+=1;
+				else HERO=RUNNING_MODE;
+			}
+	}
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
+			if(HERO!=RUNNING_MODE)
+				HERO-=1;	
+	}
+	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
+		  HERO=RUNNING_MODE;  		
+			SHIFT_F=true;
+	}
+	else SHIFT_F=false;
+	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
+
+			HERO=SPEED_LIMITATION;
+			SHIFT_G=true;
+	}
+	else SHIFT_G=false;
+	
+	//What's the condition to execute this switch???
+	//may be press G or press the key to switch back state, and of course, prev is needed
+	if((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch){
+			switch_and_send();
 	}	
 	
 	

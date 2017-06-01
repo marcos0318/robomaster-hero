@@ -130,7 +130,22 @@ int main(void)
 				if (CAN1BrokenLine == 0){
 					//Can1 online
 					//Check the change of switch
+/*****************************************************************************************************************************/					
+					if (DBUS_ReceiveData.rc.switch_left == 1 && DBUS_ReceiveData.rc.switch_right == 1)
+						GimbalFlag = 1;
+					else GimbalFlag = 3;
+/*********************************************************************************************************************/
+					  
+				}
+				else {
+					GimbalFlag = 1;
+				}
+
+
+				if(CAN2BrokenLine == 0){
 					
+					
+					/******************************************/
 					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left || LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right){
 					  //if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left) {
 					  //Goto the state 0
@@ -152,7 +167,7 @@ int main(void)
 								HERO = RUNNING_MODE;
 					    }
 					  }
-					  if (DBUS_ReceiveData.rc.switch_right ==3 ) {
+					  if (DBUS_ReceiveData.rc.switch_right == 3 ) {
 					    GimbalFlag = 3;
 							//Right middle, control by Remote Controller
 							//Left changed from middle to Up, similar to G, go to the next step
@@ -161,23 +176,19 @@ int main(void)
 								if(HERO!=DOWN_BACK_WHEEL)
 									HERO+=1;
 								else HERO=RUNNING_MODE;
+								switch_and_send();
 					    }
 					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
 								//go to prev state
 					  	  if(HERO!=RUNNING_MODE)
 									HERO-=1;	
+								switch_and_send();
 					    }
 					  }
 					}
-
-					  
-				}
-				else {
-					GimbalFlag = 1;
-				}
-
-
-				if(CAN2BrokenLine == 0){
+					
+					
+					/********************************************/
 					tft_clear_line(2);
 					tft_prints(1,2,"CAN2WORKING");
 					turning_speed_limit_control(ticks_msimg);

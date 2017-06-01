@@ -7,7 +7,6 @@ extern volatile uint8_t upper_pneumatic_state ;
 extern volatile bool lower_pneumatic_state ;
 extern bool lower_pneumatic_prev ;
 extern bool upper_pneumatic_prev ;
-
 //extern enum modeControl HERO;
 extern enum modeControl{
 	
@@ -58,3 +57,4 @@ extern enum modeControl{
 	
 void transmit();
 void state_control();
+void switch_and_send();
