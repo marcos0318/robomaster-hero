@@ -3,7 +3,9 @@
 static u32 ticks_msimg = 0;
 uint8_t BROKEN_CABLE = 0;
 volatile uint8_t INIT_FLAG = 1;
+volatile uint8_t DANCING_MODE_FLAG = 0;
 uint8_t INIT_FLAG_PREV = 1;
+uint32_t upper_limit[4] = {0}, lower_limit[4] = {0};
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
 			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
@@ -218,8 +220,18 @@ void TIM7_IRQHandler(void){
 						initialization_process_full_init();
 					
 				}
-				if(!INIT_FLAG)
-					setSetpoint();
+				if(!INIT_FLAG){
+					if(DANCING_MODE_FLAG){
+						for(u8 i; i < 4; i++)
+						{
+							lower_limit[i]=LiftingMotorBias[i]+MID_SETPOINT;
+							upper_limit[i]=LiftingMotorBias[0]+UP_SETPOINT;
+						}
+						DancingMode(upper_limit, lower_limit);
+					}
+					if(!DANCING_MODE_FLAG)
+						setSetpoint();
+				}
 				broken_time=ticks_msimg;
 				if((broken_time-receive_time)>200)
 				{

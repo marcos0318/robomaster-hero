@@ -144,6 +144,24 @@ void USART3_IRQHandler(void)
 			ONE_KEY_UP_BACK=true;
 			broken_time=receive_time=get_ms_ticks();
 		}
+		else if(getID() == 63){
+			//dancing mode begins
+			DANCING_MODE_FLAG = 1;
+			/*
+				LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+MID_SETPOINT;
+				
+				LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
+        GO_DOWN_STAGE_ONE_KEY=false;
+			*/
+			
+		}
+		else if(getID() == 64){
+			DANCING_MODE_FLAG = 0;
+			for(u8 i = 0; i < 4; i++)
+				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
+			//dancing mode ends
+			//need to set all LiftingMotors to raise up to the UP_SETPOINT
+		}
 		else if(getID()==0x00){
 			//front wheels expanding acoording to the desired position offset sent by master
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();

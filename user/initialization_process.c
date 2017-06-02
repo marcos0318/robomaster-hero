@@ -9,7 +9,15 @@ uint8_t RightFrontReach = 0;
 uint8_t RightBackReach = 0;
 uint8_t LeftBackReach = 0;
 
+uint8_t LeftFrontReachLower = 0;
+uint8_t RightFrontReachLower = 0;
+uint8_t RightBackReachLower = 0;
+uint8_t LeftBackReachLower = 0;
 
+uint8_t LeftFrontReachUpper = 1;
+uint8_t RightFrontReachUpper = 1;
+uint8_t RightBackReachUpper = 1;
+uint8_t LeftBackReachUpper = 1;
 
 
 void Limit_Switch_init(){
@@ -59,8 +67,6 @@ void LF_init(){
 			LiftingMotorSpeedSetpointBuffered[0] = 0;
 			LiftingMotorSpeedSetpoint[0] = 0;
 			LiftingMotorOutput[0] = 0;
-			//
-			//LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle-1000;
 			LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 		}
 		else {
@@ -84,8 +90,6 @@ void RF_init(){
 			LiftingMotorSpeedSetpointBuffered[1] = 0;
 			LiftingMotorSpeedSetpoint[1] = 0;
 			LiftingMotorOutput[1] = 0;
-			//
-			//LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle-1000;
 			LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 			
 		}
@@ -111,9 +115,6 @@ void LB_init(){
 			LiftingMotorSpeedSetpointBuffered[3] = 0;
 			LiftingMotorSpeedSetpoint[3] = 0;
 			LiftingMotorOutput[3] = 0;
-			//
-			//LiftingMotorPositionSetpoint[3] = LiftingMotorPositionLimit[3] - 20000;
-			//LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle-1000;
 			LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 			
 		}
@@ -138,9 +139,6 @@ void RB_init(){
 			LiftingMotorSpeedSetpointBuffered[2] = 0;
 			LiftingMotorSpeedSetpoint[2] = 0;
 			LiftingMotorOutput[2] = 0;
-			//
-			//LiftingMotorPositionSetpoint[2] = LiftingMotorPositionLimit[2] - 20000;
-			//LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle-1000;
 			LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - UP_DOWN_DISTANCE + TOTALLY_DOWN_SETPOINT;
 		}
 		else {
@@ -186,4 +184,59 @@ void initialization_process_back_init(){
 }
 
 
+void LF_Dancing(uint32_t ul, uint32_t ll){
+	if(CM1Encoder.ecd_angle - ul > -5000){
+		LeftFrontReachUpper = 1;
+	}
+	if(ll - CM1Encoder.ecd_angle > -5000)
+		LeftFrontReachLower = 1;
+}
+
+void RF_Dancing(uint32_t ul, uint32_t ll){
+	if(CM2Encoder.ecd_angle - ul > -5000)
+		RightFrontReachUpper = 1;
+	if(ll - CM2Encoder.ecd_angle > -5000)
+		RightFrontReachLower = 1;
+}
+
+void RB_Dancing(uint32_t ul, uint32_t ll){
+	if(CM3Encoder.ecd_angle - ul > -5000)
+		RightBackReachUpper = 1;
+	if(ll - CM3Encoder.ecd_angle > -5000)
+		RightBackReachLower = 1;
+}
+
+void LB_Dancing(uint32_t ul, uint32_t ll){
+	if(CM4Encoder.ecd_angle - ul > -5000)
+		LeftBackReachUpper = 1;
+	if(ll - CM4Encoder.ecd_angle > -5000)
+		LeftBackReachLower = 1;
+}
+
+void (*Dancing[4]) (uint32_t, uint32_t) = {LF_Dancing, RF_Dancing, RB_Dancing, LB_Dancing};
+void DancingMode(uint32_t* ul, uint32_t* ll)
+{
+	for(u8 i = 0; i < 4; i++)
+		Dancing[i](ul[i], ll[i]);
+	if(LeftFrontReachLower && RightFrontReachLower && RightBackReachLower && LeftBackReachLower){
+		//only if all reaches lower limit will all lifting motors expand together
+		for(u8 i = 0; i < 4; i++)
+			LiftingMotorPositionSetpoint[i] = ul[i];
+		LeftFrontReachLower = 0;
+		RightFrontReachLower = 0;
+		RightBackReachLower = 0;
+		LeftBackReachLower = 0;
+	}
+	if(LeftFrontReachUpper && RightFrontReachUpper && RightBackReachUpper && LeftBackReachUpper){
+		//only if all reaches upper limit will all lifting motors go down together
+		for(u8 i = 0; i < 4; i++)
+			LiftingMotorPositionSetpoint[i] = ll[i];
+		LeftFrontReachUpper = 0;
+		RightFrontReachUpper = 0;
+		RightBackReachUpper = 0;
+		LeftBackReachUpper = 0;
+		
+	}
+	
+}
 

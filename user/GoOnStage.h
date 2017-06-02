@@ -4,6 +4,8 @@
 #include "initialization_process.h"
 #include "ticks.h"
 extern volatile uint8_t INIT_FLAG ;		//to be modified by initialization_process
+extern volatile uint8_t DANCING_MODE_FLAG ; 	//used to catch golf, need to up down oscillate
+extern uint8_t BROKEN_CABLE;
 void readFeedback();
 void speedProcess();
 void setSetpoint();
