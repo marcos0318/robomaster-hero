@@ -37,19 +37,19 @@ int32_t xtotal_chasis = 0;
 int32_t xtotal_chasis_prev = 0;
 
 //float gimbalPositionPID[3] = {0.5, 0.00032, 22};
-float kp_gimbalPosition = 0.5;
-float ki_gimbalPosition = 0.00032;
-float kd_gimbalPosition = 22;
+float kp_gimbalPosition = 0.3;
+float ki_gimbalPosition = 0.0000;
+float kd_gimbalPosition = 0;
 
 //float pitchPositionPID[3] = {0.4, 0.0003, 12};
-float kp_pitchPosition = 0.01;
+float kp_pitchPosition = 0.4;
 float ki_pitchPosition = 0.0000;
 float kd_pitchPosition = 0;
 
 //float cameraPositionPID[3] = {0.3, 0.00, 1};
 float kp_cameraPosition = 0.3;
 float ki_cameraPosition = 0.00;
-float kd_cameraPosition = 1;
+float kd_cameraPosition = 0.1;
 
 //int32_t cameraSpeedPID[3] = {80, 4, 1};
 int32_t kp_cameraSpeed = 80;

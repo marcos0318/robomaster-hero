@@ -20,9 +20,9 @@ extern struct fpid_control_states gimbalPositionState;
 extern int32_t yawPosMultiplier;		//DBUS mouse yaw control
 
 //velocity control
-extern struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
-extern int32_t gimbalSpeedSetpoint;
-extern int32_t gimbalSpeedMoveOutput;
+//extern struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
+extern float gimbalSpeedSetpoint;
+extern float gimbalSpeedMoveOutput;
 extern int32_t outsideLimit;
 
 

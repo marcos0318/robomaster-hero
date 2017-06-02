@@ -48,10 +48,10 @@ int main(void)
 			buffer[i][j] = 0;
 		
 	
-	incPIDinit(&gimbalSpeedMoveState);
+	//incPIDinit(&gimbalSpeedMoveState);
 	//incPIDinit(&pitchSpeedMoveState);
 
-	incPIDset(&gimbalSpeedMoveState, 70, 3.7, 0);
+	//incPIDset(&gimbalSpeedMoveState, 70, 3.7, 0);
 	//incPIDset(&pitchSpeedMoveState, 70, 3.7, 0);
 
 	mouse_prev = DBUS_ReceiveData.mouse.xtotal;
@@ -228,12 +228,12 @@ int main(void)
 				tft_clear_line(9);
 				tft_prints(1, 9, "state:%d", (int)HERO);
 				//tft_prints(1,2, "ticks:%d", ticks_msimg);
-				tft_clear_line(3);
-				tft_clear_line(4);
-				tft_clear_line(5);
-				tft_prints(1,3, "DBUS:%d %d %d", DBUSBrokenLineCounter, DBUSBrokenLine, DBUSBrokenLineRecover);
-				tft_prints(1,4, "CAN1:%d %d %d", CAN1BrokenLineCounter, CAN1BrokenLine, CAN1BrokenLineRecover);
-				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
+				//tft_clear_line(3);
+				//tft_clear_line(4);
+				//tft_clear_line(5);
+				//tft_prints(1,3, "DBUS:%d %d %d", DBUSBrokenLineCounter, DBUSBrokenLine, DBUSBrokenLineRecover);
+				//tft_prints(1,4, "CAN1:%d %d %d", CAN1BrokenLineCounter, CAN1BrokenLine, CAN1BrokenLineRecover);
+				//tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
 		
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
 				//tft_clear_line(7);

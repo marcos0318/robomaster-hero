@@ -10,9 +10,13 @@ struct fpid_control_states gimbalPositionState = {0,0,0};
 int32_t yawPosMultiplier = 3;		//DBUS mouse yaw control
 
 //velocity control
-struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
-int32_t gimbalSpeedSetpoint = 0;
-int32_t gimbalSpeedMoveOutput = 0;
+//struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
+float gimbalSpeedSetpoint = 0;
+float gimbalSpeedMoveOutput = 0;
+float gimbalSpeedFeedback = 0;
+
+struct fpid_control_states gimbalSpeedState = {0,0,0};
+
 int32_t outsideLimit = 670;
 
 int32_t turningConst = 2430;
@@ -41,6 +45,8 @@ float pitchSpeedFeedback = 0;
 float pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
+float ytotalPrev = 0;
+float rawpitchsetpoint = 0;
 
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
@@ -196,29 +202,34 @@ void gimbal_yaw_control(){
 	
 	
 	gimbalPositionFeedback = GMYawEncoder.ecd_angle;
-	gimbalSpeedSetpoint = (int32_t)fpid_process(&gimbalPositionState, &bufferedGimbalPositionSetpoint, &gimbalPositionFeedback, kp_gimbalPosition, ki_gimbalPosition, kd_gimbalPosition);
+	gimbalSpeedSetpoint = fpid_process(&gimbalPositionState, &bufferedGimbalPositionSetpoint, &gimbalPositionFeedback, kp_gimbalPosition, ki_gimbalPosition, kd_gimbalPosition);
 	//Limit the output
-	windowLimit(&gimbalSpeedSetpoint, 80, -80);
+	fwindowLimit(&gimbalSpeedSetpoint, 80, -80);
 	
 	//Get the speed here
-	incPIDsetpoint(&gimbalSpeedMoveState, gimbalSpeedSetpoint);
-	gimbalSpeedMoveOutput += incPIDcalc(&gimbalSpeedMoveState, GMYawEncoder.filter_rate);
+	//incPIDsetpoint(&gimbalSpeedMoveState, gimbalSpeedSetpoint);
+	//gimbalSpeedMoveOutput += incPIDcalc(&gimbalSpeedMoveState, GMYawEncoder.filter_rate);
+	gimbalSpeedFeedback = GMYawEncoder.filter_rate;
+	gimbalSpeedMoveOutput = fpid_process(&gimbalSpeedState, &gimbalSpeedSetpoint, &gimbalSpeedFeedback, 80, 4, 1 );
 	// Direction Protection
 	if ( DBUSBrokenLineRecover ) {
 		fPIDClearError(&gimbalPositionState);
-		incPIDClearError(&gimbalSpeedMoveState);
+		fPIDClearError(&gimbalSpeedState);
+		//incPIDClearError(&gimbalSpeedMoveState);
 		gimbalSpeedMoveOutput = 0;
 	}
 
 	//Static Detection
 	if ( DBUSBrokenLine == 1 || GimbalFlag == 1 || CAN1BrokenLine == 1 ) {
 		fPIDClearError(&gimbalPositionState);
-		incPIDClearError(&gimbalSpeedMoveState);
+		fPIDClearError(&gimbalSpeedState);
+		//incPIDClearError(&gimbalSpeedMoveState);
 		gimbalSpeedMoveOutput = 0;
 	}
 }
 
 void gimbal_pitch_control() {
+
 	
 	if (GimbalFlag == 2 || GimbalFlag == 1 ) {
 		DBUS_ReceiveData.mouse.ytotal = 0;
@@ -244,14 +255,14 @@ void gimbal_pitch_control() {
 
 
 
-	pitchPositionSetpoint =  DBUS_ReceiveData.mouse.ytotal;
-	pitchPositionSetpoint +=  DBUS_ReceiveData.rc.ch3*0.001;
+	rawpitchsetpoint +=  DBUS_ReceiveData.mouse.ytotal - ytotalPrev;
+	rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
 
 	//limit pitch position
-	fwindowLimit(&pitchPositionSetpoint, 1000/pitchPosMultiplier, 50/pitchPosMultiplier);
+	fwindowLimit(&rawpitchsetpoint, 1000/pitchPosMultiplier, 50/pitchPosMultiplier);
 
 
-	pitchPositionSetpoint = -pitchPositionSetpoint * pitchPosMultiplier;
+	pitchPositionSetpoint = -rawpitchsetpoint * pitchPosMultiplier;
 
 
 
@@ -284,7 +295,7 @@ void gimbal_pitch_control() {
 		pitchSpeedMoveOutput = 0;
 	}
 
-
+	ytotalPrev = DBUS_ReceiveData.mouse.ytotal; 
 
 }
 
