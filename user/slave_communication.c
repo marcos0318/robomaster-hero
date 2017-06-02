@@ -112,12 +112,23 @@ void switch_and_send()
 		case CATCH_GOLF:
 			DataMonitor_Send(28,0);			//turn on friciton wheel
 			upper_pneumatic_state = 0;
-			pneumatic_control(3, true);
+			pneumatic_control(3, true);		
+			pneumatic_control(4, false);
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+			break;
+		case VERTICAL_PNEUMATIC_EXTENDS:
+			pneumatic_control(4, true);
+			DataMonitor_Send(63, 0);
+			//LiftingMotors oscillate
+			break;
+		case VERTICAL_PNEUMATIC_WITHDRAWS:
+			pneumatic_control(4, false);
+			DataMonitor_Send(64, 0);
+			//LiftingMotors stop oscillate
 			break;
 		case LOADED:
 			DataMonitor_Send(26, 0);	// turn off friction wheel
