@@ -62,6 +62,14 @@ void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit) {
 		*dst = lowerLimit;
 }
 
+void fwindowLimit(float* dst, int32_t upperLimit, int32_t lowerLimit) {
+
+	if(*dst > upperLimit)
+		*dst = upperLimit;
+	else if(*dst < lowerLimit)
+		*dst = lowerLimit;
+}
+
 uint8_t checkBrokenLine(uint32_t ticks, uint32_t counter)
 {
 	//if((ticks-counter)<80 && (ticks-counter)>-80) return 0;

@@ -34,35 +34,14 @@ int32_t storedPitch = 0;
 struct fpid_control_states pitchPositionState = {0,0,0};
 
 //velocity control
-struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
-int32_t pitchSpeedSetpoint = 0;
-int32_t pitchSpeedMoveOutput = 0;
+struct fpid_control_states pitchSpeedState = {0,0,0};
+//struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
+float pitchSpeedSetpoint = 0;
+float pitchSpeedFeedback = 0;
+float pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
-//This function is nolonger used 
-/*void camera_position_control() {
-    cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-    if (pressCameraChangePrev == 0 && DBUS_CheckPush(KEY_R)){
-        cameraPositionId++;
-        if (cameraPositionId == 6)
-            cameraPositionId = 0;
-        cameraPositionSetpoint = cameraArray[cameraPositionId];
-    }
 
-
-    cameraPositionFeedback = GMCameraEncoder.ecd_angle;
-    fpidLimitI(&cameraPositionState, 20000);
-    cameraPositionOutput = fpid_process(&cameraPositionState, &cameraPositionSetpoint, &cameraPositionFeedback, kp_cameraPosition, ki_cameraPosition, kd_cameraPosition);
-    
-    cameraSpeedSetpoint = (int32_t) cameraPositionOutput;
-    cameraSpeedFeedback = GMCameraEncoder.filter_rate;
-
-    pidLimitI(&cameraSpeedState, 20000);
-    cameraSpeedOutput = pid_process(&cameraSpeedState, &cameraSpeedSetpoint, &cameraSpeedFeedback, kp_cameraSpeed, ki_cameraSpeed, kd_cameraSpeed);
-    pressCameraChangePrev = DBUS_CheckPush(KEY_R);
-    
-}
-*/
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
 
@@ -261,32 +240,47 @@ void gimbal_pitch_control() {
 
 
 
-	//limit pitch position
-	windowLimit(&DBUS_ReceiveData.mouse.ytotal, 1000/pitchPosMultiplier, 0/pitchPosMultiplier);
 	//pitch setpoint
 
 
 
-	pitchPositionSetpoint = -DBUS_ReceiveData.mouse.ytotal * pitchPosMultiplier;
+	pitchPositionSetpoint =  DBUS_ReceiveData.mouse.ytotal;
+	pitchPositionSetpoint +=  DBUS_ReceiveData.rc.ch3*0.001;
+
+	//limit pitch position
+	fwindowLimit(&pitchPositionSetpoint, 1000/pitchPosMultiplier, 50/pitchPosMultiplier);
+
+
+	pitchPositionSetpoint = -pitchPositionSetpoint * pitchPosMultiplier;
+
+
+
 	pitchPositionFeedback = GMPitchEncoder.ecd_angle;
-	pitchSpeedSetpoint = (int32_t)fpid_process(&pitchPositionState, &pitchPositionSetpoint, &pitchPositionFeedback, kp_pitchPosition, ki_pitchPosition, kd_pitchPosition);
+	pitchSpeedSetpoint = fpid_process(&pitchPositionState, &pitchPositionSetpoint, &pitchPositionFeedback, kp_pitchPosition, ki_pitchPosition, kd_pitchPosition);
 	
-	windowLimit(&pitchSpeedSetpoint, 80, -80);
+	fwindowLimit(&pitchSpeedSetpoint, 100, -100);
 	
-	incPIDsetpoint(&pitchSpeedMoveState, pitchSpeedSetpoint);
-	pitchSpeedMoveOutput += incPIDcalc(&pitchSpeedMoveState, GMPitchEncoder.filter_rate);
+	pitchSpeedFeedback = GMPitchEncoder.filter_rate;
+	pitchSpeedMoveOutput = fpid_process(&pitchSpeedState, &pitchSpeedSetpoint, &pitchSpeedFeedback, 80, 4, 1);
+
+
+	//incPIDsetpoint(&pitchSpeedMoveState, pitchSpeedSetpoint);
+	//pitchSpeedMoveOutput += incPIDcalc(&pitchSpeedMoveState, GMPitchEncoder.filter_rate);
 
 	//Dynamic Detection
 	if (DBUSBrokenLineRecover) {
-		incPIDClearError(&pitchSpeedMoveState);
+		//incPIDClearError(&pitchSpeedMoveState);
 		fPIDClearError(&pitchPositionState);
+		fPIDClearError(&pitchSpeedState);
+
 		pitchSpeedMoveOutput = 0;
 	}
 
 	//Static Detection
 	if ( DBUSBrokenLine == 1 || GimbalFlag == 1 || CAN1BrokenLine == 1 ) {
-		incPIDClearError(&pitchSpeedMoveState);
+		//incPIDClearError(&pitchSpeedMoveState);
 		fPIDClearError(&pitchPositionState);
+		fPIDClearError(&pitchSpeedState);
 		pitchSpeedMoveOutput = 0;
 	}
 

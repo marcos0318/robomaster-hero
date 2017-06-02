@@ -42,9 +42,9 @@ float ki_gimbalPosition = 0.00032;
 float kd_gimbalPosition = 22;
 
 //float pitchPositionPID[3] = {0.4, 0.0003, 12};
-float kp_pitchPosition = 0.4;
-float ki_pitchPosition = 0.0003;
-float kd_pitchPosition = 12;
+float kp_pitchPosition = 0.01;
+float ki_pitchPosition = 0.0000;
+float kd_pitchPosition = 0;
 
 //float cameraPositionPID[3] = {0.3, 0.00, 1};
 float kp_cameraPosition = 0.3;

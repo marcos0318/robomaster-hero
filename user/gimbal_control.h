@@ -39,9 +39,11 @@ extern int32_t storedPitch;
 extern struct fpid_control_states pitchPositionState;
 
 //velocity control
-extern struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
-extern int32_t pitchSpeedSetpoint;
-extern int32_t pitchSpeedMoveOutput;
+
+extern float pitchSpeedSetpoint;
+extern float pitchSpeedFeedback;
+extern float pitchSpeedMoveOutput;
+
 extern int32_t pitchPosMultiplier;       //DBUS mouse pitch control
 
 void gimbal_yaw_control();

@@ -49,10 +49,10 @@ int main(void)
 		
 	
 	incPIDinit(&gimbalSpeedMoveState);
-	incPIDinit(&pitchSpeedMoveState);
+	//incPIDinit(&pitchSpeedMoveState);
 
 	incPIDset(&gimbalSpeedMoveState, 70, 3.7, 0);
-	incPIDset(&pitchSpeedMoveState, 70, 3.7, 0);
+	//incPIDset(&pitchSpeedMoveState, 70, 3.7, 0);
 
 	mouse_prev = DBUS_ReceiveData.mouse.xtotal;
 
@@ -237,11 +237,17 @@ int main(void)
 		
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
 				//tft_clear_line(7);
-				tft_clear_line(8);
+				tft_clear_line(3);
+				tft_clear_line(4);
+				tft_clear_line(5);
+				tft_clear_line(6);
 				tft_clear_line(10);
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
 				//tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
-				tft_prints(1,8,"gimecd:%f", GMYawEncoder.ecd_angle);
+				tft_prints(1,3,"psp:%f", pitchPositionSetpoint);
+				tft_prints(1,4,"pfd:%f", pitchPositionFeedback);
+				tft_prints(1,5,"ssp:%f", pitchSpeedSetpoint);
+				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
 				tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
 				tft_update();
 			}	
