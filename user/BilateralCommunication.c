@@ -147,13 +147,10 @@ void USART3_IRQHandler(void)
 		else if(getID() == 63){
 			//dancing mode begins
 			DANCING_MODE_FLAG = 1;
-			/*
-				LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+MID_SETPOINT;
-				
-				LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
-        GO_DOWN_STAGE_ONE_KEY=false;
-			*/
-			
+		    LeftFrontReachUpper = 1;
+            LeftBackReachUpper = 1;
+            RightBackReachUpper = 1;
+            RightFrontReachUpper = 1;    
 		}
 		else if(getID() == 64){
 			DANCING_MODE_FLAG = 0;

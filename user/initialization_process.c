@@ -184,7 +184,7 @@ void initialization_process_back_init(){
 }
 
 
-void LF_Dancing(uint32_t ul, uint32_t ll){
+void LF_Dancing(int32_t ul, int32_t ll){
 	if(CM1Encoder.ecd_angle - ul > -5000){
 		LeftFrontReachUpper = 1;
 	}
@@ -192,29 +192,44 @@ void LF_Dancing(uint32_t ul, uint32_t ll){
 		LeftFrontReachLower = 1;
 }
 
-void RF_Dancing(uint32_t ul, uint32_t ll){
+void RF_Dancing(int32_t ul, int32_t ll){
 	if(CM2Encoder.ecd_angle - ul > -5000)
 		RightFrontReachUpper = 1;
 	if(ll - CM2Encoder.ecd_angle > -5000)
 		RightFrontReachLower = 1;
 }
 
-void RB_Dancing(uint32_t ul, uint32_t ll){
+void RB_Dancing(int32_t ul, int32_t ll){
 	if(CM3Encoder.ecd_angle - ul > -5000)
 		RightBackReachUpper = 1;
 	if(ll - CM3Encoder.ecd_angle > -5000)
 		RightBackReachLower = 1;
 }
 
-void LB_Dancing(uint32_t ul, uint32_t ll){
+void LB_Dancing(int32_t ul, int32_t ll){
 	if(CM4Encoder.ecd_angle - ul > -5000)
 		LeftBackReachUpper = 1;
 	if(ll - CM4Encoder.ecd_angle > -5000)
 		LeftBackReachLower = 1;
 }
 
-void (*Dancing[4]) (uint32_t, uint32_t) = {LF_Dancing, RF_Dancing, RB_Dancing, LB_Dancing};
-void DancingMode(uint32_t* ul, uint32_t* ll)
+void (*Dancing[4]) (int32_t, int32_t) = {LF_Dancing, RF_Dancing, RB_Dancing, LB_Dancing};
+
+void clear()
+{
+        LeftFrontReachLower = 0;
+		RightFrontReachLower = 0;
+		RightBackReachLower = 0;
+		LeftBackReachLower = 0;
+        LeftFrontReachUpper = 0;
+		RightFrontReachUpper = 0;
+		RightBackReachUpper = 0;
+		LeftBackReachUpper = 0;
+
+}
+
+
+void DancingMode(int32_t* ul, int32_t* ll)
 {
 	for(u8 i = 0; i < 4; i++)
 		Dancing[i](ul[i], ll[i]);
@@ -222,20 +237,13 @@ void DancingMode(uint32_t* ul, uint32_t* ll)
 		//only if all reaches lower limit will all lifting motors expand together
 		for(u8 i = 0; i < 4; i++)
 			LiftingMotorPositionSetpoint[i] = ul[i];
-		LeftFrontReachLower = 0;
-		RightFrontReachLower = 0;
-		RightBackReachLower = 0;
-		LeftBackReachLower = 0;
-	}
+        clear();
+			}
 	if(LeftFrontReachUpper && RightFrontReachUpper && RightBackReachUpper && LeftBackReachUpper){
 		//only if all reaches upper limit will all lifting motors go down together
 		for(u8 i = 0; i < 4; i++)
 			LiftingMotorPositionSetpoint[i] = ll[i];
-		LeftFrontReachUpper = 0;
-		RightFrontReachUpper = 0;
-		RightBackReachUpper = 0;
-		LeftBackReachUpper = 0;
-		
+		clear();		
 	}
 	
 }

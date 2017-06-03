@@ -5,7 +5,7 @@ uint8_t BROKEN_CABLE = 0;
 volatile uint8_t INIT_FLAG = 1;
 volatile uint8_t DANCING_MODE_FLAG = 0;
 uint8_t INIT_FLAG_PREV = 1;
-uint32_t upper_limit[4] = {0}, lower_limit[4] = {0};
+int32_t upper_limit[4] = {0}, lower_limit[4] = {0};
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
 			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
@@ -85,7 +85,7 @@ void speedProcess(){
     
 
     
-    //to correct the out put to get a reasonable speed
+    //to correct the output to get a reasonable speed
     for(uint8_t i=0;i<4;i++){
         if(LiftingMotorSpeedSetpoint[i]>SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=SPEED_SETPOINT_LIMIT;
         else if(LiftingMotorSpeedSetpoint[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=-SPEED_SETPOINT_LIMIT;
@@ -104,7 +104,7 @@ void speedProcess(){
         else if(LiftingMotorSpeedSetpointBuffered[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpointBuffered[i]=-SPEED_SETPOINT_LIMIT;
     }
     
-		//Before pid process contrl the cumlated error 
+		//Before pid process contrl the cummulated error 
 		for (int i = 0; i < 4; i++) {
 			pid_limit_cumulated_error(&LiftingMotorState[i], 10000);
 		}
@@ -213,7 +213,7 @@ void TIM7_IRQHandler(void){
 			if not in init state, still need to detect
 			if touch the GPIO switch for a long time
 			then unconditionally stop
-			And I will need to update the bias, lower_limit and upeer_limit
+			And I will need to update the bias, lower_limit and upper_limit
 			*/
 				if(INIT_FLAG){
 					

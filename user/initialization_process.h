@@ -15,4 +15,4 @@ void Limit_Switch_init();
 void initialization_process_full_init();
 void initialization_process_front_init();
 void initialization_process_back_init();
-void DancingMode(uint32_t*, uint32_t*);
+void DancingMode(int32_t*, int32_t*);
