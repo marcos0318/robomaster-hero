@@ -18,20 +18,7 @@ volatile bool SHIFT_G = false;
 volatile bool state_switch = false;
 u8 G_counter_for_John=0;
 
-/*
-enum modeControl{
-	
-	RUNNING_MODE,
-	INTO_RI_MODE,
-	ON_RI_MODE,
-	BACK_WHEEL_UP,
-	FRONT_WHEEL_UP,
-	SPEED_LIMITATION,
-	PRE_CATCH_GOLF,
-	CATCH_GOLF,
-	LOADED
-} HERO = 0;
-*/
+
 enum modeControl HERO = RUNNING_MODE;
 
 
@@ -53,6 +40,8 @@ void switch_and_send()
 	switch(HERO){
 		case RUNNING_MODE:
 			ChasisFlag=1;
+			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
 			//withdraw lower pneumatic
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
@@ -91,6 +80,7 @@ void switch_and_send()
 				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
 			break;
 		case SPEED_LIMITATION:
+			ChasisFlag = 3;
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 		  //all lifting motor go up 
@@ -100,28 +90,31 @@ void switch_and_send()
 		case PRE_CATCH_GOLF:
 			//extend gripper pneumatic
 			//camera towards ... where???
+			upper_pneumatic_state = 0;
+			pneumatic_control(3, true);	
+			pneumatic_control(4, false);		
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
 			cameraPositionId = 1;
 			cameraPositionSetpoint = cameraArray[cameraPositionId];
-			upper_pneumatic_state = 2;
-			pneumatic_control(3, false);
+			//upper_pneumatic_state = 2;
+			//pneumatic_control(3, false);
 			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case CATCH_GOLF:
 			DataMonitor_Send(28,0);			//turn on friciton wheel
-			upper_pneumatic_state = 0;
-			pneumatic_control(3, true);		
-			pneumatic_control(4, false);
+			//upper_pneumatic_state = 0;
+			//pneumatic_control(3, true);		
+			pneumatic_control(4, true);
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
-		case VERTICAL_PNEUMATIC_EXTENDS:
-			pneumatic_control(4, true);
+		case DANCING_MODE:
+			//pneumatic_control(4, true);
 			DataMonitor_Send(63, 0);
 			//LiftingMotors oscillate
 			break;
