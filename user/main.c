@@ -76,6 +76,7 @@ int main(void)
 				}
 				FRIC_SET_THRUST_L(friction_wheel_setpoint);
 				FRIC_SET_THRUST_R(friction_wheel_setpoint);
+				FRIC_SET_THRUST_M(friction_wheel_setpoint);
 			}
 			if(ticks_msimg % 50 ==0) {
 				//tft_clear();
@@ -89,13 +90,13 @@ int main(void)
           tft_clear_line(i+2);
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
-				tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
-				tft_prints(1,4,"LF Bias %d", LiftingMotorBias[0]);
-				tft_prints(1,5,"LF limit %d", LiftingMotorPositionLimit[0]);
-				tft_prints(1,6,"LF ecd %f", CM1Encoder.ecd_angle);
-				tft_prints(1,7,"RB speed %d", LiftingMotorOutput[3]);
-				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
-				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
+				tft_prints(1,3,"RF sp %d", LiftingMotorPositionSetpoint[1]);
+				tft_prints(1,4,"RB sp %d", LiftingMotorPositionSetpoint[2]);
+				tft_prints(1,5,"RF ecd %f", CM2Encoder.ecd_angle);
+				tft_prints(1,6,"RB ecd %f", CM3Encoder.ecd_angle);
+				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
+				tft_prints(1, 8, "GPIO_RF: %d", gpio_read_input(RightFront));
+				tft_prints(1, 9, "num_RF: %d", num_of_touch(RightFront));
         //for (int i=0;i<4;i++) 
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				uint8_t temp = getID();

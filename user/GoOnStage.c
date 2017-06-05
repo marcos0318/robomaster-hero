@@ -6,6 +6,7 @@ volatile uint8_t INIT_FLAG = 1;
 volatile uint8_t DANCING_MODE_FLAG = 0;
 uint8_t INIT_FLAG_PREV = 1;
 int32_t upper_limit[4] = {0}, lower_limit[4] = {0};
+int32_t SPEED_LIMIT = 30000;
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
 			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
@@ -73,7 +74,7 @@ uint8_t num_of_touch(const GPIO* gpio){
 void speedProcess(){
 		//Control the cumulated error of the position pid process
 		for (int i = 0; i<4; i++) {
-			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 3000000);
+			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 2000000);
 		}
 		
 	
@@ -117,8 +118,8 @@ void speedProcess(){
     
 		//limit the CM_Speed output to 30000, which is reasonable here. But this number could be adjust later on 
     for (uint8_t i = 0 ; i < 4 ; i++){
-        if (LiftingMotorOutput[i]>30000) LiftingMotorOutput[i]=30000;
-        if (LiftingMotorOutput[i]<-30000) LiftingMotorOutput[i]=-30000;
+        if (LiftingMotorOutput[i]>SPEED_LIMIT) LiftingMotorOutput[i]=SPEED_LIMIT;
+        if (LiftingMotorOutput[i]<-SPEED_LIMIT) LiftingMotorOutput[i]=-SPEED_LIMIT;
     }
 		
 		Set_CM_Speed(CAN2,LiftingMotorOutput[0],LiftingMotorOutput[1],LiftingMotorOutput[2],LiftingMotorOutput[3]);
@@ -216,16 +217,17 @@ void TIM7_IRQHandler(void){
 			And I will need to update the bias, lower_limit and upper_limit
 			*/
 				if(INIT_FLAG){
-					
+						SPEED_LIMIT = 3000;
 						initialization_process_full_init();
 					
 				}
 				if(!INIT_FLAG){
+					SPEED_LIMIT = 30000;
 					if(DANCING_MODE_FLAG){
-						for(u8 i; i < 4; i++)
+						for(u8 i = 0; i < 4; i++)
 						{
 							lower_limit[i]=LiftingMotorBias[i]+MID_SETPOINT;
-							upper_limit[i]=LiftingMotorBias[0]+UP_SETPOINT;
+							upper_limit[i]=LiftingMotorBias[i]+UP_SETPOINT;
 						}
 						DancingMode(upper_limit, lower_limit);
 					}

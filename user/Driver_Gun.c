@@ -34,12 +34,13 @@ void GUN_BSP_Init(void) {
     // Friction Wheel
     GPIO_InitStructure.GPIO_Mode   =   GPIO_Mode_AF;
     GPIO_InitStructure.GPIO_OType  =   GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Pin    =   GPIO_Pin_8 | GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Pin    =   GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10;
     GPIO_InitStructure.GPIO_PuPd   =   GPIO_PuPd_NOPULL;
     GPIO_InitStructure.GPIO_Speed  =   GPIO_Speed_100MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource8, GPIO_AF_TIM1);
     GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_TIM1);
+		GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_TIM1);
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
     TIM_OCInitTypeDef TIM_OCInitStructure;
@@ -66,6 +67,8 @@ void GUN_BSP_Init(void) {
     TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
     TIM_OC2Init(TIM1, &TIM_OCInitStructure);
     TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
+		TIM_OC3Init(TIM1, &TIM_OCInitStructure);
+    TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
     TIM_ARRPreloadConfig(TIM1, ENABLE);
     TIM_CtrlPWMOutputs(TIM1, ENABLE);
     TIM_Cmd(TIM1, ENABLE);

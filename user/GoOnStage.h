@@ -10,5 +10,5 @@ void readFeedback();
 void speedProcess();
 void setSetpoint();
 uint8_t num_of_touch(const GPIO*);
-
+void TIM7_Int_Init(u16 period,u16 psc);
 #endif

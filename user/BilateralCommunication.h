@@ -6,6 +6,7 @@
 #include "pneumatic.h"
 #include "Lifting_Motor_Control.h"
 #include "GoOnStage.h"
+#include "initialization_process.h"
 void Bilateral_Init();
 //volatile int32_t LiftingMotorPositionSetpoint[4];
 extern u32 receive_time;

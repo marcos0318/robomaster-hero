@@ -29,30 +29,6 @@ void Limit_Switch_init(){
 
 }
 
-/*
-volatile int32_t LiftingMotorPositionSetpoint[4]={0};
-int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
-int32_t LiftingMotorUpperLimit[4] = {UP_SETPOINT, UP_SETPOINT, UP_SETPOINT, UP_SETPOINT};
-int32_t LiftingMotorPositionLimit[4] = {UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE};
-
-#define TOTALLY_DOWN_SETPOINT 1000
-#define UP_SETPOINT 255000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
-#define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define UP_DOWN_DISTANCE 280000
-
-if(LiftingMotorPositionSetpoint[i] > LiftingMotorUpperLimit[i]){
-			LiftingMotorUpperLimit[i]=LiftingMotorPositionSetpoint[i];
-			LiftingMotorBias[i]=LiftingMotorUpperLimit[i]-UP_SETPOINT;
-	}
-
-
-LiftingMotorPositionFeedback[0] = CM1Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[1] = CM2Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[2] = CM3Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[3] = CM4Encoder.ecd_angle;
-*/
-
-
 void LF_init(){
 	if(LeftFrontExpand){
 		if(num_of_touch(LeftFront)>15){
@@ -217,11 +193,11 @@ void (*Dancing[4]) (int32_t, int32_t) = {LF_Dancing, RF_Dancing, RB_Dancing, LB_
 
 void clear()
 {
-        LeftFrontReachLower = 0;
+    LeftFrontReachLower = 0;
 		RightFrontReachLower = 0;
 		RightBackReachLower = 0;
 		LeftBackReachLower = 0;
-        LeftFrontReachUpper = 0;
+    LeftFrontReachUpper = 0;
 		RightFrontReachUpper = 0;
 		RightBackReachUpper = 0;
 		LeftBackReachUpper = 0;
