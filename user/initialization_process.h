@@ -20,6 +20,8 @@ extern uint8_t RightFrontReachUpper;
 extern uint8_t RightBackReachUpper;
 extern uint8_t LeftBackReachUpper;
 
+extern u8 ALL_TO_LIMIT_SWITCH;
+
 void Limit_Switch_init();
 void initialization_process_full_init();
 void initialization_process_front_init();

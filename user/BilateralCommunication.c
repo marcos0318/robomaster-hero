@@ -108,12 +108,19 @@ void USART3_IRQHandler(void)
 		BREAK=false;
 		if(getID() == 90){
 			INIT_FLAG = 1;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
 			for(uint8_t i = 0; i < 4; i++)
 				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
+			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==69){
+			//all go up to the limit switch
+			ALL_TO_LIMIT_SWITCH = 1;
+			INIT_FLAG = 1;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFF){
@@ -147,10 +154,11 @@ void USART3_IRQHandler(void)
 		else if(getID() == 63){
 			//dancing mode begins
 			DANCING_MODE_FLAG = 1;
-		    LeftFrontReachUpper = 1;
-            LeftBackReachUpper = 1;
-            RightBackReachUpper = 1;
-            RightFrontReachUpper = 1;    
+		  LeftFrontReachUpper = 1;
+      LeftBackReachUpper = 1;
+      RightBackReachUpper = 1;
+      RightFrontReachUpper = 1;  
+			broken_time=receive_time=get_ms_ticks();			
 		}
 		else if(getID() == 64){
 			DANCING_MODE_FLAG = 0;
@@ -158,6 +166,9 @@ void USART3_IRQHandler(void)
 				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
 			//dancing mode ends
 			//need to set all LiftingMotors to raise up to the UP_SETPOINT
+			//turn off friction wheel
+			FRICTION_WHEEL_STATE=false;
+			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){
 			//front wheels expanding acoording to the desired position offset sent by master

@@ -9,7 +9,7 @@
 #define MOVING_BOUND_2 450
 #define SPEED_SETPOINT_LIMIT 1200
 #define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
-#define DOWN_SETPOINT 5000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 220000
 #define TOTALLY_DOWN_SETPOINT 10000
 #define UP_DOWN_DISTANCE 280000

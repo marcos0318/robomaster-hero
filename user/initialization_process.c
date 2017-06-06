@@ -19,6 +19,7 @@ uint8_t RightFrontReachUpper = 1;
 uint8_t RightBackReachUpper = 1;
 uint8_t LeftBackReachUpper = 1;
 
+u8 ALL_TO_LIMIT_SWITCH = 0;
 
 void Limit_Switch_init(){
 	
@@ -133,8 +134,11 @@ void initialization_process_full_init(){
 	RB_init();
 	if(LeftFrontReach && LeftBackReach && RightFrontReach && RightBackReach){
 		INIT_FLAG = 0;
-		for(u8 i = 0; i < 4; i++)
-			LiftingMotorPositionSetpoint[i] =  LiftingMotorBias[i] + TOTALLY_DOWN_SETPOINT;
+		if(!ALL_TO_LIMIT_SWITCH){
+			for(u8 i = 0; i < 4; i++)
+				LiftingMotorPositionSetpoint[i] =  LiftingMotorBias[i] + TOTALLY_DOWN_SETPOINT;
+		}
+		else ALL_TO_LIMIT_SWITCH = 0;
 		LeftFrontExpand = 1;
 		RightFrontExpand = 1;
 		RightBackExpand = 1;
