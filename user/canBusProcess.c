@@ -57,12 +57,12 @@ void EncoderProcess(volatile Encoder *v, CanRxMsg * msg)
 	v->diff = v->raw_value - v->last_raw_value;
 	v->velocity_from_ESC = (msg->Data[2]<<8)|msg->Data[3];
 	//for detecting the speed with last sample
-	if(v->diff < -7000)    //两次编码器的反馈值差别太大，表示圈数发生了改变
+	if(v->diff < -4000)    //两次编码器的反馈值差别太大，表示圈数发生了改变
 	{
 		v->round_cnt++;
 		v->ecd_raw_rate = v->diff + 8192;
 	}
-	else if(v->diff>7000)   //bug
+	else if(v->diff>4000)   //bug
 	{
 		v->round_cnt--;
 		v->ecd_raw_rate = v->diff- 8192;
