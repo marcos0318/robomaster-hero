@@ -17,7 +17,8 @@ void DataMonitor_Init(void) {
     DataMonitor_DMA_InitStruct.DMA_PeripheralDataSize=   DMA_PeripheralDataSize_Byte;
     DataMonitor_DMA_InitStruct.DMA_Mode              =   DMA_Mode_Normal;
     DataMonitor_DMA_InitStruct.DMA_Priority          =   DMA_Priority_Medium;
-    DataMonitor_DMA_InitStruct.DMA_FIFOMode          =   DMA_FIFOMode_Disable;
+
+	DataMonitor_DMA_InitStruct.DMA_FIFOMode          =   DMA_FIFOMode_Disable;
     DataMonitor_DMA_InitStruct.DMA_FIFOThreshold     =   DMA_FIFOThreshold_Full;
     DataMonitor_DMA_InitStruct.DMA_MemoryBurst       =   DMA_MemoryBurst_Single;
     DataMonitor_DMA_InitStruct.DMA_PeripheralBurst   =   DMA_PeripheralBurst_Single;

@@ -25,7 +25,7 @@
 #define FOR_JOHN_SHIFT_MAX_RUNNING_SPEED 1000
 #define FOR_JOHN_CTRL_MAX_RUNNING_SPEED 300		//Ctrl has higher precedence than Shift
 #define FOR_JOHN_INTO_RI_MAX_SPEED 300		//Shift and Control are meaningless here
-
+#define FOR_JOHN_QE_INC 120
 
 /***************************/
 /***** Global Flags   ******/
@@ -128,7 +128,7 @@ extern int32_t output_angle_speed;
 
 extern int32_t speed_limitor;
 extern int32_t speed_multiplier;
-extern int32_t QE_RC_dir_multiplier;
+extern int32_t RC_dir_multiplier;
 extern int32_t angular_speed_limitor;
 extern int32_t forward_speed;
 extern int32_t right_speed;

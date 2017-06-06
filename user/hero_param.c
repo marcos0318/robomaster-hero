@@ -97,7 +97,8 @@ bool Fprev = false;
 
 int32_t filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 int32_t speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
-int32_t QE_RC_dir_multiplier = 1;
+int32_t RC_dir_multiplier = 1;
+
 //int32_t power_buffer[POWER_BUFFER_LENGTH];
 float feedback_current = 0;
 float feedback_voltage = 0;

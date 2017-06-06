@@ -43,7 +43,7 @@ void switch_and_send()
 			GimbalFlag = 3;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
-			QE_RC_dir_multiplier = 1;
+			//RC_dir_multiplier = 1;
 			//withdraw lower pneumatic
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
@@ -64,12 +64,12 @@ void switch_and_send()
 			//reverse QWEASD
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
-			QE_RC_dir_multiplier = 1;
+			//RC_dir_multiplier = 1;
 			break;
 		case ON_RI_MODE:
 			//turn off gyro
 			ChasisFlag=3;
-			QE_RC_dir_multiplier = -1;
+			//RC_dir_multiplier = -1;
 			//extend lower pneumatic
 			lower_pneumatic_state=true;
 			pneumatic_control(1, 1);
@@ -87,7 +87,7 @@ void switch_and_send()
 			break;
 		case SPEED_LIMITATION:
 			ChasisFlag = 3;
-			QE_RC_dir_multiplier = -1;
+			//RC_dir_multiplier = -1;
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 		  //all lifting motor go up 
@@ -131,7 +131,7 @@ void switch_and_send()
 			//LiftingMotors stop oscillate
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
-			QE_RC_dir_multiplier = -1;
+			//RC_dir_multiplier = -1;
 			ChasisFlag = 3;
 			break;
 		case LOADED:
@@ -144,7 +144,7 @@ void switch_and_send()
 			ChasisFlag=4;	
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
-			QE_RC_dir_multiplier = 1;
+			//RC_dir_multiplier = 1;
 			break;
 		case LIFTING_MOTOR_DOWN:
 			//Lifting Motors go down
