@@ -1,27 +1,39 @@
+#ifndef SLAVE_COMMUNICATION_H
+#define SLAVE_COMMUNICATION_H
 #include "data_monitor.h"
 #include "Dbus.h"
 #include "stdbool.h"
 #include "hero_param.h"
+#include "gimbal_control.h"
 
-extern volatile uint8_t upper_pneumatic_state ;
-extern volatile bool lower_pneumatic_state ;
-extern bool lower_pneumatic_prev ;
-extern bool upper_pneumatic_prev ;
-//extern enum modeControl HERO;
+extern volatile u8 upper_pneumatic_state ;
+extern volatile u8 lower_pneumatic_state ;
+extern u8 lower_pneumatic_prev ;
+extern u8 upper_pneumatic_prev ;
+
+//INTO_RI_MODE: lower pneumatic timer and flag
+extern volatile u8 INTO_RI_LPneu_flag;
+extern volatile u32 INTO_RI_LPneu_timer;
+
+//SPEED_LIMITATION: lower pneumatic timer and flag
+extern volatile u8 SPEED_LIMITATION_LPneu_flag;
+extern volatile u32 SPEED_LIMITATION_LPneu_timer;
+
+//VERTICAL_PNEUMATIC_WITHDRAWS: upeer horinzontal peumatic timer and flag
+extern volatile u8 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag;
+extern volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer;
+
+
 extern enum modeControl{
 	
 	RUNNING_MODE,												//0
 	INTO_RI_MODE,												//1
-	ON_RI_MODE,													//2
 	BACK_WHEEL_UP,											//3
 	FRONT_WHEEL_UP,											//4
 	SPEED_LIMITATION,										//5
-	PRE_CATCH_GOLF,											//6
 	CATCH_GOLF,													//7
 	DANCING_MODE,												//8
 	VERTICAL_PNEUMATIC_WITHDRAWS,				//9
-	LOADED,															//10
-	LIFTING_MOTOR_DOWN,									//11
 	DOWN_FRONT_WHEEL,										//12
 	DOWN_BACK_WHEEL											//13
 } HERO;
@@ -36,9 +48,8 @@ extern enum modeControl{
 //	b. four LiftingMotors go up
 //	c. camera towards timber pile
 //	d. QWEASD reversed
-//2. ON_RI_MODE (prepare to go on the resource island mode continued)
-//	a.gyro open-looped
-//	b. pneumatic extended
+//	e. gyro open-looped
+//	f. lower pneumatic extended
 //3. BACK_WHEEL_UP (back wheels go on the stage)
 //	a. back wheels LiftingMotors go up
 //4. FRONT_WHEEL_UP (back wheels and pneumatic have already gone up)
@@ -78,3 +89,4 @@ extern enum modeControl{
 void transmit();
 void state_control();
 void switch_and_send();
+#endif

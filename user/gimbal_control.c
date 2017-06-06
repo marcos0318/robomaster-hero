@@ -1,6 +1,6 @@
 #include "gimbal_control.h"
 
-
+volatile u32 TIM_7_Counter = 0;
 //position control
 float gimbalPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
 float bufferedGimbalPositionSetpoint = 0;
@@ -342,6 +342,7 @@ void TIM7_IRQHandler(void){
     if(TIM_GetITStatus(TIM7,TIM_IT_Update) != RESET)
     {
         
+			++TIM_7_Counter;
   					
 //Used in control			
 			//what ever the state is, these control functions are always running
@@ -352,29 +353,36 @@ void TIM7_IRQHandler(void){
 			GUN_PokeControl();
 			if(CAN1BrokenLine == 0)
 				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-  		//if(CAN1BrokenLine_prev==0 && CAN1BrokenLine == 1)
-					//Set_CM_Speed(CAN1,0,0,0,0);
-  				
-//Used in rest	
-//						fPIDClearError(&gimbalPositionState);
-//						fPIDClearError(&pitchPositionState);
-//						//cameraPositionState
-//						PIDClearError(&cameraSpeedState);
-//						//pitchPositionState
-//						incPIDClearError(&pitchSpeedMoveState);
-//						//gimbalPositionState
-//						incPIDClearError(&gimbalSpeedMoveState);
-//						//gunPositionState
-//						PIDClearError(&gunSpeedMoveState);
-//						//direction = - output_angle*upperTotal/3600;
-//						FRIC_SET_THRUST_L(0);
-//						FRIC_SET_THRUST_R(0);
-//						
-//						Set_CM_Speed(CAN1, 0, 0, 0, 0);
-				
-				
 			
+				//INTO_RI lower pneumatic delay extention
+				if(INTO_RI_LPneu_flag == 1 && ((TIM_7_Counter - INTO_RI_LPneu_timer) > 3000))
+				{
+					INTO_RI_LPneu_flag = 0;
+					lower_pneumatic_state=true;
+					pneumatic_control(1, 1);
+					pneumatic_control(2, 1);
+				}
+				//SPEED_LIMITATION lower pneumatic delay withdrawl
+				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 3000))
+				{
+					SPEED_LIMITATION_LPneu_flag = 0;
+					lower_pneumatic_state=false;
+					pneumatic_control(1, 0);
+					pneumatic_control(2, 0);
+				}
+				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
+				{
+					VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
+					pneumatic_control(4, false);
+					upper_pneumatic_state = 1;
+					pneumatic_control(3, false);
+					//Lifting Motors go down
+					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+					DataMonitor_Send(5, 0);
+				}
 				
+  		
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
     

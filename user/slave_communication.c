@@ -1,21 +1,32 @@
-#ifndef SLAVE_COMMUNICATION_H
-#define SLAVE_COMMUNICATION_H
-
 #include "slave_communication.h"
 #include "pneumatic.h"
 #include "1.8 TFT_display.h"
 
 volatile uint8_t upper_pneumatic_state = 0 ;
-volatile bool lower_pneumatic_state = false ;
-bool lower_pneumatic_prev = false ;
-bool upper_pneumatic_prev = false ;
-volatile bool KEY_G_PREV = false;
-volatile bool KEY_F_PREV = false;
-volatile bool KEY_SHIFT_G_PREV = false;
-volatile bool KEY_SHIFT_F_PREV = false;
-volatile bool SHIFT_F = false;
-volatile bool SHIFT_G = false;
-volatile bool state_switch = false;
+volatile u8 lower_pneumatic_state = 0 ;
+u8 lower_pneumatic_prev = 0 ;
+u8 upper_pneumatic_prev = 0 ;
+volatile u8 KEY_G_PREV = 0;
+volatile u8 KEY_F_PREV = 0;
+volatile u8 KEY_SHIFT_G_PREV = 0;
+volatile u8 KEY_SHIFT_F_PREV = 0;
+volatile u8 SHIFT_F = 0;
+volatile u8 SHIFT_G = 0;
+volatile u8 state_switch = 0;
+
+//INTO_RI_MODE: lower pneumatic timer and flag
+volatile u8 INTO_RI_LPneu_flag = 0;
+volatile u32 INTO_RI_LPneu_timer = 0;
+
+//SPEED_LIMITATION: lower pneumatic timer and flag
+volatile u8 SPEED_LIMITATION_LPneu_flag = 0;
+volatile u32 SPEED_LIMITATION_LPneu_timer = 0;
+
+//VERTICAL_PNEUMATIC_WITHDRAWS: upeer horinzontal peumatic timer and flag
+volatile u8 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
+volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer = 0;
+
+
 u8 G_counter_for_John=0;
 
 
@@ -58,24 +69,16 @@ void switch_and_send()
 			//LiftingMotors go up
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
 			DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
-			//camera towards timber pile
-			cameraPositionId = 1;
-			cameraPositionSetpoint = cameraArray[cameraPositionId];
 			//reverse QWEASD
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
-			//RC_dir_multiplier = 1;
-			break;
-		case ON_RI_MODE:
 			//turn off gyro
 			ChasisFlag=3;
-			//RC_dir_multiplier = -1;
 			//extend lower pneumatic
-			lower_pneumatic_state=true;
-			pneumatic_control(1, 1);
-			pneumatic_control(2, 1);
+			//do it in the interrupt
+			INTO_RI_LPneu_flag = 1;
+			INTO_RI_LPneu_timer = TIM_7_Counter;
 			
-			DataMonitor_Send(0x55, 0);	//keep communication
 			break;
 		case BACK_WHEEL_UP:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
@@ -83,31 +86,26 @@ void switch_and_send()
 			break;
 		case FRONT_WHEEL_UP:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
-				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
+			DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
 			break;
 		case SPEED_LIMITATION:
 			ChasisFlag = 3;
-			//RC_dir_multiplier = -1;
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 		  //all lifting motor go up 
-			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
-			break;
-		case PRE_CATCH_GOLF:
-			//extend gripper pneumatic
-			//camera towards ... where???
+			//up to the limit switch
+			//need to add new number
+			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_DOWN_DISTANCE/8;
+			DataMonitor_Send(69, 0);        //up to the limit switch
+			//LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
+			//DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
 			upper_pneumatic_state = 0;
 			pneumatic_control(3, true);	
-			pneumatic_control(4, false);		
-			lower_pneumatic_state=false;
-			pneumatic_control(1, 0);
-			pneumatic_control(2, 0);
-			cameraPositionId = 1;
-			cameraPositionSetpoint = cameraArray[cameraPositionId];
-			//upper_pneumatic_state = 2;
-			//pneumatic_control(3, false);
-			DataMonitor_Send(0x55, 0);	//keep communication
+			pneumatic_control(4, false);
+			//withdraw lower pneumatic
+			//do it in the interrupt
+			SPEED_LIMITATION_LPneu_flag = 1;
+			SPEED_LIMITATION_LPneu_timer = TIM_7_Counter;			
 			break;
 		case CATCH_GOLF:
 			DataMonitor_Send(28,0);			//turn on friciton wheel
@@ -124,32 +122,25 @@ void switch_and_send()
 			pneumatic_control(4, true);
 			DataMonitor_Send(63, 0);
 			//LiftingMotors oscillate
+			ChasisFlag = 3;
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case VERTICAL_PNEUMATIC_WITHDRAWS:
 			pneumatic_control(4, false);
 			DataMonitor_Send(64, 0);
 			//LiftingMotors stop oscillate
-			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
-			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
-			//RC_dir_multiplier = -1;
-			ChasisFlag = 3;
-			break;
-		case LOADED:
-			DataMonitor_Send(26, 0);	// turn off friction wheel
-			upper_pneumatic_state = 1;
-			pneumatic_control(3, false);
+			//and turn off the friction wheel			
+			//DataMonitor_Send(26, 0);	// turn off friction wheel
+			VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 1;
+			VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer = TIM_7_Counter;
 			lower_pneumatic_state=true;
 			pneumatic_control(1, 1);
 			pneumatic_control(2, 1);
 			ChasisFlag=4;	
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
-			//RC_dir_multiplier = 1;
-			break;
-		case LIFTING_MOTOR_DOWN:
-			//Lifting Motors go down
-			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(5, 0);
+			
 			break;
 		case DOWN_FRONT_WHEEL:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
@@ -373,4 +364,3 @@ void transmit(){
 }
 
 
-#endif

@@ -19,6 +19,7 @@
 #define MID_SETPOINT 220000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define DOWN_SETPOINT 5000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define TOTALLY_DOWN_SETPOINT 10000
+#define UP_DOWN_DISTANCE 280000
 #define CAMERA_ARRAY_MULTIPLIER = 2430
 #define FOR_JOHN_MAX_TURNING_SPEED 900
 #define FOR_JOHN_MAX_RUNNING_SPEED 700

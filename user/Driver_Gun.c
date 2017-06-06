@@ -183,9 +183,9 @@ void GUN_ShootOne(void) {
 	
 	
 	if(dir)
-    GUN_Data.pokeTargetAngle += 1368;
+    GUN_Data.pokeTargetAngle += 1140;
 	else 
-		GUN_Data.pokeTargetAngle -= 1368;
+		GUN_Data.pokeTargetAngle -= 1140;
 	if(GMballfeedEncoder.ecd_angle>16777151){
 		GMballfeedEncoder.ecd_angle=GUN_Data.pokeTargetAngle=0;
 	}
@@ -203,7 +203,7 @@ void GUN_PokeControl(void) {
 }
 
 void GUN_PokeSpeedControl(void) {
-		current_cummulated *= 0.92;
+		current_cummulated *= 0.90;
 		if(abs(gunSpeed)>4000)
 			current_cummulated+=gunSpeed;
 			
@@ -217,7 +217,7 @@ void GUN_PokeSpeedControl(void) {
 			gunSpeedMoveState.cummulated_error = 0;
 			if(dir){
 			targetAngleBuffer=GUN_Data.pokeTargetAngle;
-			GUN_Data.pokeTargetAngle -= 1368;
+			GUN_Data.pokeTargetAngle -= 1140;
 			dir_switch(&dir);
 			}
 		}else if((int32_t)current_cummulated<-200000){
@@ -226,7 +226,7 @@ void GUN_PokeSpeedControl(void) {
 			gunSpeedMoveState.cummulated_error = 0;
 			if(!dir){
 			targetAngleBuffer=GUN_Data.pokeTargetAngle;
-			GUN_Data.pokeTargetAngle += 1368;
+			GUN_Data.pokeTargetAngle += 1140;
 			dir_switch(&dir);
 			}
 		}
@@ -245,8 +245,8 @@ void GUN_PokeSpeedControl(void) {
 		gunPositionState.cummulated_error = 0;
 		//gunSpeedSetpoint=300;
 		//Limit the output
-		if (gunSpeedSetpoint > 300) gunSpeedSetpoint = 300;
-		else if (gunSpeedSetpoint < -300) gunSpeedSetpoint = -300;
+		if (gunSpeedSetpoint > 250) gunSpeedSetpoint = 250;
+		else if (gunSpeedSetpoint < -250) gunSpeedSetpoint = -250;
 		curr_speed=GMballfeedEncoder.filter_rate;
 		spSp = current_cummulated;
 		

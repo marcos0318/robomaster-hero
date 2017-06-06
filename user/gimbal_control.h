@@ -4,9 +4,12 @@
 #include "stdbool.h"
 #include "hero_param.h"
 #include "Driver_Gun.h"
+#include "slave_communication.h"
 /****************************************************************/
 /***** Gimbal Yaw Control (Position loop and velocity loop) *****/
 /****************************************************************/
+
+extern volatile u32 TIM_7_Counter;
 
 extern bool is_qe_turning;
 
