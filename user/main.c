@@ -130,6 +130,10 @@ int main(void)
 				if (CAN1BrokenLine == 0){
 					//Can1 online
 					//Check the change of switch
+					if(HERO == RUNNING_MODE && GimbalFlag != 1 && CAN2BrokenLine == 0)
+						ChasisFlag = 1;
+					if(HERO == RUNNING_MODE && !(DBUS_ReceiveData.rc.switch_left == 1 && DBUS_ReceiveData.rc.switch_right == 1))
+						GimbalFlag = 3;
 			
 					if (LastDBUSLeftSwitch != DBUS_ReceiveData.rc.switch_left || LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right){
 					  
@@ -177,7 +181,9 @@ int main(void)
 
 
 				if(CAN2BrokenLine == 0){
-			
+					if(HERO == RUNNING_MODE && GimbalFlag != 1)
+						ChasisFlag = 1;
+					
 					tft_clear_line(2);
 					tft_prints(1,2,"CAN2WORKING");
 					turning_speed_limit_control(ticks_msimg);

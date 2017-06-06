@@ -40,12 +40,16 @@ void switch_and_send()
 	switch(HERO){
 		case RUNNING_MODE:
 			ChasisFlag=1;
+			GimbalFlag = 3;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+			QE_RC_dir_multiplier = 1;
 			//withdraw lower pneumatic
 			lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
+			pneumatic_control(3, 0);
+			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 			DataMonitor_Send(5, 0);
 			//speed limit in chasis control
@@ -60,10 +64,12 @@ void switch_and_send()
 			//reverse QWEASD
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+			QE_RC_dir_multiplier = 1;
 			break;
 		case ON_RI_MODE:
 			//turn off gyro
 			ChasisFlag=3;
+			QE_RC_dir_multiplier = -1;
 			//extend lower pneumatic
 			lower_pneumatic_state=true;
 			pneumatic_control(1, 1);
@@ -81,6 +87,7 @@ void switch_and_send()
 			break;
 		case SPEED_LIMITATION:
 			ChasisFlag = 3;
+			QE_RC_dir_multiplier = -1;
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 		  //all lifting motor go up 
@@ -114,7 +121,7 @@ void switch_and_send()
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case DANCING_MODE:
-			//pneumatic_control(4, true);
+			pneumatic_control(4, true);
 			DataMonitor_Send(63, 0);
 			//LiftingMotors oscillate
 			break;
@@ -122,6 +129,10 @@ void switch_and_send()
 			pneumatic_control(4, false);
 			DataMonitor_Send(64, 0);
 			//LiftingMotors stop oscillate
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+			QE_RC_dir_multiplier = -1;
+			ChasisFlag = 3;
 			break;
 		case LOADED:
 			DataMonitor_Send(26, 0);	// turn off friction wheel
@@ -133,6 +144,7 @@ void switch_and_send()
 			ChasisFlag=4;	
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
+			QE_RC_dir_multiplier = 1;
 			break;
 		case LIFTING_MOTOR_DOWN:
 			//Lifting Motors go down

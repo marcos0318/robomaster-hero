@@ -16,9 +16,9 @@
 #define MOVING_BOUND_2 450
 #define LiftingMotorSetpointLimit 31999
 #define UP_SETPOINT 260000					//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
-#define MID_SETPOINT 180000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define DOWN_SETPOINT 1000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define TOTALLY_DOWN_SETPOINT 1000
+#define MID_SETPOINT 220000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define DOWN_SETPOINT 5000					//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define TOTALLY_DOWN_SETPOINT 10000
 #define CAMERA_ARRAY_MULTIPLIER = 2430
 #define FOR_JOHN_MAX_TURNING_SPEED 900
 #define FOR_JOHN_MAX_RUNNING_SPEED 700
@@ -128,6 +128,7 @@ extern int32_t output_angle_speed;
 
 extern int32_t speed_limitor;
 extern int32_t speed_multiplier;
+extern int32_t QE_RC_dir_multiplier;
 extern int32_t angular_speed_limitor;
 extern int32_t forward_speed;
 extern int32_t right_speed;

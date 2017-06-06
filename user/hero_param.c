@@ -6,7 +6,7 @@ int32_t CAN1BrokenLineRecover = 0;
 int32_t CAN2BrokenLineRecover = 0;
 
 
-int32_t GimbalFlag = 1;  
+int32_t GimbalFlag = 3;  
 int32_t ChasisFlag = 1;
 int32_t CameraFlag = 1;
 
@@ -97,6 +97,7 @@ bool Fprev = false;
 
 int32_t filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 int32_t speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+int32_t QE_RC_dir_multiplier = 1;
 //int32_t power_buffer[POWER_BUFFER_LENGTH];
 float feedback_current = 0;
 float feedback_voltage = 0;

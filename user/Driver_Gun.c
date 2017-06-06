@@ -5,6 +5,7 @@
 #include "Driver_Gun.h"
 #include "canBusProcess.h"
 #include "PID.h"
+#include "ticks.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -148,7 +149,8 @@ void GUN_SetMotion(void) {
     static int32_t pressCount = 0;
 
     // friction wheel
-    if (DBUS_ReceiveData.rc.switch_right != 1) {
+    if(get_ms_ticks() > 10000){
+		if (!(DBUS_ReceiveData.rc.switch_right == 1 && DBUS_ReceiveData.rc.switch_left == 1)) {
         FRIC_SET_THRUST_L(800);
         FRIC_SET_THRUST_R(800);
     }
@@ -156,6 +158,7 @@ void GUN_SetMotion(void) {
         FRIC_SET_THRUST_L(0);
         FRIC_SET_THRUST_R(0);
     }
+	}
 
     // poke motor
     jumpPress = DBUS_ReceiveData.mouse.press_left &&

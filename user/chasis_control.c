@@ -65,9 +65,10 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 		//Use Q and E to control direction
 		if (ChasisFlag == 4 || ChasisFlag == 3) {
 			if(DBUS_CheckPush(KEY_Q))
-				wheel_setpoints[i]+=2;
+				wheel_setpoints[i] += 20 * QE_RC_dir_multiplier;
 			if(DBUS_CheckPush(KEY_E))
-				wheel_setpoints[i]-=2;
+				wheel_setpoints[i] -= 20 * QE_RC_dir_multiplier;
+			wheel_setpoints[i] += DBUS_ReceiveData.rc.ch1 * QE_RC_dir_multiplier / 33;
 		}
 
 		xtotal_chasis_prev = xtotal_chasis;
