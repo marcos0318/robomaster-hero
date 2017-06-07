@@ -108,6 +108,8 @@ void USART3_IRQHandler(void)
 		BREAK=false;
 		if(getID() == 90){
 			INIT_FLAG = 1;
+			INIT_protection_up_begin_flag = 1;
+			INIT_protection_timer_begin = TIM_7_counter;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x05){
@@ -179,7 +181,11 @@ void USART3_IRQHandler(void)
 			//turn off friction wheel
             if(getPositionSetpoint() == 0)
 			    FRICTION_WHEEL_STATE=false;
-            else FRICTION_WHEEL_STATE = true;
+            else {
+							FRICTION_WHEEL_STATE = true;
+							for(u8 i = 0; i < 4; i++)
+								LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+						}
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){

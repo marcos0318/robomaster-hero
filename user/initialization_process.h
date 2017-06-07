@@ -21,11 +21,15 @@ extern uint8_t RightBackReachUpper;
 extern uint8_t LeftBackReachUpper;
 
 extern u8 ALL_TO_LIMIT_SWITCH;
+extern u8 HAS_ALL_REACHED_FLAG;
+extern u8 HAS_ALL_DOWN_FLAG;
 
 void Limit_Switch_init();
 void initialization_process_full_init();
 void initialization_process_front_init();
 void initialization_process_back_init();
 void DancingMode(int32_t*, int32_t*);
+//void INIT_time_protection(u8 dir);
+u8 TP_reach_lower_detection();
 
 #endif

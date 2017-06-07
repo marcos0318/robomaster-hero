@@ -15,6 +15,8 @@
 #define UP_DOWN_DISTANCE 280000
 #define DANCING_MODE_UP_DOWN_DIFF 20000
 #define RASING_HEIGHT_FOR_INITIALIZATION 350000
+#define INIT_UP_PROTECTION_TIME 7000
+#define INIT_DOWN_PROTECTION_TIME 7000
 
 extern int32_t LiftingMotorSpeedFeedback[4];
 extern float LiftingMotorPositionFeedback[4];

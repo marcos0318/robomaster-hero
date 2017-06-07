@@ -9,6 +9,13 @@ uint8_t RightFrontReach = 0;
 uint8_t RightBackReach = 0;
 uint8_t LeftBackReach = 0;
 
+//for time protection
+uint8_t TP_LeftFrontReachLower = 0;
+uint8_t TP_RightFrontReachLower = 0;
+uint8_t TP_RightBackReachLower = 0;
+uint8_t TP_LeftBackReachLower = 0;
+
+
 uint8_t LeftFrontReachLower = 0;
 uint8_t RightFrontReachLower = 0;
 uint8_t RightBackReachLower = 0;
@@ -19,6 +26,8 @@ uint8_t RightFrontReachUpper = 1;
 uint8_t RightBackReachUpper = 1;
 uint8_t LeftBackReachUpper = 1;
 
+u8 HAS_ALL_REACHED_FLAG = 0;
+u8 HAS_ALL_DOWN_FLAG = 0;
 u8 ALL_TO_LIMIT_SWITCH = 0;
 
 void Limit_Switch_init(){
@@ -124,16 +133,88 @@ void RB_init(){
 	}
 	
 }
+/*
+void INIT_time_protection(u8 dir)
+{
+	if(dir){
+		//going up protection
+		LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
+		
+	}
+	else{
+		//going down protection
+		LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
+		LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
+	}
+}
+*/
+/*
+uint8_t TP_LeftFrontReachLower = 0;
+uint8_t TP_RightFrontReachLower = 0;
+uint8_t TP_RightBackReachLower = 0;
+uint8_t TP_LeftBackReachLower = 0;
+*/
+
+u8 TP_reach_lower_detection()
+{
+	if(LiftingMotorBias[0] + TOTALLY_DOWN_SETPOINT - CM1Encoder.ecd_angle > -5000)
+		TP_LeftFrontReachLower = 1;
+	else TP_LeftFrontReachLower = 0;
+	if(LiftingMotorBias[1] + TOTALLY_DOWN_SETPOINT - CM2Encoder.ecd_angle > -5000)
+		TP_RightFrontReachLower = 1;
+	else TP_RightFrontReachLower = 0;
+	if(LiftingMotorBias[2] + TOTALLY_DOWN_SETPOINT - CM3Encoder.ecd_angle > -5000)
+		TP_RightBackReachLower = 1;
+	else TP_RightBackReachLower = 0;
+	if(LiftingMotorBias[3] + TOTALLY_DOWN_SETPOINT - CM4Encoder.ecd_angle > -5000)
+		TP_LeftBackReachLower = 1;
+	else TP_LeftBackReachLower = 0;
+	if(TP_LeftFrontReachLower && TP_LeftBackReachLower && TP_RightFrontReachLower && TP_RightBackReachLower)
+		HAS_ALL_DOWN_FLAG = 1;
+	else HAS_ALL_DOWN_FLAG = 0;
+	return HAS_ALL_DOWN_FLAG;
+	
+}
 
 
 
 void initialization_process_full_init(){
+	/*
+	u8 HAS_ALL_REACHED_FLAG = 0;
+	u8 HAS_ALL_DOWN_FLAG = 0;
+	u8 ALL_TO_LIMIT_SWITCH = 0;
+	
+	extern volatile u32 TIM_7_counter;
+	extern volatile uint8_t INIT_protection_up_stop_flag;
+	extern volatile uint8_t INIT_protection_down_stop_flag;
+	extern volatile uint8_t INIT_protection_up_begin_flag;
+	extern volatile uint8_t INIT_protection_down_begin_flag;
+	extern volatile u32 INIT_protection_timer_begin;
+	extern volatile u32 INIT_protection_timer_reach;
+	extern volatile u32 INIT_protection_timer_down;
+	
+	void INIT_time_protection(u8 dir);
+	*/
+	
+	
+	
 	LF_init();
 	RF_init();
 	LB_init();
 	RB_init();
 	if(LeftFrontReach && LeftBackReach && RightFrontReach && RightBackReach){
 		INIT_FLAG = 0;
+		if(INIT_protection_up_begin_flag){
+			HAS_ALL_REACHED_FLAG = 1;
+			INIT_protection_timer_reach = TIM_7_counter;
+			INIT_protection_down_begin_flag = 1;
+			
+		}
 		if(!ALL_TO_LIMIT_SWITCH){
 			for(u8 i = 0; i < 4; i++)
 				LiftingMotorPositionSetpoint[i] =  LiftingMotorBias[i] + TOTALLY_DOWN_SETPOINT;

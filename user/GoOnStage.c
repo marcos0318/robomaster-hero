@@ -1,8 +1,16 @@
 
 #include "GoOnStage.h"
 static u32 ticks_msimg = 0;
+volatile u32 TIM_7_counter = 0;
 uint8_t BROKEN_CABLE = 0;
 volatile uint8_t INIT_FLAG = 1;
+volatile uint8_t INIT_protection_up_stop_flag = 0;
+volatile uint8_t INIT_protection_down_stop_flag = 0;
+volatile uint8_t INIT_protection_up_begin_flag = 1;			//begin protection when turned on
+volatile uint8_t INIT_protection_down_begin_flag = 0;
+volatile u32 INIT_protection_timer_begin = 0;
+volatile u32 INIT_protection_timer_reach = 0;
+volatile u32 INIT_protection_timer_down = 0;
 volatile uint8_t DANCING_MODE_FLAG = 0;
 uint8_t INIT_FLAG_PREV = 1;
 int32_t upper_limit[4] = {0}, lower_limit[4] = {0};
@@ -208,6 +216,7 @@ void TIM7_IRQHandler(void){
     
     if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
     {
+				++TIM_7_counter;
         ticks_msimg = get_ms_ticks();
 				update_GPIO_state();	//always update the GPIO state array
 			/*
@@ -234,6 +243,68 @@ void TIM7_IRQHandler(void){
 					}
 					if(!DANCING_MODE_FLAG)
 						setSetpoint();
+				}
+				//INIT time protection
+				/*
+	u8 HAS_ALL_REACHED_FLAG = 0;
+	u8 HAS_ALL_DOWN_FLAG = 0;
+	
+	extern volatile u32 TIM_7_counter;
+	extern volatile uint8_t INIT_protection_up_stop_flag;
+	extern volatile uint8_t INIT_protection_down_stop_flag;
+	extern volatile uint8_t INIT_protection_up_begin_flag;
+	extern volatile uint8_t INIT_protection_down_begin_flag;
+	extern volatile u32 INIT_protection_timer_begin;
+	extern volatile u32 INIT_protection_timer_reach;
+	extern volatile u32 INIT_protection_timer_down;
+				
+				void INIT_time_protection(u8 dir);
+	*/
+				if(INIT_protection_up_begin_flag && !HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)>INIT_UP_PROTECTION_TIME) )
+				{
+					//has already raising for the maximum raising time, still not all reached 
+					LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
+					LiftingMotorBias[0] = LiftingMotorPositionLimit[0]  - UP_DOWN_DISTANCE;
+					LiftingMotorUpperLimit[0] = LiftingMotorBias[0] + UP_SETPOINT;
+					LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - DOWN_SETPOINT;
+					LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
+					LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE;
+					LiftingMotorUpperLimit[1] = LiftingMotorBias[1] + UP_SETPOINT;
+					LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - DOWN_SETPOINT;
+					LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
+					LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE;
+					LiftingMotorUpperLimit[2] = LiftingMotorBias[2] + UP_SETPOINT;
+					LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
+					LiftingMotorPositionLimit[3] = CM3Encoder.ecd_angle;
+					LiftingMotorBias[3] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE;
+					LiftingMotorUpperLimit[3] = LiftingMotorBias[2] + UP_SETPOINT;
+					LiftingMotorPositionSetpoint[3] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
+					
+					INIT_protection_up_begin_flag = 0;
+					INIT_protection_timer_begin = 0;
+					HAS_ALL_REACHED_FLAG = 0;
+					
+				}
+				else if(INIT_protection_up_begin_flag && HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)<=INIT_UP_PROTECTION_TIME) ){
+					INIT_protection_up_begin_flag = 0;
+					INIT_protection_timer_begin = 0;
+					HAS_ALL_REACHED_FLAG = 0;
+				}
+				if(!INIT_protection_up_begin_flag){
+					HAS_ALL_REACHED_FLAG = 0;
+				}
+				
+				if(INIT_protection_down_begin_flag && !TP_reach_lower_detection() && ((TIM_7_counter-INIT_protection_timer_reach)>INIT_DOWN_PROTECTION_TIME))
+				{
+					LiftingMotorBias[0] = LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle;
+					LiftingMotorBias[1] = LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle;
+					LiftingMotorBias[2] = LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle;
+					LiftingMotorBias[3] = LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle;	
+					INIT_protection_down_begin_flag = 0;
+				}
+				else if(INIT_protection_down_begin_flag && TP_reach_lower_detection()){
+					INIT_protection_timer_down = TIM_7_counter;
+					INIT_protection_down_begin_flag = 0;
 				}
 				broken_time=ticks_msimg;
 				if((broken_time-receive_time)>200)

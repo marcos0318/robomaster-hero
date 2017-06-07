@@ -84,27 +84,25 @@ int main(void)
 				tft_prints(1,2,"Broken %d", BROKEN_CABLE);
 				//tft_prints(1,4,"btime %d", broken_time);
 				//tft_prints(1,5,"rtime %d", receive_time);
-				for(uint8_t i=0;i<4;i++) 
-          tft_clear_line(i+6); 
-        for (int i=1;i<4;i++) 
-          tft_clear_line(i+2);
+				for(u8 i=3;i<10;i++) 
+          tft_clear_line(i); 
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
-				tft_prints(1,3,"RF sp %d", LiftingMotorPositionSetpoint[1]);
+				tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
 				tft_prints(1,4,"RB sp %d", LiftingMotorPositionSetpoint[2]);
-				tft_prints(1,5,"RF ecd %f", CM2Encoder.ecd_angle);
+				tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
 				tft_prints(1,6,"RB ecd %f", CM3Encoder.ecd_angle);
 				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
-				tft_prints(1, 8, "GPIO_RF: %d", gpio_read_input(RightFront));
-				tft_prints(1, 9, "num_RF: %d", num_of_touch(RightFront));
+				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
+				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
         //for (int i=0;i<4;i++) 
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				uint8_t temp = getID();
 				tft_clear_line(10);
 				
-				tft_prints(1,10,"ID:%d",temp);
+				tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
 				tft_clear_line(11);
-				tft_prints(1,11,"key:%d",getPositionSetpoint());
+				tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
 				tft_update();
 			}
 	
