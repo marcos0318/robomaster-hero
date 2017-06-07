@@ -123,6 +123,16 @@ void USART3_IRQHandler(void)
 			INIT_FLAG = 1;
 			broken_time=receive_time=get_ms_ticks();
 		}
+		else if(getID() == 70){
+		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + UP_SETPOINT;
+            LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + UP_SETPOINT;
+            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2] + DOWN_SETPOINT;
+            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3] + DOWN_SETPOINT;    
+		}
+		else if(getID() == 71) {
+            for(u8 i = 0; i < 4; i++)
+                LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
+		}
 		else if(getID()==0xFF){
 			GO_ON_STAGE_ONE_KEY=true;
 			broken_time=receive_time=get_ms_ticks();
@@ -154,10 +164,10 @@ void USART3_IRQHandler(void)
 		else if(getID() == 63){
 			//dancing mode begins
 			DANCING_MODE_FLAG = 1;
-		  LeftFrontReachUpper = 1;
-      LeftBackReachUpper = 1;
-      RightBackReachUpper = 1;
-      RightFrontReachUpper = 1;  
+		    LeftFrontReachUpper = 1;
+            LeftBackReachUpper = 1;
+            RightBackReachUpper = 1;
+            RightFrontReachUpper = 1;  
 			broken_time=receive_time=get_ms_ticks();			
 		}
 		else if(getID() == 64){
@@ -167,7 +177,9 @@ void USART3_IRQHandler(void)
 			//dancing mode ends
 			//need to set all LiftingMotors to raise up to the UP_SETPOINT
 			//turn off friction wheel
-			FRICTION_WHEEL_STATE=false;
+            if(getPositionSetpoint() == 0)
+			    FRICTION_WHEEL_STATE=false;
+            else FRICTION_WHEEL_STATE = true;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x00){

@@ -132,8 +132,7 @@ void setSetpoint(){
     if(!GO_ON_STAGE_ONE_KEY_PREV && GO_ON_STAGE_ONE_KEY) {
         //ticks_msimg_on_prev=ticks_msimg;			//starting counting time for the procedure
         for(uint8_t i=0;i<4;i++)
-            LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
-        //may need to be loaded into flash memory when testing using the RC
+            LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i]+UP_SETPOINT;
         GO_ON_STAGE_ONE_KEY=false;
     }
     if(!GO_DOWN_STAGE_ONE_KEY_PREV && GO_DOWN_STAGE_ONE_KEY) {
