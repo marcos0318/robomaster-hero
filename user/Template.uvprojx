@@ -654,6 +654,11 @@
               <FileType>5</FileType>
               <FilePath>.\BSP_DWT.h</FilePath>
             </File>
+            <File>
+              <FileName>switch_back_state.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\switch_back_state.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

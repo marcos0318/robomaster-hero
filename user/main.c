@@ -167,9 +167,11 @@ int main(void)
 					    }
 					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
 								//go to prev state
-					  	  if(HERO!=RUNNING_MODE)
-									HERO-=1;	
-								switch_and_send();
+					  	  //if(HERO!=RUNNING_MODE)
+									//HERO-=1;	
+								//switch_and_send();
+                          //if(HERO != RUNNING_MODE)
+                              //backState[HERO--]();
 					    }
 					  }
 					}

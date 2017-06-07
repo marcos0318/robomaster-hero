@@ -381,7 +381,17 @@ void TIM7_IRQHandler(void){
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 					DataMonitor_Send(5, 0);
 				}
-				
+				//Back_To_RUNNING_MODE: upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
+				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 3000))
+				{
+					B_RUNNING_MODE_UHPneu_LM_flag = 0;
+					pneumatic_control(4, 0);
+					upper_pneumatic_state = 1;
+					pneumatic_control(3, 0);
+					//Lifting Motors go down
+					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+					DataMonitor_Send(5, 0);
+				}
   		
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);

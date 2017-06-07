@@ -22,7 +22,7 @@ volatile u32 INTO_RI_LPneu_timer = 0;
 volatile u8 SPEED_LIMITATION_LPneu_flag = 0;
 volatile u32 SPEED_LIMITATION_LPneu_timer = 0;
 
-//VERTICAL_PNEUMATIC_WITHDRAWS: upeer horinzontal peumatic timer and flag
+//VERTICAL_PNEUMATIC_WITHDRAWS: upper horinzontal pneumatic and LiftingMotor timer and flag
 volatile u8 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
 volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer = 0;
 
@@ -50,17 +50,14 @@ void switch_and_send()
 {
 	switch(HERO){
 		case RUNNING_MODE:
-			ChasisFlag=1;
+			ChasisFlag = 1;
 			GimbalFlag = 3;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
-			//RC_dir_multiplier = 1;
 			//withdraw lower pneumatic
-			lower_pneumatic_state=false;
+			lower_pneumatic_state = false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
-			pneumatic_control(3, 0);
-			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 			DataMonitor_Send(5, 0);
 			//speed limit in chasis control
@@ -68,12 +65,12 @@ void switch_and_send()
 		case INTO_RI_MODE:
 			//LiftingMotors go up
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
+			DataMonitor_Send(0xFF, 0);        //GO_ON_STAGE_ONE_KEY
 			//reverse QWEASD
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			//turn off gyro
-			ChasisFlag=3;
+			ChasisFlag = 3;
 			//extend lower pneumatic
 			//do it in the interrupt
 			INTO_RI_LPneu_flag = 1;
@@ -82,11 +79,12 @@ void switch_and_send()
 			break;
 		case BACK_WHEEL_UP:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-			DataMonitor_Send(0xFB, LiftingMotorSetpoint[2]);		//ONE_KEY_DOWN_BACK			
+            LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
+			DataMonitor_Send(70, 0);		//ONE_KEY_DOWN_BACK			
 			break;
 		case FRONT_WHEEL_UP:
-			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
-			DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT						
+			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
+			DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT						
 			break;
 		case SPEED_LIMITATION:
 			ChasisFlag = 3;
@@ -99,22 +97,26 @@ void switch_and_send()
 			DataMonitor_Send(69, 0);        //up to the limit switch
 			//LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
 			//DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
-			upper_pneumatic_state = 0;
-			pneumatic_control(3, true);	
-			pneumatic_control(4, false);
+			
 			//withdraw lower pneumatic
 			//do it in the interrupt
 			SPEED_LIMITATION_LPneu_flag = 1;
 			SPEED_LIMITATION_LPneu_timer = TIM_7_Counter;			
+			break;
+		case UPPER_HORIZONTAL_PNEUMATIC_EXTENDS:
+			upper_pneumatic_state = 0;
+			pneumatic_control(3, true);	
+			pneumatic_control(4, false);
+            lower_pneumatic_state=false;
+			pneumatic_control(1, 0);
+			pneumatic_control(2, 0);
+
 			break;
 		case CATCH_GOLF:
 			DataMonitor_Send(28,0);			//turn on friciton wheel
 			//upper_pneumatic_state = 0;
 			//pneumatic_control(3, true);		
 			pneumatic_control(4, true);
-			lower_pneumatic_state=false;
-			pneumatic_control(1, 0);
-			pneumatic_control(2, 0);
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
@@ -144,11 +146,12 @@ void switch_and_send()
 			break;
 		case DOWN_FRONT_WHEEL:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFA, LiftingMotorSetpoint[0]);		//ONE_KEY_UP_FRONT		
+            LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+			DataMonitor_Send(70, 0);		//ONE_KEY_UP_FRONT		
 			break;
 		case DOWN_BACK_WHEEL:
-			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-			DataMonitor_Send(0xF9, LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK		
+			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
+			DataMonitor_Send(0xFF, 0);		//ONE_KEY_UP_BACK		
 			break;
 		
 	}
@@ -192,12 +195,14 @@ void state_control(){
 			}
 	}
 	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
-			if(HERO!=RUNNING_MODE)
-				HERO-=1;	
+			//if(HERO!=RUNNING_MODE)
+				//HERO-=1;	
+            if(HERO != RUNNING_MODE)
+                backState[HERO--]();
 	}
 	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
-		  HERO=RUNNING_MODE;  		
-			SHIFT_F=true;
+		    HERO=RUNNING_MODE;  		
+		    SHIFT_F=true;
 	}
 	else SHIFT_F=false;
 	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){

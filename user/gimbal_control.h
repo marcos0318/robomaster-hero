@@ -5,6 +5,7 @@
 #include "hero_param.h"
 #include "Driver_Gun.h"
 #include "slave_communication.h"
+#include "switch_back_state.h"
 /****************************************************************/
 /***** Gimbal Yaw Control (Position loop and velocity loop) *****/
 /****************************************************************/

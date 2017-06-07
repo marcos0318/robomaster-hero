@@ -19,7 +19,7 @@ extern volatile u32 INTO_RI_LPneu_timer;
 extern volatile u8 SPEED_LIMITATION_LPneu_flag;
 extern volatile u32 SPEED_LIMITATION_LPneu_timer;
 
-//VERTICAL_PNEUMATIC_WITHDRAWS: upeer horinzontal peumatic timer and flag
+//VERTICAL_PNEUMATIC_WITHDRAWS: upper horinzontal peumatic timer and flag
 extern volatile u8 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag;
 extern volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer;
 
@@ -31,6 +31,7 @@ extern enum modeControl{
 	BACK_WHEEL_UP,											//3
 	FRONT_WHEEL_UP,											//4
 	SPEED_LIMITATION,										//5
+	UPPER_HORIZONTAL_PNEUMATIC_EXTENDS,  //6
 	CATCH_GOLF,													//7
 	DANCING_MODE,												//8
 	VERTICAL_PNEUMATIC_WITHDRAWS,				//9
