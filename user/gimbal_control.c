@@ -371,7 +371,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 0);
 				}
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 5000))
 				{
 					VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
 					pneumatic_control(4, false);
@@ -382,7 +382,7 @@ void TIM7_IRQHandler(void){
 					DataMonitor_Send(5, 0);
 				}
 				//Back_To_RUNNING_MODE: upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 3000))
+				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 2000))
 				{
 					B_RUNNING_MODE_UHPneu_LM_flag = 0;
 					pneumatic_control(4, 0);
@@ -391,6 +391,14 @@ void TIM7_IRQHandler(void){
 					//Lifting Motors go down
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 					DataMonitor_Send(5, 0);
+				}
+				
+				//Back_To_DANCING_MODE: upper vertical pneumatic delay extension, friction wheels delay being turned on
+				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 3000))
+				{
+					B_DANCING_MODE_UVPneu_FW_flag = 0;
+					pneumatic_control(4, true);
+					DataMonitor_Send(63, 0);
 				}
   		
     }

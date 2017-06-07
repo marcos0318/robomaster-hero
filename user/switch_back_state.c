@@ -4,6 +4,9 @@
 volatile u8 B_RUNNING_MODE_UHPneu_LM_flag = 0;
 volatile u32 B_RUNNING_MODE_UHPneu_LM_timer = 0;
 
+//Back_To_DANCING_MODE: upper vertical pneumatic and friction wheel timer and flag
+volatile u8 B_DANCING_MODE_UVPneu_FW_flag = 0;
+volatile u32 B_DANCING_MODE_UVPneu_FW_timer = 0;
 
 void Back_To_RUNNING_MODE()
 {
@@ -84,13 +87,14 @@ void Back_To_CATCH_GOLF()
     //LiftingMotors stop oscillate
     //but friction wheel still on
     DataMonitor_Send(64, 1);
+		//LiftinMotors need to go back to the highest point
 
 }
 
 void Back_To_DANCING_MODE()
 {
-    pneumatic_control(4, true);
-    DataMonitor_Send(63, 0);
+		//need to first extend upper horizontal pneumatic
+		pneumatic_control(3, true);
     ChasisFlag = 3;
     filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
     speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
