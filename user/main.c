@@ -170,8 +170,8 @@ int main(void)
 					  	  //if(HERO!=RUNNING_MODE)
 									//HERO-=1;	
 								//switch_and_send();
-                          //if(HERO != RUNNING_MODE)
-                              //backState[HERO--]();
+                          if(HERO != RUNNING_MODE)
+                              backState[HERO--]();
 					    }
 					  }
 					}
