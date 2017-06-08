@@ -8,7 +8,7 @@ float gimbalPositionFeedback = 0;
 bool isGimbalPositionSetpointIncrease = true;
 struct fpid_control_states gimbalPositionState = {0,0,0};
 int32_t yawPosMultiplier = 3;		//DBUS mouse yaw control
-
+u8 LeftJoystick = 1;
 //velocity control
 //struct inc_pid_states gimbalSpeedMoveState;// gimbalSpeedStaticState;
 float gimbalSpeedSetpoint = 0;
@@ -256,7 +256,8 @@ void gimbal_pitch_control() {
 
 
 	rawpitchsetpoint +=  DBUS_ReceiveData.mouse.ytotal - ytotalPrev;
-	rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
+	if(LeftJoystick)
+		rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
 
 	//limit pitch position
 	fwindowLimit(&rawpitchsetpoint, 1000/pitchPosMultiplier, 50/pitchPosMultiplier);
@@ -363,7 +364,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 1);
 				}
 				//SPEED_LIMITATION lower pneumatic delay withdrawl
-				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 3000))
+				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 2000))
 				{
 					SPEED_LIMITATION_LPneu_flag = 0;
 					lower_pneumatic_state=false;
@@ -371,7 +372,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 0);
 				}
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 2000))
 				{
 					VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
 					pneumatic_control(4, false);
@@ -394,7 +395,7 @@ void TIM7_IRQHandler(void){
 				}
 				
 				//Back_To_DANCING_MODE: upper vertical pneumatic delay extension, friction wheels delay being turned on
-				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 3000))
+				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 2000))
 				{
 					B_DANCING_MODE_UVPneu_FW_flag = 0;
 					pneumatic_control(4, true);

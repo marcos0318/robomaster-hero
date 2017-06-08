@@ -23,6 +23,11 @@ extern volatile u32 SPEED_LIMITATION_LPneu_timer;
 extern volatile u8 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag;
 extern volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer;
 
+//for flash memory usage
+extern volatile int16_t LOAD_FLASH;
+extern volatile int16_t step;
+extern volatile u8 RC_CTRL_SHIFT;
+extern volatile u8 RC_CTRL;
 
 extern enum modeControl{
 	

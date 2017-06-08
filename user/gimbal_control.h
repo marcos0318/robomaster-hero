@@ -41,7 +41,7 @@ extern float pitchPositionFeedback;
 extern bool isPitchPositionSetpointIncrease;
 extern int32_t storedPitch;
 extern struct fpid_control_states pitchPositionState;
-
+extern u8 LeftJoystick;
 //velocity control
 
 extern float pitchSpeedSetpoint;

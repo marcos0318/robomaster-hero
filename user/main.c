@@ -164,6 +164,13 @@ int main(void)
 									HERO+=1;
 								else HERO=RUNNING_MODE;
 								switch_and_send();
+								if(HERO == FRONT_WHEEL_UP || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS)
+								{
+									LOAD_FLASH = 0;
+									RC_CTRL = 0;
+									RC_CTRL_SHIFT = 0;
+									step = 0;
+								}
 					    }
 					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
 								//go to prev state
@@ -174,6 +181,70 @@ int main(void)
                               backState[HERO--]();
 					    }
 					  }
+					}
+					if(DBUS_ReceiveData.rc.switch_left == 3 && DBUS_ReceiveData.rc.switch_right == 3 && (HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION)){
+						//Left Middle, Right Middle						DONE
+						//can only manipulate LiftingMotor by RC under BACK_WHEEL_UP and SPEED_LIMITATION mode				DONE
+						
+						LeftJoystick = 0;
+						if(DBUS_ReceiveData.rc.ch3 > 200 || DBUS_ReceiveData.rc.ch3 < -200 || DBUS_ReceiveData.rc.ch2 > 200 || DBUS_ReceiveData.rc.ch2 < -200)
+						{
+							LOAD_FLASH = 1;
+							//after switch_and_send()
+							//need to turn off LOAD_FLASH
+							
+							
+							if(DBUS_ReceiveData.rc.ch3 > 200 || DBUS_ReceiveData.rc.ch3 < -200){
+								//ch3, vertically move, control LeftBack (id 3) and RightBack (id 2)
+								if(DBUS_ReceiveData.rc.ch3 > 200){
+								//up, LiftingMotors go up, using CTRL+SHIFT
+									RC_CTRL_SHIFT = 1;
+									RC_CTRL = 0;
+									step = DBUS_ReceiveData.rc.ch3;
+									if(step & 1)
+										++step;
+								} else {
+								//down, LiftingMotors go down, using CTRL
+									RC_CTRL = 1;
+									RC_CTRL_SHIFT = 0;
+									step = -DBUS_ReceiveData.rc.ch3;
+									if(step & 1)
+										++step;
+								}
+								//modify step to be even
+							}
+							else{
+							//ch2, horizontally move, control LeftFront (id 0) and RightFront (id 1)					
+								if(DBUS_ReceiveData.rc.ch2 > 200){
+								//Left, LiftingMotors go up, using CTRL+SHIFT
+									RC_CTRL_SHIFT = 1;
+									RC_CTRL = 0;
+									step = DBUS_ReceiveData.rc.ch2;
+									if(!(step & 1))
+										++step;
+								} else {
+								//Right, LiftingMotors go down, using CTRL
+									RC_CTRL = 1;
+									RC_CTRL_SHIFT = 0;
+									step = -DBUS_ReceiveData.rc.ch2;
+									if(!(step & 1))
+										++step;
+								}
+							//modify step to be odd
+							}
+						
+						//turn off left joystick control for gimbal
+						//pitch DONE
+						//yaw
+						//in SPEED_LIMITATION mode, detect whether to load DANGIN_MODE_RASING_HEIGHT
+						}
+						else {
+							step = 0;
+						}
+					}
+					else {
+						//turn on left joystick control for gimbal
+						LeftJoystick = 1;
 					}
 					  
 				}

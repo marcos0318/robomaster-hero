@@ -14,6 +14,12 @@ volatile u8 SHIFT_F = 0;
 volatile u8 SHIFT_G = 0;
 volatile u8 state_switch = 0;
 
+//for flash memory usage
+volatile int16_t LOAD_FLASH = 0;
+volatile int16_t step = 0;
+volatile u8 RC_CTRL_SHIFT = 0;
+volatile u8 RC_CTRL = 0;
+
 //INTO_RI_MODE: lower pneumatic timer and flag
 volatile u8 INTO_RI_LPneu_flag = 0;
 volatile u32 INTO_RI_LPneu_timer = 0;
@@ -104,6 +110,8 @@ void switch_and_send()
 			SPEED_LIMITATION_LPneu_timer = TIM_7_Counter;			
 			break;
 		case UPPER_HORIZONTAL_PNEUMATIC_EXTENDS:
+			if(LOAD_FLASH)
+				DataMonitor_Send(72, 0);
 			upper_pneumatic_state = 0;
 			pneumatic_control(3, true);	
 			pneumatic_control(4, false);
@@ -227,8 +235,10 @@ void state_control(){
 }
 
 void transmit(){
-		if (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))) 
+		if (RC_CTRL || (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))) 
 		{
+			//CTRL + FGCV
+			if(step == 0){
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) ){
 				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
@@ -247,6 +257,8 @@ void transmit(){
 				key_bit |= 1<<3;				
 			}
 			DataMonitor_Send(19, key_bit);
+			}
+			else DataMonitor_Send(19, step);
 		}
 		else
 		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
@@ -258,7 +270,9 @@ void transmit(){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
 			}
-			else if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V))){
+			else if(RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))){
+				//CTRL + SHIFT + FGCV
+				if(step == 0){
 				int16_t key_bit = 0;
 				if(DBUS_CheckPush(KEY_F)){
 					LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
@@ -277,6 +291,9 @@ void transmit(){
 					key_bit |= 1<<3;
 				}
 				DataMonitor_Send(0x14, key_bit);
+				}
+				else
+					DataMonitor_Send(0x14, step);
 			}
 			else if(DBUS_CheckPush(KEY_Z)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);
