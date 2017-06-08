@@ -160,18 +160,25 @@ int main(void)
 							//Left changed from middle to Up, similar to G, go to the next step
 					    if (DBUS_ReceiveData.rc.switch_left == 1 && LastDBUSLeftSwitch == 3) {
 					  	  //go to next state
-								if(HERO!=DOWN_BACK_WHEEL)
-									HERO+=1;
-								else HERO=RUNNING_MODE;
-								switch_and_send();
-								if(HERO == FRONT_WHEEL_UP || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS)
+								
+								if(HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION)
 								{
 									LOAD_FLASH = 0;
 									RC_CTRL = 0;
 									RC_CTRL_SHIFT = 0;
 									step = 0;
-									LeftJoystick = 3;
+									LeftJoystick = 1;
+									if(HERO == BACK_WHEEL_UP)
+										//need to load UP_SETPOINT
+										DataMonitor_Send(72, 1);
+									else if(HERO == SPEED_LIMITATION)
+										//need to load DANCING_MODE_RAISING_HEIGHT
+										DataMonitor_Send(72, 0);
 								}
+								if(HERO!=DOWN_BACK_WHEEL)
+									HERO+=1;
+								else HERO=RUNNING_MODE;
+								switch_and_send();
 					    }
 					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
 								//go to prev state
@@ -205,7 +212,7 @@ int main(void)
 									step/=3;
 									if(step & 1)
 										++step;
-								} else {
+								} else if(DBUS_ReceiveData.rc.ch3 < -300){
 								//down, LiftingMotors go down, using CTRL
 									RC_CTRL = 1;
 									RC_CTRL_SHIFT = 0;
@@ -214,6 +221,7 @@ int main(void)
 									if(step & 1)
 										++step;
 								}
+								else step = 0;
 								//modify step to be even
 							}
 							else{
@@ -226,7 +234,7 @@ int main(void)
 									step/=3;
 									if(!(step & 1))
 										++step;
-								} else {
+								} else if(DBUS_ReceiveData.rc.ch2 < -300){
 								//Right, LiftingMotors go down, using CTRL
 									RC_CTRL = 1;
 									RC_CTRL_SHIFT = 0;
@@ -235,6 +243,7 @@ int main(void)
 									if(!(step & 1))
 										++step;
 								}
+								else step = 0;
 							//modify step to be odd
 							}
 						

@@ -166,7 +166,7 @@ void switch_and_send()
 }
 
 void state_control(){
-	if(DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT))){
+	if(RC_CTRL || RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT)))){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
 		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
@@ -261,12 +261,12 @@ void transmit(){
 			else DataMonitor_Send(19, step);
 		}
 		else
-		if (DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
-			if(DBUS_CheckPush(KEY_R) && DBUS_CheckPush(KEY_CTRL)){
+		if (RC_CTRL_SHIFT || DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
+			if(!RC_CTRL_SHIFT && DBUS_CheckPush(KEY_R) && DBUS_CheckPush(KEY_CTRL)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(90, 0);
 			}
-			else if(DBUS_CheckPush(KEY_R) && !DBUS_CheckPush(KEY_CTRL)){
+			else if(!RC_CTRL_SHIFT && DBUS_CheckPush(KEY_R) && !DBUS_CheckPush(KEY_CTRL)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
 			}
