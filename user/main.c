@@ -67,17 +67,7 @@ int main(void)
 			
 			
 			
-			if(ticks_msimg>10000){
-				if(!FRICTION_WHEEL_STATE)
-					friction_wheel_setpoint=0;
-				else {
-					if(friction_wheel_setpoint<300)
-						friction_wheel_setpoint+=1;
-				}
-				FRIC_SET_THRUST_L(friction_wheel_setpoint);
-				FRIC_SET_THRUST_R(friction_wheel_setpoint);
-				FRIC_SET_THRUST_M(friction_wheel_setpoint);
-			}
+			
 			if(ticks_msimg % 50 ==0) {
 				//tft_clear();
 				tft_clear_line(2);
@@ -88,10 +78,15 @@ int main(void)
           tft_clear_line(i); 
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
-				tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
-				tft_prints(1,4,"RB sp %d", LiftingMotorPositionSetpoint[2]);
-				tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
-				tft_prints(1,6,"RB ecd %f", CM3Encoder.ecd_angle);
+				//tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
+				//tft_prints(1,4,"RB sp %d", LiftingMotorPositionSetpoint[2]);
+				//tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
+				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
+				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
+				tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
+				tft_prints(1,4,"RH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
+				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
+				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
 				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
 				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
 				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
@@ -102,7 +97,8 @@ int main(void)
 				
 				tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
 				tft_clear_line(11);
-				tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
+				//tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
+				tft_prints(1, 11, "UBF:%d DBF:%d", INIT_protection_up_begin_flag, INIT_protection_down_begin_flag);
 				tft_update();
 			}
 	

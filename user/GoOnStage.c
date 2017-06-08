@@ -226,8 +226,26 @@ void TIM7_IRQHandler(void){
 			then unconditionally stop
 			And I will need to update the bias, lower_limit and upper_limit
 			*/
+			
+			
+			//friction wheel initialization needs to be delayed
+			if(ticks_msimg>10000){
+				if(!FRICTION_WHEEL_STATE)
+					friction_wheel_setpoint=0;
+				else {
+					if(friction_wheel_setpoint<350)
+						friction_wheel_setpoint+=1;
+				}
+				FRIC_SET_THRUST_L(friction_wheel_setpoint);
+				FRIC_SET_THRUST_R(friction_wheel_setpoint);
+				FRIC_SET_THRUST_M(friction_wheel_setpoint);
+			}
+			
+			
+			
+			//need to fix the bug when RC lefr up right down, then open the RC, the init will not start
 				if(INIT_FLAG){
-						SPEED_LIMIT = 3000;
+						SPEED_LIMIT = 30000;
 						initialization_process_full_init();
 					
 				}
@@ -236,8 +254,10 @@ void TIM7_IRQHandler(void){
 					if(DANCING_MODE_FLAG){
 						for(u8 i = 0; i < 4; i++)
 						{
-							lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
-							upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+							//lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
+							//upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+							upper_limit[i]=LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
+							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
 						}
 						DancingMode(upper_limit, lower_limit);
 					}
@@ -281,13 +301,14 @@ void TIM7_IRQHandler(void){
 					LiftingMotorPositionSetpoint[3] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
 					
 					INIT_protection_up_begin_flag = 0;
-					INIT_protection_timer_begin = 0;
+					//INIT_protection_timer_begin = 0;
 					HAS_ALL_REACHED_FLAG = 0;
+					INIT_FLAG = 0;
 					
 				}
 				else if(INIT_protection_up_begin_flag && HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)<=INIT_UP_PROTECTION_TIME) ){
 					INIT_protection_up_begin_flag = 0;
-					INIT_protection_timer_begin = 0;
+					//INIT_protection_timer_begin = 0;
 					HAS_ALL_REACHED_FLAG = 0;
 				}
 				if(!INIT_protection_up_begin_flag){

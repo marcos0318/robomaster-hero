@@ -7,13 +7,14 @@
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
-#define SPEED_SETPOINT_LIMIT 1200
+#define SPEED_SETPOINT_LIMIT 1100
 #define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 220000
 #define TOTALLY_DOWN_SETPOINT 10000
 #define UP_DOWN_DISTANCE 280000
-#define DANCING_MODE_UP_DOWN_DIFF 20000
+#define DANCING_MODE_UP_DOWN_DIFF 30000
+#define DANCING_MODE_RASING_HEIGHT 60600
 #define RASING_HEIGHT_FOR_INITIALIZATION 350000
 #define INIT_UP_PROTECTION_TIME 7000
 #define INIT_DOWN_PROTECTION_TIME 7000

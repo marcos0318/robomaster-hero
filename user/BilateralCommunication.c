@@ -80,14 +80,16 @@ void modifyingBias(uint8_t i){
 	if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]){
 			LiftingMotorBias[i]=LiftingMotorPositionSetpoint[i];
 			LiftingMotorUpperLimit[i]=LiftingMotorBias[i]+UP_SETPOINT;
+			LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE;
 	}
 }
 
 void modifyingUpperLimit(uint8_t i){
 	LiftingMotorPositionSetpoint[i]+=200;
-	if(LiftingMotorPositionSetpoint[i] > LiftingMotorUpperLimit[i]){
-			LiftingMotorUpperLimit[i]=LiftingMotorPositionSetpoint[i];
-			LiftingMotorBias[i]=LiftingMotorUpperLimit[i]-UP_SETPOINT;
+	if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]){
+			LiftingMotorPositionLimit[i] = LiftingMotorPositionSetpoint[i];
+			LiftingMotorBias[i]=LiftingMotorPositionLimit[i]-UP_DOWN_DISTANCE;
+			LiftingMotorUpperLimit[i]=LiftingMotorBias[i] + UP_SETPOINT;
 	}
 }
 u8 UARTtemp1;
@@ -121,8 +123,11 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID()==69){
 			//all go up to the limit switch
-			ALL_TO_LIMIT_SWITCH = 1;
-			INIT_FLAG = 1;
+			//ALL_TO_LIMIT_SWITCH = 1;
+			//INIT_FLAG = 1;
+			for(u8 i = 0; i < 4; i++)
+								//LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+					LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 70){
@@ -165,6 +170,7 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 63){
 			//dancing mode begins
+			INIT_FLAG = 0;
 			DANCING_MODE_FLAG = 1;
 		    LeftFrontReachUpper = 1;
             LeftBackReachUpper = 1;
@@ -175,7 +181,8 @@ void USART3_IRQHandler(void)
 		else if(getID() == 64){
 			DANCING_MODE_FLAG = 0;
 			for(u8 i = 0; i < 4; i++)
-				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
+				//LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
+				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
 			//dancing mode ends
 			//need to set all LiftingMotors to raise up to the UP_SETPOINT
 			//turn off friction wheel
@@ -184,7 +191,8 @@ void USART3_IRQHandler(void)
             else {
 							FRICTION_WHEEL_STATE = true;
 							for(u8 i = 0; i < 4; i++)
-								LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+								//LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+								LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
 						}
 			broken_time=receive_time=get_ms_ticks();
 		}
