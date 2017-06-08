@@ -227,32 +227,29 @@ void USART3_IRQHandler(void)
 		else if(getID() == 19){
 			int16_t key_bit = getPositionSetpoint();
 			u16 step = 200;
-			if(key_bit < 100){
+			if(key_bit < 100 && key_bit != 0){
 				step = 200;
 			if((key_bit>>0) & 1){														
 				//Ctrl F
 				//LiftingMotor[0] draws back
 				modifyingBias(0, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>1) & 1){
 				//Ctrl G
 				//LiftingMotor[1] draws back
 				modifyingBias(1, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>2) & 1){
 				//Ctrl C
 				//LiftingMotor[3] draws back
 				modifyingBias(3, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>3) & 1){
 				//Ctrl V
 				//LiftingMotor[2] draws back
 				modifyingBias(2, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
+							broken_time=receive_time=get_ms_ticks();
 			}
 			else {
 				step = key_bit;
@@ -271,32 +268,29 @@ void USART3_IRQHandler(void)
 		else if(getID() == 0x14){
 			int16_t key_bit = getPositionSetpoint();
 			u16 step = 200;
-			if(key_bit < 100){
+			if(key_bit < 100 && key_bit != 0){
 				step = 200;
 			if((key_bit>>0) & 1){
 				//Ctrl Shift F
 				//LiftingMotor[0] expands
 				modifyingUpperLimit(0, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>1) & 1){
 				//Ctrl Shift G
 				//LiftingMotor[1] expands
 				modifyingUpperLimit(1, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>2) & 1){
 				//Ctrl Shift C
 				//LiftingMotor[3] expands
 				modifyingUpperLimit(3, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
 			if((key_bit>>3) & 1){
 				//Ctrl Shift V
 				//LiftingMotor[2] expands
 				modifyingUpperLimit(2, step);
-				broken_time=receive_time=get_ms_ticks();
 			}
+							broken_time=receive_time=get_ms_ticks();
 			}
 			else{
 				step = key_bit;
