@@ -8,16 +8,23 @@
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
 #define SPEED_SETPOINT_LIMIT 1100
-#define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
+//#define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 220000
 #define TOTALLY_DOWN_SETPOINT 10000
 #define UP_DOWN_DISTANCE 280000
 #define DANCING_MODE_UP_DOWN_DIFF 30000
-#define DANCING_MODE_RASING_HEIGHT 60600
+//#define DANCING_MODE_RASING_HEIGHT 60600
 #define RASING_HEIGHT_FOR_INITIALIZATION 350000
-#define INIT_UP_PROTECTION_TIME 7000
-#define INIT_DOWN_PROTECTION_TIME 7000
+#define INIT_UP_PROTECTION_TIME 6800
+#define INIT_DOWN_PROTECTION_TIME 6800
+
+extern u32 UP_SETPOINT;
+extern u32 DANCING_MODE_RASING_HEIGHT;
+//type to be u32 so as to fit in the write_flash() function
+//when to update them ?
+//need to read getPositionSetpoint(), the second field of the data sent by Data_Monitor
+//when to update them by flash ?
 
 extern int32_t LiftingMotorSpeedFeedback[4];
 extern float LiftingMotorPositionFeedback[4];

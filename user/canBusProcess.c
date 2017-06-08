@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "canBusProcess.h"
 #include "judge.h"
+#include "GoOnStage.h"
 
 static uint32_t can_count = 0;
 
@@ -112,19 +113,23 @@ void CanReceiveMsgProcess_for_chassis(CanRxMsg * msg)
 		{
 				case CAN_BUS2_MOTOR1_FEEDBACK_MSG_ID:
 				{
+					Wheel1BrokenLineCounter=TIM_7_counter;
 					(can_count<=50) ? GetEncoderBias(&CM1Encoder ,msg):EncoderProcess(&CM1Encoder ,msg);       //获取到编码器的初始偏差值            
                     
 				}break;
 				case CAN_BUS2_MOTOR2_FEEDBACK_MSG_ID:
 				{
+					Wheel2BrokenLineCounter=TIM_7_counter;
 					(can_count<=50) ? GetEncoderBias(&CM2Encoder ,msg):EncoderProcess(&CM2Encoder ,msg);
 				}break;
 				case CAN_BUS2_MOTOR3_FEEDBACK_MSG_ID:
 				{
+					Wheel3BrokenLineCounter=TIM_7_counter;
 					(can_count<=50) ? GetEncoderBias(&CM3Encoder ,msg):EncoderProcess(&CM3Encoder ,msg);   
 				}break;
 				case CAN_BUS2_MOTOR4_FEEDBACK_MSG_ID:
 				{
+					Wheel4BrokenLineCounter=TIM_7_counter;
 					(can_count<=50) ? GetEncoderBias(&CM4Encoder ,msg):EncoderProcess(&CM4Encoder ,msg);
 				}break;
 				
@@ -179,8 +184,10 @@ void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3
 	
     tx_message.Data[6] = (uint8_t)(cm4_iq >> 8);
     tx_message.Data[7] = (uint8_t)cm4_iq;
-#else
-	if (InfantryJudge.LastBlood > 0) {
+
+	#else	
+	//if (InfantryJudge.LastBlood > 0) {
+	if(1){
 		tx_message.Data[0] = (uint8_t)(cm1_iq >> 8);
     tx_message.Data[1] = (uint8_t)cm1_iq;
 	
@@ -192,6 +199,7 @@ void Set_CM_Speed(CAN_TypeDef *CANx, int16_t cm1_iq, int16_t cm2_iq, int16_t cm3
 	
     tx_message.Data[6] = (uint8_t)(cm4_iq >> 8);
     tx_message.Data[7] = (uint8_t)cm4_iq;
+		
 	}
 	else {
 		tx_message.Data[0] = 0;
@@ -233,7 +241,8 @@ void Set_Gimbal_Current(CAN_TypeDef *CANx, int16_t gimbal_yaw_iq, int16_t gimbal
     tx_message.Data[6] = 0x00;
     tx_message.Data[7] = 0x00;
 #else
-	if (InfantryJudge.LastBlood > 0) {
+//	if (InfantryJudge.LastBlood > 0) {
+	if(1){
 		tx_message.Data[0] = (uint8_t)(gimbal_yaw_iq >> 8);
     tx_message.Data[1] = (uint8_t)gimbal_yaw_iq;
     tx_message.Data[2] = (uint8_t)(gimbal_pitch_iq >> 8);

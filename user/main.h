@@ -21,7 +21,7 @@
 #include "data_monitor.h"
 #include "BilateralCommunication.h"
 #include "adc.h"
-
+#include "flash.h"
 
 #include "stm32f4xx_crc.h"
 #include "core_cm4.h"

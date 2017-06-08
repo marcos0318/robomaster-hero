@@ -6,7 +6,6 @@
 
 static u32 ticks_msimg = (u32)-1;
 
-
 void init(){
 //	InfantryJudge.LastBlood = 1500;
 	SysTick_Init();  
@@ -24,9 +23,7 @@ void init(){
 	CAN1_Configuration();
 	CAN2_Configuration();
 	gyro_init();
-	gyro_cal();
-	//Friction_wheel_init();
-	GUN_Init();
+	gyro_cal();	
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 	LiftingMotorInit();
 	Limit_Switch_init();
@@ -63,15 +60,11 @@ int main(void)
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 			LED_blink(LED1);
 			readFeedback();
-			
-			
-			
-			
-			
+				
 			if(ticks_msimg % 50 ==0) {
 				//tft_clear();
 				tft_clear_line(2);
-				tft_prints(1,2,"Broken %d", BROKEN_CABLE);
+				tft_prints(1,2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
 				//tft_prints(1,4,"btime %d", broken_time);
 				//tft_prints(1,5,"rtime %d", receive_time);
 				for(u8 i=3;i<10;i++) 

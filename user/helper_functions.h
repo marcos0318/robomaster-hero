@@ -18,6 +18,6 @@ extern void f_buffer_in(float* b , int32_t length, int32_t counter, float input)
 extern int32_t abs(int32_t x);
 
 extern void wheel_setpoints_adjust(int32_t * sp1, int32_t* sp2, int32_t* sp3, int32_t* sp4, int32_t limit);
-
+uint8_t checkBrokenLine(uint32_t ticks, uint32_t counter);
 
 #endif

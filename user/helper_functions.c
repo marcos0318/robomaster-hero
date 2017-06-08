@@ -54,3 +54,10 @@ void wheel_setpoints_adjust(int32_t * sp1, int32_t* sp2, int32_t* sp3, int32_t* 
 			*sp4 = *sp4 * limit  / max;			
 	}
 }	
+
+uint8_t checkBrokenLine(uint32_t ticks, uint32_t counter)
+{
+	//if((ticks-counter)<80 && (ticks-counter)>-80) return 0;
+	if((ticks-counter)<=80) return 0;
+	else return 1;
+}

@@ -1,4 +1,6 @@
 #include "Lifting_Motor_Control.h"
+u32 UP_SETPOINT = 260000;
+u32 DANCING_MODE_RASING_HEIGHT = 60600;
 int32_t LiftingMotorSpeedFeedback[4] = {0};
 float LiftingMotorPositionFeedback[4] = {0};
 volatile int32_t LiftingMotorPositionSetpoint[4] = {0};
@@ -6,7 +8,7 @@ int32_t LiftingMotorPositionSetpointBuffered[4] = {0};
 int32_t LiftingMotorSpeedSetpoint[4] = {0};
 int32_t LiftingMotorSpeedSetpointBuffered[4] = {0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
-int32_t LiftingMotorUpperLimit[4] = {UP_SETPOINT, UP_SETPOINT, UP_SETPOINT, UP_SETPOINT};
+int32_t LiftingMotorUpperLimit[4] = {0};
 int32_t LiftingMotorPositionLimit[4] = {UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE};
 //Index indices which element in the array should I store current GPIO state
 uint8_t LeftFrontIndex = 0;
@@ -81,4 +83,16 @@ void LiftingMotorInit(){
 	kp = 80;
 	ki = 4;
 	kd = 1;
+	
+	//read UP_SETPOINT and DANCING_MODE_RASING_HEIGHT from flash memory
+	UP_SETPOINT = readFlash(0);
+	if(UP_SETPOINT < 50000 || UP_SETPOINT > 280000) UP_SETPOINT = 260000;	//for first recording protection
+	DANCING_MODE_RASING_HEIGHT = readFlash(1);
+	if(DANCING_MODE_RASING_HEIGHT < 50000 || DANCING_MODE_RASING_HEIGHT > 280000) DANCING_MODE_RASING_HEIGHT = 60600;	//for first recording protection
+	//update LiftingMotorUpperLimit[4] by UP_SETPOINT
+	for(u8 i = 0; i < 4; i++)
+		LiftingMotorUpperLimit[i] = UP_SETPOINT;
+	
+	
+	
 }
