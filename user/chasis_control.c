@@ -68,7 +68,8 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 				wheel_setpoints[i] -= FOR_JOHN_QE_INC;
 			if(DBUS_CheckPush(KEY_E))
 				wheel_setpoints[i] += FOR_JOHN_QE_INC;
-			wheel_setpoints[i] += DBUS_ReceiveData.rc.ch2 / 5;
+			if(LeftJoystick)
+				wheel_setpoints[i] += DBUS_ReceiveData.rc.ch2 / 5;
 		}
 
 		xtotal_chasis_prev = xtotal_chasis;
