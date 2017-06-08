@@ -8,7 +8,7 @@ int32_t LiftingMotorPositionSetpointBuffered[4] = {0};
 int32_t LiftingMotorSpeedSetpoint[4] = {0};
 int32_t LiftingMotorSpeedSetpointBuffered[4] = {0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
-int32_t LiftingMotorUpperLimit[4] = {0};
+//int32_t LiftingMotorUpperLimit[4] = {0};
 int32_t LiftingMotorPositionLimit[4] = {UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE, UP_DOWN_DISTANCE};
 //Index indices which element in the array should I store current GPIO state
 uint8_t LeftFrontIndex = 0;
@@ -90,8 +90,8 @@ void LiftingMotorInit(){
 	DANCING_MODE_RASING_HEIGHT = readFlash(1);
 	if(DANCING_MODE_RASING_HEIGHT < 50000 || DANCING_MODE_RASING_HEIGHT > 280000) DANCING_MODE_RASING_HEIGHT = 60600;	//for first recording protection
 	//update LiftingMotorUpperLimit[4] by UP_SETPOINT
-	for(u8 i = 0; i < 4; i++)
-		LiftingMotorUpperLimit[i] = UP_SETPOINT;
+	//for(u8 i = 0; i < 4; i++)
+		//LiftingMotorUpperLimit[i] = UP_SETPOINT;
 	
 	
 	

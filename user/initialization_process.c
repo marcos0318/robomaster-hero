@@ -46,7 +46,7 @@ void LF_init(){
 			LeftFrontReach = 1;
 			LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
 			LiftingMotorBias[0] = LiftingMotorPositionLimit[0] - UP_DOWN_DISTANCE;
-			LiftingMotorUpperLimit[0] = LiftingMotorBias[0] + UP_SETPOINT;
+			//LiftingMotorUpperLimit[0] = LiftingMotorBias[0] + UP_SETPOINT;
 			//LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + TOTALLY_DOWN_SETPOINT;
 			PIDClearError(&LiftingMotorState[0]);
 			fpidClearError(&LiftingMotorPositionState[0]);
@@ -69,7 +69,7 @@ void RF_init(){
 			RightFrontReach = 1;
 			LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
 			LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE;
-			LiftingMotorUpperLimit[1] = LiftingMotorBias[1] + UP_SETPOINT;
+			//LiftingMotorUpperLimit[1] = LiftingMotorBias[1] + UP_SETPOINT;
 			//LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + TOTALLY_DOWN_SETPOINT;
 			PIDClearError(&LiftingMotorState[1]);
 			fpidClearError(&LiftingMotorPositionState[1]);
@@ -94,7 +94,7 @@ void LB_init(){
 			LeftBackReach = 1;
 			LiftingMotorPositionLimit[3] = CM4Encoder.ecd_angle;
 			LiftingMotorBias[3] = LiftingMotorPositionLimit[3] - UP_DOWN_DISTANCE;
-			LiftingMotorUpperLimit[3] = LiftingMotorBias[3] + UP_SETPOINT;
+			//LiftingMotorUpperLimit[3] = LiftingMotorBias[3] + UP_SETPOINT;
 			//LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3] + TOTALLY_DOWN_SETPOINT;
 			PIDClearError(&LiftingMotorState[3]);
 			fpidClearError(&LiftingMotorPositionState[3]);
@@ -118,7 +118,7 @@ void RB_init(){
 			RightBackReach = 1;
 			LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
 			LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE;
-			LiftingMotorUpperLimit[2] = LiftingMotorBias[2] + UP_SETPOINT;
+			//LiftingMotorUpperLimit[2] = LiftingMotorBias[2] + UP_SETPOINT;
 			//LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2] + TOTALLY_DOWN_SETPOINT;
 			PIDClearError(&LiftingMotorState[2]);
 			fpidClearError(&LiftingMotorPositionState[2]);

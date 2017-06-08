@@ -79,7 +79,7 @@ void modifyingBias(uint8_t i, u16 step){
 	LiftingMotorPositionSetpoint[i]-=step;
 	if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]){
 			LiftingMotorBias[i]=LiftingMotorPositionSetpoint[i];
-			LiftingMotorUpperLimit[i]=LiftingMotorBias[i]+UP_SETPOINT;
+			//LiftingMotorUpperLimit[i]=LiftingMotorBias[i]+UP_SETPOINT;
 			LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE;
 	}
 }
@@ -89,7 +89,7 @@ void modifyingUpperLimit(uint8_t i, u16 step){
 	if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]){
 			LiftingMotorPositionLimit[i] = LiftingMotorPositionSetpoint[i];
 			LiftingMotorBias[i]=LiftingMotorPositionLimit[i]-UP_DOWN_DISTANCE;
-			LiftingMotorUpperLimit[i]=LiftingMotorBias[i] + UP_SETPOINT;
+			//LiftingMotorUpperLimit[i]=LiftingMotorBias[i] + UP_SETPOINT;
 	}
 }
 u8 UARTtemp1;
@@ -142,6 +142,15 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 72) {
 			//load DANCING_MODE_RASING_HEIGHT
+			if(getPositionSetpoint() == 1){
+				UP_SETPOINT = LiftingMotorPositionSetpoint[0] - LiftingMotorBias[0];
+				writeFlash(0, UP_SETPOINT);
+			}
+			else if(getPositionSetpoint() == 0)
+			{
+				DANCING_MODE_RASING_HEIGHT = LiftingMotorPositionSetpoint[2] - LiftingMotorBias[2];
+				writeFlash(1, DANCING_MODE_RASING_HEIGHT);
+			}
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFF){
