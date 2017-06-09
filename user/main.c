@@ -166,10 +166,10 @@ int main(void)
 									if(LOAD_FLASH == 1){
 										if(HERO == BACK_WHEEL_UP)
 										//need to load UP_SETPOINT
-										DataMonitor_Send(72, 1);
-									else if(HERO == SPEED_LIMITATION)
+											DataMonitor_Send(72, 1);
+										else if(HERO == SPEED_LIMITATION)
 										//need to load DANCING_MODE_RAISING_HEIGHT
-										DataMonitor_Send(72, 0);
+											DataMonitor_Send(72, 0);
 									}
 									LOAD_FLASH = 0;
 									RC_CTRL = 0;
@@ -287,7 +287,7 @@ int main(void)
 					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
-				if(ticks_msimg % 20 == 0)
+				if(TIM_7_Counter % 20 == 0)
 					state_control();
 			}
 			else {
@@ -321,11 +321,12 @@ int main(void)
 				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
 		
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
-				//tft_clear_line(7);
+				tft_clear_line(7);
 //				tft_clear_line(3);
 //				tft_clear_line(4);
 //				tft_clear_line(5);
-//				tft_clear_line(6);
+				tft_clear_line(6);
+				tft_prints(1, 6, "LF:%d", LOAD_FLASH);
 //				tft_clear_line(10);
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
 				//tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );

@@ -1,6 +1,21 @@
 #include "gimbal_control.h"
 
 volatile u32 TIM_7_Counter = 0;
+
+u8 FOR_JOHN_SHIFT_G_SPECIAL_MODE = 0;
+u8 SHIFT_F_F_up_state = 0;
+u8 FOR_JOHN_G_PREV = 0;
+u8 FOR_JOHN_F_PREV = 0;
+u8 FOR_JOHN_SHIFT_G_PREV = 0;
+u8 FOR_JOHN_SHIFT_F_PREV = 0;
+u8 FOR_JOHN_SHIFT_F = 0;
+u8 FOR_JOHN_SHIFT_G = 0;
+u8 FOR_JOHN_F = 0;
+u8 FOR_JOHN_G = 0;
+u8 SHIFT_F_F_DETECTOR = 0;
+u8 SHIFT_G_G_DETECTOR = 0;
+volatile u32 SHIFT_G_timer = 0;
+volatile u32 SHIFT_F_timer = 0;
 //position control
 float gimbalPositionSetpoint = 0;// prevGimbalPositionSetpoint = 0;
 float bufferedGimbalPositionSetpoint = 0;
@@ -354,7 +369,88 @@ void TIM7_IRQHandler(void){
 			GUN_PokeControl();
 			if(CAN1BrokenLine == 0)
 				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-			
+				
+				if(TIM_7_Counter % 20 == 10){
+				//key check
+				FOR_JOHN_G=DBUS_CheckPush(KEY_G);
+				FOR_JOHN_F=DBUS_CheckPush(KEY_F);
+				FOR_JOHN_SHIFT_F = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+				FOR_JOHN_SHIFT_G = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
+				
+				if(SHIFT_F_F_DETECTOR &&(TIM_7_Counter - SHIFT_F_timer) > 500) {
+					SHIFT_F_F_DETECTOR = 0;
+					//SHIFT+F
+						HERO = RUNNING_MODE;
+						switch_and_send();
+				}
+				if(SHIFT_G_G_DETECTOR && (TIM_7_Counter - SHIFT_G_timer) > 500) {
+					SHIFT_G_G_DETECTOR = 0;
+					//SHIFT+G
+						//jump to a special mode, after that mode, if press G, will jump to SPEED_LIMITATION
+						LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
+						DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT
+						//reverse QWEASD
+						filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+						speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+						//turn off gyro
+						ChasisFlag = 3;		
+						pneumatic_control(1, 0);
+						pneumatic_control(2, 0);						
+						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
+					
+				}
+				if(!FOR_JOHN_SHIFT_F && FOR_JOHN_SHIFT_F_PREV){
+					SHIFT_F_F_DETECTOR = 1;
+					SHIFT_F_timer = TIM_7_Counter;
+				}
+				if(!FOR_JOHN_SHIFT_G && FOR_JOHN_SHIFT_G_PREV){
+					SHIFT_G_G_DETECTOR = 1;
+					SHIFT_G_timer = TIM_7_Counter;
+				}
+				if(FOR_JOHN_SHIFT_F && !FOR_JOHN_SHIFT_F_PREV && ((TIM_7_Counter - SHIFT_F_timer) < 500)){
+					
+					//SHIFT+F+F
+						//upper pneumatic extends
+						if(SHIFT_F_F_up_state == 0){
+							pneumatic_control(3,1);
+							SHIFT_F_F_up_state =1;
+						}
+						else{
+							pneumatic_control(3,0);
+							SHIFT_F_F_up_state =0;
+						}
+					
+					
+				}
+				
+				if(FOR_JOHN_SHIFT_G && !FOR_JOHN_SHIFT_G_PREV && ((TIM_7_Counter - SHIFT_G_timer) < 500)){
+					
+						//SHIFT+G+G
+						//jump to jump off island mode
+						pneumatic_control(1, 0);
+						pneumatic_control(2, 0);
+						LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
+            LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+						DataMonitor_Send(70, 0);
+					
+					
+				}
+				if(FOR_JOHN_SHIFT_G_SPECIAL_MODE && !FOR_JOHN_G_PREV && FOR_JOHN_G)
+				{
+						HERO = SPEED_LIMITATION;
+						switch_and_send();
+						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 0;
+				}
+
+				//key check
+				FOR_JOHN_G_PREV=DBUS_CheckPush(KEY_G);
+				FOR_JOHN_F_PREV=DBUS_CheckPush(KEY_F);
+				FOR_JOHN_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
+				FOR_JOHN_SHIFT_G_PREV = DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT);
+			}
+				
+				
+				
 				//INTO_RI lower pneumatic delay extention
 				if(INTO_RI_LPneu_flag == 1 && ((TIM_7_Counter - INTO_RI_LPneu_timer) > 3000))
 				{

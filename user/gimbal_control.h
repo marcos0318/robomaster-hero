@@ -14,6 +14,23 @@ extern volatile u32 TIM_7_Counter;
 
 extern bool is_qe_turning;
 
+//SHIFT+G, SHIFT+G+G
+//SHIFT+F, SHIFT+F+F
+extern u8 SHIFT_F_F_up_state;
+extern u8 FOR_JOHN_G_PREV;
+extern u8 FOR_JOHN_F_PREV;
+extern u8 FOR_JOHN_SHIFT_G_PREV;
+extern u8 FOR_JOHN_SHIFT_F_PREV;
+extern u8 FOR_JOHN_SHIFT_F;
+extern u8 FOR_JOHN_SHIFT_G;
+extern u8 FOR_JOHN_F;
+extern u8 FOR_JOHN_G;
+extern u8 SHIFT_F_F_DETECTOR;
+extern u8 SHIFT_G_G_DETECTOR;
+extern u8 FOR_JOHN_SHIFT_G_SPECIAL_MODE;
+extern volatile u32 SHIFT_G_timer;
+extern volatile u32 SHIFT_F_timer;
+
 
 //position control
 extern float gimbalPositionSetpoint;// prevGimbalPositionSetpoint = 0;

@@ -6,10 +6,14 @@
 #include "hero_param.h"
 #include "gimbal_control.h"
 
+
+
 extern volatile u8 upper_pneumatic_state ;
 extern volatile u8 lower_pneumatic_state ;
 extern u8 lower_pneumatic_prev ;
 extern u8 upper_pneumatic_prev ;
+
+
 
 //INTO_RI_MODE: lower pneumatic timer and flag
 extern volatile u8 INTO_RI_LPneu_flag;

@@ -6,12 +6,15 @@ volatile uint8_t upper_pneumatic_state = 0 ;
 volatile u8 lower_pneumatic_state = 0 ;
 u8 lower_pneumatic_prev = 0 ;
 u8 upper_pneumatic_prev = 0 ;
+
 volatile u8 KEY_G_PREV = 0;
 volatile u8 KEY_F_PREV = 0;
 volatile u8 KEY_SHIFT_G_PREV = 0;
 volatile u8 KEY_SHIFT_F_PREV = 0;
 volatile u8 SHIFT_F = 0;
 volatile u8 SHIFT_G = 0;
+
+
 volatile u8 state_switch = 0;
 
 //for flash memory usage
@@ -110,8 +113,6 @@ void switch_and_send()
 			SPEED_LIMITATION_LPneu_timer = TIM_7_Counter;			
 			break;
 		case UPPER_HORIZONTAL_PNEUMATIC_EXTENDS:
-			if(LOAD_FLASH)
-				DataMonitor_Send(72, 0);
 			upper_pneumatic_state = 0;
 			pneumatic_control(3, true);	
 			pneumatic_control(4, false);
@@ -175,7 +176,7 @@ void state_control(){
 		return;
 	}
 	if(DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
-	if(KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
+	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
 		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
 			HERO=INTO_RI_MODE;
 			state_switch=true;
@@ -192,38 +193,37 @@ void state_control(){
 		transmit();
 		return;
 	}
-	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV)){
-			if(HERO==RUNNING_MODE){
-			}
-			else 
-			{
+	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV) && HERO != RUNNING_MODE){
+			
 				if(HERO!=DOWN_BACK_WHEEL)
 					HERO+=1;
 				else HERO=RUNNING_MODE;
-			}
+			
 	}
-	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV)){
-			//if(HERO!=RUNNING_MODE)
-				//HERO-=1;	
-            if(HERO != RUNNING_MODE)
-                backState[HERO--]();
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV) && HERO != RUNNING_MODE){
+    if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE)    
+			backState[HERO--]();
+		else {
+			HERO = RUNNING_MODE;
+			backState[1]();
+		}
 	}
+	
 	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
-		    HERO=RUNNING_MODE;  		
+		    //HERO=RUNNING_MODE;  		
 		    SHIFT_F=true;
 	}
 	else SHIFT_F=false;
 	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
 
-			HERO=SPEED_LIMITATION;
+			//HERO=SPEED_LIMITATION;
 			SHIFT_G=true;
 	}
 	else SHIFT_G=false;
-	
-	//What's the condition to execute this switch???
-	//may be press G or press the key to switch back state, and of course, prev is needed
+
 	if((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch){
-			switch_and_send();
+			//switch_and_send();
+		DataMonitor_Send(0x55, 0);
 	}	
 	
 	
@@ -355,24 +355,7 @@ void transmit(){
 		}
 
 		else { //SHIFT is not pressed
-			/*
-			if(DBUS_CheckPush(KEY_R)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-				DataMonitor_Send(0xFF, LiftingMotorSetpoint[0]);        //GO_ON_STAGE_ONE_KEY
-			}
-			else
-			*/
-			/*			
-			if(DBUS_CheckPush(KEY_E)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = MID_SETPOINT/8;
-				DataMonitor_Send(0xFE, LiftingMotorSetpoint[0]);        //GO_DOWN_STAGE_ONE_KEY
-			}
-			*/
-			//else if(DBUS_CheckPush(KEY_A)){
-				//DataMonitor_Send(0xFD,LiftingMotorSetpoint[0]);   //BREAK
-			//}
-//			else
+
 			if(DBUS_CheckPush(KEY_X)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
 				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
