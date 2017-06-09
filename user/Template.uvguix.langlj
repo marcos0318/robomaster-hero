@@ -1478,7 +1478,7 @@
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
-          <Data>2100000037000000D5000000DE000000</Data>
+          <Data>0A0000000A0000006E0000006E000000</Data>
         </RectRecentFloat>
       </Window>
       <Window>
@@ -1749,8 +1749,8 @@
       <ActiveTab>6</ActiveTab>
       <Doc>
         <Name>.\GoOnStage.c</Name>
-        <ColumnNumber>2</ColumnNumber>
-        <TopLine>218</TopLine>
+        <ColumnNumber>8</ColumnNumber>
+        <TopLine>252</TopLine>
         <CurrentLine>250</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
@@ -1758,18 +1758,18 @@
       </Doc>
       <Doc>
         <Name>.\main.c</Name>
-        <ColumnNumber>10</ColumnNumber>
-        <TopLine>65</TopLine>
-        <CurrentLine>70</CurrentLine>
+        <ColumnNumber>39</ColumnNumber>
+        <TopLine>66</TopLine>
+        <CurrentLine>96</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>.\Lifting_Motor_Control.h</Name>
-        <ColumnNumber>36</ColumnNumber>
+        <ColumnNumber>34</ColumnNumber>
         <TopLine>13</TopLine>
-        <CurrentLine>36</CurrentLine>
+        <CurrentLine>19</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -1803,9 +1803,9 @@
       </Doc>
       <Doc>
         <Name>.\BilateralCommunication.c</Name>
-        <ColumnNumber>54</ColumnNumber>
-        <TopLine>268</TopLine>
-        <CurrentLine>293</CurrentLine>
+        <ColumnNumber>27</ColumnNumber>
+        <TopLine>275</TopLine>
+        <CurrentLine>269</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>

@@ -87,11 +87,13 @@ int main(void)
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				uint8_t temp = getID();
 				tft_clear_line(10);
-				
-				tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
+				tft_prints(1,10, "ID:%d", temp);
+				//tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
 				tft_clear_line(11);
 				//tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
-				tft_prints(1, 11, "UBF:%d DBF:%d", INIT_protection_up_begin_flag, INIT_protection_down_begin_flag);
+				//tft_prints(1, 11, "UBF:%d DBF:%d", INIT_protection_up_begin_flag, INIT_protection_down_begin_flag);
+				temp = getPositionSetpoint();
+				tft_prints(1,11,"kb:%d", temp);
 				tft_update();
 			}
 	
@@ -102,4 +104,5 @@ int main(void)
 	
 	
 }	//main
+
 

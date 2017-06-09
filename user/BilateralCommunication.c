@@ -78,18 +78,18 @@ int16_t getPositionSetpoint(){
 void modifyingBias(uint8_t i, u16 step){
 	LiftingMotorPositionSetpoint[i]-=step;
 	if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]){
-			LiftingMotorBias[i]=LiftingMotorPositionSetpoint[i];
-			//LiftingMotorUpperLimit[i]=LiftingMotorBias[i]+UP_SETPOINT;
-			LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE;
+			//LiftingMotorBias[i]=LiftingMotorPositionSetpoint[i];
+			//LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE;
+		LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i];
 	}
 }
 
 void modifyingUpperLimit(uint8_t i, u16 step){
 	LiftingMotorPositionSetpoint[i]+=step;
 	if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]){
-			LiftingMotorPositionLimit[i] = LiftingMotorPositionSetpoint[i];
-			LiftingMotorBias[i]=LiftingMotorPositionLimit[i]-UP_DOWN_DISTANCE;
-			//LiftingMotorUpperLimit[i]=LiftingMotorBias[i] + UP_SETPOINT;
+			//LiftingMotorPositionLimit[i] = LiftingMotorPositionSetpoint[i];
+			//LiftingMotorBias[i]=LiftingMotorPositionLimit[i]-UP_DOWN_DISTANCE;
+		 LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i];
 	}
 }
 u8 UARTtemp1;
@@ -260,18 +260,17 @@ void USART3_IRQHandler(void)
 			}
 							broken_time=receive_time=get_ms_ticks();
 			}
-			else {
-				step = key_bit;
-				if(key_bit &1){
+			else if(key_bit ==35 ){
+
 					modifyingBias(0, step);
 					modifyingBias(1, step);
 					broken_time=receive_time=get_ms_ticks();
-				}
-				else {
+			}
+			else if(key_bit ==34){
 					modifyingBias(2, step);
 					modifyingBias(3, step);
 					broken_time=receive_time=get_ms_ticks();
-				}
+				
 			}
 		}
 		else if(getID() == 0x14){
@@ -301,19 +300,18 @@ void USART3_IRQHandler(void)
 			}
 							broken_time=receive_time=get_ms_ticks();
 			}
-			else{
-				step = key_bit;
-				if(key_bit &1){
+			else if(key_bit ==35){
+
 					modifyingUpperLimit(0, step);
 					modifyingUpperLimit(1, step);
 					broken_time=receive_time=get_ms_ticks();
-				}
-				else {
+			}
+			else if(key_bit == 34){
 					modifyingUpperLimit(2, step);
 					modifyingUpperLimit(3, step);
 					broken_time=receive_time=get_ms_ticks();
-				}
 			}
+			
 		}
 		else if(getID()==26){
 			FRICTION_WHEEL_STATE=false;
