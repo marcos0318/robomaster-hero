@@ -163,17 +163,19 @@ int main(void)
 								
 								if(HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION)
 								{
-									LOAD_FLASH = 0;
-									RC_CTRL = 0;
-									RC_CTRL_SHIFT = 0;
-									step = 0;
-									LeftJoystick = 1;
-									if(HERO == BACK_WHEEL_UP)
+									if(LOAD_FLASH == 1){
+										if(HERO == BACK_WHEEL_UP)
 										//need to load UP_SETPOINT
 										DataMonitor_Send(72, 1);
 									else if(HERO == SPEED_LIMITATION)
 										//need to load DANCING_MODE_RAISING_HEIGHT
 										DataMonitor_Send(72, 0);
+									}
+									LOAD_FLASH = 0;
+									RC_CTRL = 0;
+									RC_CTRL_SHIFT = 0;
+									step = 0;
+									LeftJoystick = 1;							
 								}
 								if(HERO!=DOWN_BACK_WHEEL)
 									HERO+=1;
@@ -195,53 +197,41 @@ int main(void)
 						//can only manipulate LiftingMotor by RC under BACK_WHEEL_UP and SPEED_LIMITATION mode				DONE
 						
 						LeftJoystick = 0;
-						if(DBUS_ReceiveData.rc.ch3 > 300 || DBUS_ReceiveData.rc.ch3 < -300 || DBUS_ReceiveData.rc.ch2 > 300 || DBUS_ReceiveData.rc.ch2 < -300)
+						if(DBUS_ReceiveData.rc.ch3 > 600 || DBUS_ReceiveData.rc.ch3 < -600 || DBUS_ReceiveData.rc.ch2 > 600 || DBUS_ReceiveData.rc.ch2 < -600)
 						{
 							LOAD_FLASH = 1;
 							//after switch_and_send()
 							//need to turn off LOAD_FLASH
 							
 							
-							if(DBUS_ReceiveData.rc.ch3 > 300 || DBUS_ReceiveData.rc.ch3 < -300){
+							if(DBUS_ReceiveData.rc.ch3 > 600 || DBUS_ReceiveData.rc.ch3 < -600){
 								//ch3, vertically move, control LeftBack (id 3) and RightBack (id 2)
-								if(DBUS_ReceiveData.rc.ch3 > 300){
+								if(DBUS_ReceiveData.rc.ch3 > 600){
 								//up, LiftingMotors go up, using CTRL+SHIFT
 									RC_CTRL_SHIFT = 1;
-									RC_CTRL = 0;
-									step = DBUS_ReceiveData.rc.ch3;								
-									step/=3;
-									if(step & 1)
-										++step;
-								} else if(DBUS_ReceiveData.rc.ch3 < -300){
+									RC_CTRL = 0;						
+									step =34;
+								} else if(DBUS_ReceiveData.rc.ch3 < -600){
 								//down, LiftingMotors go down, using CTRL
 									RC_CTRL = 1;
 									RC_CTRL_SHIFT = 0;
-									step = -DBUS_ReceiveData.rc.ch3;									
-									step/=3;
-									if(step & 1)
-										++step;
+									step =34;
 								}
 								else step = 0;
 								//modify step to be even
 							}
 							else{
 							//ch2, horizontally move, control LeftFront (id 0) and RightFront (id 1)					
-								if(DBUS_ReceiveData.rc.ch2 > 300){
+								if(DBUS_ReceiveData.rc.ch2 > 600){
 								//Left, LiftingMotors go up, using CTRL+SHIFT
 									RC_CTRL_SHIFT = 1;
 									RC_CTRL = 0;
-									step = DBUS_ReceiveData.rc.ch2;
-									step/=3;
-									if(!(step & 1))
-										++step;
-								} else if(DBUS_ReceiveData.rc.ch2 < -300){
+									step = 35;
+								} else if(DBUS_ReceiveData.rc.ch2 < -600){
 								//Right, LiftingMotors go down, using CTRL
 									RC_CTRL = 1;
 									RC_CTRL_SHIFT = 0;
-									step = -DBUS_ReceiveData.rc.ch2;	
-									step/=3;
-									if(!(step & 1))
-										++step;
+									step =35;
 								}
 								else step = 0;
 							//modify step to be odd
