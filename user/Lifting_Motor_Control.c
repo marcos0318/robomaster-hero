@@ -1,6 +1,6 @@
 #include "Lifting_Motor_Control.h"
-u32 UP_SETPOINT = 260000;
-u32 DANCING_MODE_RASING_HEIGHT = 60600;
+volatile u32 UP_SETPOINT = 260000;
+volatile u32 DANCING_MODE_RASING_HEIGHT = 60600;
 int32_t LiftingMotorSpeedFeedback[4] = {0};
 float LiftingMotorPositionFeedback[4] = {0};
 volatile int32_t LiftingMotorPositionSetpoint[4] = {0};

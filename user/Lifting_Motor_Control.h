@@ -19,8 +19,8 @@
 #define INIT_UP_PROTECTION_TIME 7200
 #define INIT_DOWN_PROTECTION_TIME 7000
 
-extern u32 UP_SETPOINT;
-extern u32 DANCING_MODE_RASING_HEIGHT;
+extern volatile u32 UP_SETPOINT;
+extern volatile u32 DANCING_MODE_RASING_HEIGHT;
 //type to be u32 so as to fit in the write_flash() function
 //when to update them ?
 //need to read getPositionSetpoint(), the second field of the data sent by Data_Monitor

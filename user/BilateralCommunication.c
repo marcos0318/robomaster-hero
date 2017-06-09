@@ -4,6 +4,7 @@ static DMA_InitTypeDef Bilateral_DMA_InitStruct;
 int8_t BilateralBuffer[BilateralCommunication_buffer];
 u32 receive_time=0;
 u32 broken_time=0;
+u8 HAS_RECEIVED_LOAD = 0;
 void Bilateral_Init(void) {
 	
 	
@@ -114,6 +115,20 @@ void USART3_IRQHandler(void)
 			INIT_protection_timer_begin = TIM_7_counter;
 			broken_time=receive_time=get_ms_ticks();
 		}
+		else if(getID() == 72) {
+			//load DANCING_MODE_RASING_HEIGHT
+			if(getPositionSetpoint() == 1){
+				UP_SETPOINT = LiftingMotorPositionSetpoint[0] - LiftingMotorBias[0];
+				writeFlash(0, UP_SETPOINT);
+			}
+			else if(getPositionSetpoint() == 0)
+			{
+				DANCING_MODE_RASING_HEIGHT = LiftingMotorPositionSetpoint[2] - LiftingMotorBias[2];
+				writeFlash(1, DANCING_MODE_RASING_HEIGHT);
+			}
+			HAS_RECEIVED_LOAD = 1;
+			broken_time=receive_time=get_ms_ticks();
+		}
 		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
@@ -140,19 +155,7 @@ void USART3_IRQHandler(void)
             for(u8 i = 0; i < 4; i++)
                 LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
 		}
-		else if(getID() == 72) {
-			//load DANCING_MODE_RASING_HEIGHT
-			if(getPositionSetpoint() == 1){
-				UP_SETPOINT = LiftingMotorPositionSetpoint[0] - LiftingMotorBias[0];
-				writeFlash(0, UP_SETPOINT);
-			}
-			else if(getPositionSetpoint() == 0)
-			{
-				DANCING_MODE_RASING_HEIGHT = LiftingMotorPositionSetpoint[2] - LiftingMotorBias[2];
-				writeFlash(1, DANCING_MODE_RASING_HEIGHT);
-			}
-			broken_time=receive_time=get_ms_ticks();
-		}
+		
 		else if(getID()==0xFF){
 			GO_ON_STAGE_ONE_KEY=true;
 			broken_time=receive_time=get_ms_ticks();

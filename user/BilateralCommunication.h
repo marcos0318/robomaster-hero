@@ -7,6 +7,7 @@
 #include "Lifting_Motor_Control.h"
 #include "GoOnStage.h"
 #include "initialization_process.h"
+extern u8 HAS_RECEIVED_LOAD;
 void Bilateral_Init();
 //volatile int32_t LiftingMotorPositionSetpoint[4];
 extern u32 receive_time;

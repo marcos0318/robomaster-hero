@@ -42,12 +42,15 @@ void init(){
 
 //The control of filter rate of wheels 
 // Structure to strore PID data 
+u32 flash0;
+u32 flash1;
 
 int main(void)
 {	
 	init();
 //	DBUS_ReceiveData.mouse.ytotal=0;
-	
+	flash0 = readFlash(0);
+	flash1 = readFlash(1);
 	
 	
 	
@@ -77,23 +80,29 @@ int main(void)
 				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
 				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
 				tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
-				tft_prints(1,4,"RH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
-				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
-				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
-				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
-				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
-				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
+				tft_prints(1,4,"RFH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
+				tft_prints(1,5,"RBH:%f", (float)(CM3Encoder.ecd_angle - LiftingMotorBias[2]));
+//				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
+//				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
+//				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
+//				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
+//				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
+				tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
+				tft_prints(1,7, "US:%d", UP_SETPOINT);
+				tft_prints(1,8, "DM:%d", DANCING_MODE_RASING_HEIGHT);
+				tft_prints(1,9, "F0:%d F1:%d", readFlash(0), readFlash(1));
         //for (int i=0;i<4;i++) 
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
-				uint8_t temp = getID();
+				u8 temp1 = getID();
 				tft_clear_line(10);
-				tft_prints(1,10, "ID:%d", temp);
+				tft_prints(1,10,"L %d",HAS_RECEIVED_LOAD);
+				//tft_prints(1,10, "ID:%d", temp);
 				//tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
 				tft_clear_line(11);
 				//tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
 				//tft_prints(1, 11, "UBF:%d DBF:%d", INIT_protection_up_begin_flag, INIT_protection_down_begin_flag);
-				temp = getPositionSetpoint();
-				tft_prints(1,11,"kb:%d", temp);
+				u8 temp2 = getPositionSetpoint();
+				tft_prints(1,11,"ID: %d kb:%d", temp1, temp2);
 				tft_update();
 			}
 	
