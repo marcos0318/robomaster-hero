@@ -5,10 +5,10 @@
 #include "gpio.h"
 #include "Lifting_Motor_Control.h"
 
-#define LeftFront &PC2
-#define LeftBack &PC3
-#define RightFront &PB15
-#define RightBack &PB14
+#define LeftFront &PA4	//PC2
+#define LeftBack &PA6		//PC3
+#define RightFront &PB8		//PB15
+#define RightBack &PB9			//PB14
 
 extern uint8_t LeftFrontExpand ;
 extern uint8_t RightFrontExpand ;
