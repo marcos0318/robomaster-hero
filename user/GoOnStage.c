@@ -37,10 +37,10 @@ void readFeedback(){
 }
 
 void update_GPIO_state(){
-	LeftFrontState[LeftFrontIndex] = gpio_read_input(LeftFront);
-	LeftBackState[LeftBackIndex] = gpio_read_input(LeftBack);
-	RightFrontState[RightFrontIndex] = gpio_read_input(RightFront);
-	RightBackState[RightBackIndex] = gpio_read_input(RightBack);
+	LeftFrontState[LeftFrontIndex] = 1-gpio_read_input(LeftFront);
+	LeftBackState[LeftBackIndex] = 1-gpio_read_input(LeftBack);
+	RightFrontState[RightFrontIndex] = 1-gpio_read_input(RightFront);
+	RightBackState[RightBackIndex] = 1-gpio_read_input(RightBack);
 	++LeftFrontIndex;
 	++LeftBackIndex;
 	++RightFrontIndex;

@@ -32,11 +32,19 @@ u8 ALL_TO_LIMIT_SWITCH = 0;
 
 void Limit_Switch_init(){
 	
-	BUTTON_init(LeftFront);
-	BUTTON_init(LeftBack);
-	BUTTON_init(RightFront);
-	BUTTON_init(RightBack);
-
+	//BUTTON_init(LeftFront);
+	//BUTTON_init(LeftBack);
+	//BUTTON_init(RightFront);
+	//BUTTON_init(RightBack);
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_6;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 void LF_init(){
