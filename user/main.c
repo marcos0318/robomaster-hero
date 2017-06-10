@@ -27,6 +27,7 @@ void init(){
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 	LiftingMotorInit();
 	Limit_Switch_init();
+	BSP_DWT_InitConfig();
 	TIM7_Int_Init(83,999);
 }
 
@@ -64,7 +65,7 @@ int main(void)
 			LED_blink(LED1);
 			readFeedback();
 				
-			if(ticks_msimg % 50 ==0) {
+			if(ticks_msimg % 500 ==0) {
 				//tft_clear();
 				tft_clear_line(2);
 				tft_prints(1,2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
@@ -87,10 +88,11 @@ int main(void)
 //				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
 //				tft_prints(1, 8, "GPIO_LF: %d", gpio_read_input(LeftFront));
 //				tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
-				tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
-				tft_prints(1,7, "US:%d", UP_SETPOINT);
-				tft_prints(1,8, "DM:%d", DANCING_MODE_RASING_HEIGHT);
-				tft_prints(1,9, "F0:%d F1:%d", readFlash(0), readFlash(1));
+				//tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
+				tft_prints(1,6, "US:%d", FLASH_MEM[0]);
+				tft_prints(1,7,"F0:%d",readFlash(0));
+				tft_prints(1,8, "DM:%d", FLASH_MEM[1]);
+				tft_prints(1,9, "F1:%d", readFlash(1));
         //for (int i=0;i<4;i++) 
           //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				u8 temp1 = getID();

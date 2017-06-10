@@ -150,7 +150,7 @@ void setSetpoint(){
     if(!GO_ON_STAGE_ONE_KEY_PREV && GO_ON_STAGE_ONE_KEY) {
         //ticks_msimg_on_prev=ticks_msimg;			//starting counting time for the procedure
         for(uint8_t i=0;i<4;i++)
-            LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
+            LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[0];
         //may need to be loaded into flash memory when testing using the RC
         GO_ON_STAGE_ONE_KEY=false;
     }
@@ -158,21 +158,21 @@ void setSetpoint(){
         //ticks_msimg_down_prev=ticks_msimg;			//starting counting time for the procedure
         LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+MID_SETPOINT;
 				LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+MID_SETPOINT;
-        LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+UP_SETPOINT;
-				LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
+        LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+FLASH_MEM[0];
+				LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+FLASH_MEM[0];
         GO_DOWN_STAGE_ONE_KEY=false;
     }
     if(ONE_KEY_UP_FRONT){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+UP_SETPOINT;
-			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+UP_SETPOINT;
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+FLASH_MEM[0];
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_FRONT){
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
 		}
     if(ONE_KEY_UP_BACK){
-			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+UP_SETPOINT;
-			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+UP_SETPOINT;
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+FLASH_MEM[0];
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_BACK){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+DOWN_SETPOINT;
@@ -277,7 +277,7 @@ void TIM7_IRQHandler(void){
 						{
 							//lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
 							//upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
-							upper_limit[i]=LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
+							upper_limit[i]=LiftingMotorBias[i] + FLASH_MEM[1];
 							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
 						}
 						DancingMode(upper_limit, lower_limit);
@@ -339,9 +339,9 @@ void TIM7_IRQHandler(void){
 				}
 			}
 				broken_time=ticks_msimg;
-				if((broken_time-receive_time)>200 || CAN2BrokenLine)
+				if((broken_time-receive_time)>3000 || CAN2BrokenLine)
 				{
-					if((broken_time-receive_time)>200)
+					if((broken_time-receive_time)>3000)
 						BROKEN_CABLE=1;
 					else BROKEN_CABLE = 0;
 					INIT_protection_up_begin_flag = 1;

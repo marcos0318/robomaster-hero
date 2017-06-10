@@ -12,15 +12,17 @@
 #define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 220000
 #define TOTALLY_DOWN_SETPOINT 10000
-#define UP_DOWN_DISTANCE 280000
+#define UP_DOWN_DISTANCE 300000
 #define DANCING_MODE_UP_DOWN_DIFF 30000
 //#define DANCING_MODE_RASING_HEIGHT 60600
 #define RASING_HEIGHT_FOR_INITIALIZATION 350000
-#define INIT_UP_PROTECTION_TIME 7200
-#define INIT_DOWN_PROTECTION_TIME 7000
+#define INIT_UP_PROTECTION_TIME 7400
+#define INIT_DOWN_PROTECTION_TIME 7400
 
-extern volatile u32 UP_SETPOINT;
-extern volatile u32 DANCING_MODE_RASING_HEIGHT;
+//extern u32 UP_SETPOINT;                  //FLASH_MEM[0]
+//extern u32 DANCING_MODE_RASING_HEIGHT;   //FLASH_MEM[1]
+extern u32 FLASH_MEM[2];
+
 //type to be u32 so as to fit in the write_flash() function
 //when to update them ?
 //need to read getPositionSetpoint(), the second field of the data sent by Data_Monitor

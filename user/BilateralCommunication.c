@@ -116,24 +116,29 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 72) {
-			//load DANCING_MODE_RASING_HEIGHT
-			if(getPositionSetpoint() == 1){
-				UP_SETPOINT = LiftingMotorPositionSetpoint[0] - LiftingMotorBias[0];
-				writeFlash(0, UP_SETPOINT);
-			}
-			else if(getPositionSetpoint() == 0)
+			//load UP_SETPOINT
+			if(getPositionSetpoint() == 2)
 			{
-				DANCING_MODE_RASING_HEIGHT = LiftingMotorPositionSetpoint[2] - LiftingMotorBias[2];
-				writeFlash(1, DANCING_MODE_RASING_HEIGHT);
+				//load DANCING_MODE_RAISING_HEIGHT
+				Set_CM_Speed(CAN2, 0, 0, 0, 0);
+				BSP_DWT_DelayMs(1000);
+				//delay 1s
+				FLASH_MEM[1] = (u32)(CM3Encoder.ecd_angle - LiftingMotorBias[2]);
+				writeFlash(FLASH_MEM, 2);
+				
 			}
 			HAS_RECEIVED_LOAD = 1;
+			for(u8 i = 0;i <4; i++)
+				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
+			DANCING_MODE_FLAG = 0;
 			for(uint8_t i = 0; i < 4; i++)
 				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
+			FRICTION_WHEEL_STATE = false;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==69){
@@ -142,18 +147,30 @@ void USART3_IRQHandler(void)
 			//INIT_FLAG = 1;
 			for(u8 i = 0; i < 4; i++)
 								//LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
-					LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
+					LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 70){
-		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + UP_SETPOINT;
-            LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + UP_SETPOINT;
-            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2] + DOWN_SETPOINT;
-            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3] + DOWN_SETPOINT;    
+		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + FLASH_MEM[0];
+            LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + FLASH_MEM[0];
+            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2];
+            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3];    
 		}
 		else if(getID() == 71) {
-            for(u8 i = 0; i < 4; i++)
-                LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
+			DANCING_MODE_FLAG = 0;
+			if(getPositionSetpoint() == 1)
+			{
+				//load DANCING_MODE_RAISING_HEIGHT
+				Set_CM_Speed(CAN2, 0, 0, 0, 0);
+				BSP_DWT_DelayMs(1000);
+				//delay 1s
+				FLASH_MEM[0] = (u32)(CM2Encoder.ecd_angle - LiftingMotorBias[1]);
+				writeFlash(FLASH_MEM, 1);
+				HAS_RECEIVED_LOAD = 1;
+			}
+			
+      for(u8 i = 0; i < 4; i++)
+         LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
 		}
 		
 		else if(getID()==0xFF){
@@ -198,7 +215,7 @@ void USART3_IRQHandler(void)
 			DANCING_MODE_FLAG = 0;
 			for(u8 i = 0; i < 4; i++)
 				//LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
-				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
+				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
 			//dancing mode ends
 			//need to set all LiftingMotors to raise up to the UP_SETPOINT
 			//turn off friction wheel
@@ -208,7 +225,7 @@ void USART3_IRQHandler(void)
 							FRICTION_WHEEL_STATE = true;
 							for(u8 i = 0; i < 4; i++)
 								//LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
-								LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DANCING_MODE_RASING_HEIGHT;
+								LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
 						}
 			broken_time=receive_time=get_ms_ticks();
 		}
@@ -239,7 +256,7 @@ void USART3_IRQHandler(void)
 		else if(getID() == 19){
 			int16_t key_bit = getPositionSetpoint();
 			u16 step = 200;
-			if(key_bit < 100 && key_bit != 0){
+			if(key_bit < 30 && key_bit != 0){
 				step = 200;
 			if((key_bit>>0) & 1){														
 				//Ctrl F
@@ -279,7 +296,7 @@ void USART3_IRQHandler(void)
 		else if(getID() == 0x14){
 			int16_t key_bit = getPositionSetpoint();
 			u16 step = 200;
-			if(key_bit < 100 && key_bit != 0){
+			if(key_bit < 30 && key_bit != 0){
 				step = 200;
 			if((key_bit>>0) & 1){
 				//Ctrl Shift F
