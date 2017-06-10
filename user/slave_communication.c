@@ -67,6 +67,8 @@ void switch_and_send()
 			lower_pneumatic_state = false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
+			pneumatic_control(3, 0);
+			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 			DataMonitor_Send(5, 0);
 			//speed limit in chasis control
@@ -87,13 +89,17 @@ void switch_and_send()
 			
 			break;
 		case BACK_WHEEL_UP:
-			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
+			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
             LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
 			DataMonitor_Send(70, 0);		//ONE_KEY_DOWN_BACK			
 			break;
 		case FRONT_WHEEL_UP:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-			DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT						
+			if(LOAD_FLASH == 0)	
+				DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT		
+			else if(LOAD_FLASH == 1)
+				DataMonitor_Send(71, 1);
+			LOAD_FLASH = 0;
 			break;
 		case SPEED_LIMITATION:
 			ChasisFlag = 3;
@@ -113,6 +119,10 @@ void switch_and_send()
 			SPEED_LIMITATION_LPneu_timer = TIM_7_Counter;			
 			break;
 		case UPPER_HORIZONTAL_PNEUMATIC_EXTENDS:
+			if(LOAD_FLASH ==1)	
+				DataMonitor_Send(72, 2);
+			else DataMonitor_Send(72,0);
+			LOAD_FLASH = 0;
 			upper_pneumatic_state = 0;
 			pneumatic_control(3, true);	
 			pneumatic_control(4, false);
@@ -154,8 +164,13 @@ void switch_and_send()
 			
 			break;
 		case DOWN_FRONT_WHEEL:
+			pneumatic_control(1, 1);
+			pneumatic_control(2, 1);
+			ChasisFlag=4;	
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
             LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
 			DataMonitor_Send(70, 0);		//ONE_KEY_UP_FRONT		
 			break;
 		case DOWN_BACK_WHEEL:
@@ -221,9 +236,9 @@ void state_control(){
 	}
 	else SHIFT_G=false;
 
-	if((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch){
-			//switch_and_send();
-		DataMonitor_Send(0x55, 0);
+	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch)){
+			switch_and_send();
+		//DataMonitor_Send(0x55, 0);
 	}	
 	
 	
@@ -238,11 +253,13 @@ void transmit(){
 		if (RC_CTRL || (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))) 
 		{
 			//CTRL + FGCV
+			/*
 			if(HERO != BACK_WHEEL_UP && HERO != SPEED_LIMITATION){
 					LOAD_FLASH = 0;
 					step = 0;
 			}
 			else LOAD_FLASH = 1;
+			*/
 			if(step == 0 && !RC_CTRL){
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) ){
@@ -270,11 +287,13 @@ void transmit(){
 		if (RC_CTRL_SHIFT || DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
 			if(RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))){
 				//CTRL + SHIFT + FGCV
+				/*
 				if(HERO != BACK_WHEEL_UP && HERO != SPEED_LIMITATION){
 					step = 0;
 					LOAD_FLASH = 0;
 				}
 				else LOAD_FLASH = 1;
+				*/
 				if(step == 0 && !RC_CTRL_SHIFT){
 				int16_t key_bit = 0;
 				if(DBUS_CheckPush(KEY_F)){
