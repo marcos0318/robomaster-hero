@@ -28,6 +28,7 @@ void init(){
 	LiftingMotorInit();
 	Limit_Switch_init();
 	BSP_DWT_InitConfig();
+	CameraInit();
 	TIM7_Int_Init(83,999);
 }
 
@@ -52,7 +53,6 @@ int main(void)
 //	DBUS_ReceiveData.mouse.ytotal=0;
 	flash0 = readFlash(0);
 	flash1 = readFlash(1);
-	
 	
 	
 	while (1)  
