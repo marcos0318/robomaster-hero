@@ -65,6 +65,11 @@ int main(void)
 			LED_blink(LED1);
 			readFeedback();
 				
+			
+			
+			
+			
+			
 			if(ticks_msimg % 500 ==0) {
 				//tft_clear();
 				tft_clear_line(2);
@@ -76,19 +81,19 @@ int main(void)
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
 				//tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
-				//tft_prints(1,4,"RB sp %d", LiftingMotorPositionSetpoint[2]);
+				tft_prints(1,8,"RB sp %d", LiftingMotorPositionSetpoint[2]);
 				//tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
-				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
-				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
-				tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
-				tft_prints(1,4,"RFH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
+				tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
+				tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
+				//tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
+				//tft_prints(1,4,"RFH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
 				tft_prints(1,5,"RBH:%f", (float)(CM3Encoder.ecd_angle - LiftingMotorBias[2]));
 //				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
 //				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
 //				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
-				tft_prints(1, 8, "LF%d RF%d ", gpio_read_input(LeftFront), gpio_read_input(RightFront));
-				tft_prints(1, 9, "LB%d RB%d ", gpio_read_input(LeftBack), gpio_read_input(RightBack));
-				//tft_prints(1, 9, "num_LF: %d", num_of_touch(LeftFront));
+				//tft_prints(1, 8, "LF%d RF%d ", gpio_read_input(LeftFront), gpio_read_input(RightFront));
+				//tft_prints(1, 9, "LB%d RB%d ", gpio_read_input(LeftBack), gpio_read_input(RightBack));
+				tft_prints(1, 9, "num_LB: %d", num_of_touch(LeftBack));
 				//tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
 				tft_prints(1,6, "US:%d", FLASH_MEM[0]);
 				tft_prints(1,7,"F0:%d",readFlash(0));

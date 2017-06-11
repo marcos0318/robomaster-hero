@@ -167,16 +167,16 @@ void setSetpoint(){
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_FRONT){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
-			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+0;
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+0;
 		}
     if(ONE_KEY_UP_BACK){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+FLASH_MEM[0];
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_BACK){
-			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+DOWN_SETPOINT;
-			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+0;
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+0;
 		}
 				
     
@@ -244,6 +244,16 @@ void TIM7_IRQHandler(void){
 			And I will need to update the bias, lower_limit and upper_limit
 			*/
 			
+			if(TIM_7_counter % 1000 == 0)
+			{
+				u32 temp = TIM_7_counter / 1000;
+				temp %= 15;
+				if(!(temp / 3))  
+					SetCameraChannel(5, 0);
+				else SetCameraChannel((temp / 3), 0);
+				SetCameraChannel((temp / 3) + 1, (temp % 3) + 1); 
+				
+			}
 			
 			//friction wheel initialization needs to be delayed
 			if(TIM_7_counter == 3000)

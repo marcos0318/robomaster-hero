@@ -1,7 +1,7 @@
 #include "Lifting_Motor_Control.h"
 //u32 UP_SETPOINT = 260000;
 //u32 DANCING_MODE_RASING_HEIGHT = 60600;
-u32 FLASH_MEM[2] = {260000, 60600};
+u32 FLASH_MEM[2] = {180000, 42000};
 int32_t LiftingMotorSpeedFeedback[4] = {0};
 float LiftingMotorPositionFeedback[4] = {0};
 volatile int32_t LiftingMotorPositionSetpoint[4] = {0};
@@ -87,9 +87,9 @@ void LiftingMotorInit(){
 	
 	//read UP_SETPOINT and DANCING_MODE_RASING_HEIGHT from flash memory
 	FLASH_MEM[0] = (u32)(readFlash(0));
-	if(FLASH_MEM[0] < 100000 || FLASH_MEM[0] > 300000) FLASH_MEM[0]= 260000;	//for first recording protection
+	if(FLASH_MEM[0] < 70370 || FLASH_MEM[0] > 210000) FLASH_MEM[0]= 180000;	//for first recording protection
 	FLASH_MEM[1] = (u32)(readFlash(1));
-	if(FLASH_MEM[1] < 50000 || FLASH_MEM[1] > 280000) FLASH_MEM[1] = 60600;	//for first recording protection
+	if(FLASH_MEM[1] < 35000 || FLASH_MEM[1] > 210000) FLASH_MEM[1] = 42000;	//for first recording protection
 	//update LiftingMotorUpperLimit[4] by UP_SETPOINT
 	//for(u8 i = 0; i < 4; i++)
 		//LiftingMotorUpperLimit[i] = UP_SETPOINT;

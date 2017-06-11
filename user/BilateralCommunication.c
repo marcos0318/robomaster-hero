@@ -231,26 +231,26 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID()==0x00){
 			//front wheels expanding acoording to the desired position offset sent by master
-			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
-			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x01){
 			//front wheels withdrawing according to the desired position offset specified by master
-			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
-			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x02){
 			//back wheels expanding according to the desired position offset sent by master
-			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
-			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0x03){
 			//back wheels withdrawing sccording to the desired position offset sent by master
-			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
-			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+8*getPositionSetpoint();
+			//LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+8*getPositionSetpoint();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 19){

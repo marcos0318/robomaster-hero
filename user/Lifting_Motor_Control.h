@@ -9,15 +9,15 @@
 #define MOVING_BOUND_2 450
 #define SPEED_SETPOINT_LIMIT 1100
 //#define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
-#define DOWN_SETPOINT 1000//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define MID_SETPOINT 220000
-#define TOTALLY_DOWN_SETPOINT 10000
-#define UP_DOWN_DISTANCE 300000
+#define DOWN_SETPOINT 700//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define MID_SETPOINT 155000
+#define TOTALLY_DOWN_SETPOINT 7000
+#define UP_DOWN_DISTANCE 211000
 #define DANCING_MODE_UP_DOWN_DIFF 30000
 //#define DANCING_MODE_RASING_HEIGHT 60600
-#define RASING_HEIGHT_FOR_INITIALIZATION 350000
-#define INIT_UP_PROTECTION_TIME 7400
-#define INIT_DOWN_PROTECTION_TIME 7400
+#define RASING_HEIGHT_FOR_INITIALIZATION 300000
+#define INIT_UP_PROTECTION_TIME 5300
+#define INIT_DOWN_PROTECTION_TIME 5300
 
 //extern u32 UP_SETPOINT;                  //FLASH_MEM[0]
 //extern u32 DANCING_MODE_RASING_HEIGHT;   //FLASH_MEM[1]
