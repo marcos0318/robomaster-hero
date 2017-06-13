@@ -246,12 +246,20 @@ void TIM7_IRQHandler(void){
 			
 			if(TIM_7_counter % 1000 == 0)
 			{
-				u32 temp = TIM_7_counter / 1000;
-				temp %= 15;
-				if(!(temp / 3))  
-					SetCameraChannel(5, 0);
-				else SetCameraChannel((temp / 3), 0);
-				SetCameraChannel((temp / 3) + 1, (temp % 3) + 1); 
+//				u32 temp = TIM_7_counter / 1000;
+//				temp %= 15;
+//				if(!(temp / 3))  
+//					SetCameraChannel(5, 0);
+//				else SetCameraChannel((temp / 3), 0);
+//				SetCameraChannel((temp / 3) + 1, (temp % 3) + 1); 
+				
+				
+				SetCameraChannel(1,1);
+				SetCameraChannel(2,1);
+				SetCameraChannel(3,1);
+				SetCameraChannel(4,1);
+				SetCameraChannel(5,1);
+				
 				
 			}
 			

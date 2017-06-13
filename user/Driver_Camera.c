@@ -87,7 +87,7 @@ void SetCameraChannel(int32_t signal, int32_t channel) {
           GPIO_ResetBits(GPIOB, GPIO_Pin_4);
           GPIO_SetBits(GPIOB, GPIO_Pin_5);
           return;
-      }
+      }return;
 
     case 2:
       switch (channel) {
@@ -114,7 +114,7 @@ void SetCameraChannel(int32_t signal, int32_t channel) {
           GPIO_ResetBits(GPIOC, GPIO_Pin_8);
           GPIO_SetBits(GPIOC, GPIO_Pin_7);
           return;
-      }
+      }return;
 
     case 3:
       switch (channel) {
@@ -141,7 +141,7 @@ void SetCameraChannel(int32_t signal, int32_t channel) {
           GPIO_ResetBits(GPIOB, GPIO_Pin_15);
           GPIO_SetBits(GPIOB, GPIO_Pin_14);
           return;
-      }
+      }return;
 
     case 4:
       switch (channel) {
@@ -168,7 +168,7 @@ void SetCameraChannel(int32_t signal, int32_t channel) {
           GPIO_ResetBits(GPIOC, GPIO_Pin_1);
           GPIO_SetBits(GPIOC, GPIO_Pin_2);
           return;
-      }
+      }return;
 
     case 5:
       switch (channel) {
@@ -195,7 +195,7 @@ void SetCameraChannel(int32_t signal, int32_t channel) {
           GPIO_ResetBits(GPIOA, GPIO_Pin_0);
           GPIO_SetBits(GPIOA, GPIO_Pin_1);
           return;
-      }
+      }return;
   }
 }
 
