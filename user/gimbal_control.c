@@ -63,7 +63,7 @@ float pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
 float ytotalPrev = 0;
-float rawpitchsetpoint = 0;
+float rawpitchsetpoint = 270;
 
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
@@ -371,7 +371,19 @@ void TIM7_IRQHandler(void){
 			GUN_PokeControl();
 			if(CAN1BrokenLine == 0)
 				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
-				
+			
+				if(state_delay){
+					if(HERO == SPEED_LIMITATION || HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
+						if((TIM_7_Counter - G_counter) > 1000){
+							state_delay = 0;
+						}
+					}
+					else if((TIM_7_Counter - G_counter) > 2000){
+							state_delay = 0;
+					}
+				}
+			
+			
 				if(TIM_7_Counter % 20 == 10){
 				//key check
 				FOR_JOHN_G=DBUS_CheckPush(KEY_G);

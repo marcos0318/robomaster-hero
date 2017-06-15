@@ -101,6 +101,7 @@ void Back_To_DANCING_MODE()
     lower_pneumatic_state = false;
     pneumatic_control(1, 0);
     pneumatic_control(2, 0);
+		DataMonitor_Send(64, 0);
 }
 
 void Back_To_VERTICAL_PNEUMATIC_WITHDRAWS()

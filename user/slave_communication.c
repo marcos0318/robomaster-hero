@@ -16,6 +16,8 @@ volatile u8 SHIFT_G = 0;
 
 
 volatile u8 state_switch = 0;
+volatile u8 state_delay = 0; 
+volatile u32 G_counter = 0;
 
 //for flash memory usage
 volatile int16_t LOAD_FLASH = 0;
@@ -42,18 +44,6 @@ u8 G_counter_for_John=0;
 enum modeControl HERO = RUNNING_MODE;
 
 
-int16_t checkSetpoint(int16_t a, bool dir){
-
-	if(dir) 
-		if(a > LiftingMotorSetpointLimit - 200) a = LiftingMotorSetpointLimit - 1;
-		else 																		a += 200;
-	
-	else 
-		if(a < 200) 														a = 0;
-		else 																		a -= 200;
-	
-	return a;
-}
 
 void switch_and_send()
 {
@@ -182,7 +172,7 @@ void switch_and_send()
 }
 
 void state_control(){
-	if(RC_CTRL || RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT)))){
+	if(state_delay || RC_CTRL || RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT)))){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
 		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);
@@ -190,11 +180,13 @@ void state_control(){
 		transmit();
 		return;
 	}
-	if(DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
-	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
+	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)) G_counter_for_John+=1;
+	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !DBUS_CheckPush(KEY_SHIFT) && KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
 		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
 			HERO=INTO_RI_MODE;
 			state_switch=true;
+			G_counter = TIM_7_Counter;
+			state_delay = 1;
 		}
 		else state_switch=false;
 		G_counter_for_John=0;
@@ -213,11 +205,21 @@ void state_control(){
 				if(HERO!=DOWN_BACK_WHEEL)
 					HERO+=1;
 				else HERO=RUNNING_MODE;
+				G_counter = TIM_7_Counter;
+				state_delay = 1;
 			
 	}
 	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV) && HERO != RUNNING_MODE){
     if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE)    
-			backState[HERO--]();
+		{
+			if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
+				backState[HERO--]();
+			else {
+				backState[HERO]();
+				HERO = UPPER_HORIZONTAL_PNEUMATIC_EXTENDS;
+
+			}
+		}
 		else {
 			HERO = RUNNING_MODE;
 			backState[1]();
@@ -263,19 +265,19 @@ void transmit(){
 			if(step == 0 && !RC_CTRL){
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) ){
-				LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], false);
+				LiftingMotorSetpoint[0] -= 200;
 				key_bit |= 1<<0; 
 			}
 			if(DBUS_CheckPush(KEY_G) ){
-				LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], false);
+				LiftingMotorSetpoint[1] -= 200;
 				key_bit |= 1<<1;
 			} 
 			if(DBUS_CheckPush(KEY_C) ){
-				LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], false);
+				LiftingMotorSetpoint[3] -= 200;
 				key_bit |= 1<<2;
 			}
 			if(DBUS_CheckPush(KEY_V) ){
-				LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], false);
+				LiftingMotorSetpoint[2] -= 200;
 				key_bit |= 1<<3;				
 			}
 			DataMonitor_Send(19, key_bit);
@@ -297,19 +299,19 @@ void transmit(){
 				if(step == 0 && !RC_CTRL_SHIFT){
 				int16_t key_bit = 0;
 				if(DBUS_CheckPush(KEY_F)){
-					LiftingMotorSetpoint[0] = checkSetpoint(LiftingMotorSetpoint[0], true);
+					LiftingMotorSetpoint[0] += 200;
 					key_bit |= 1<<0;
 				}
 				if(DBUS_CheckPush(KEY_G)){
-					LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[1], true);
+					LiftingMotorSetpoint[1] += 200;
 					key_bit |= 1<<1;
 				} 
 				if(DBUS_CheckPush(KEY_C)){
-					LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[3], true);
+					LiftingMotorSetpoint[3] += 200;
 					key_bit |= 1<<2;
 				}
 				if(DBUS_CheckPush(KEY_V)){
-					LiftingMotorSetpoint[2] = checkSetpoint(LiftingMotorSetpoint[2], true);
+					LiftingMotorSetpoint[2] += 200;
 					key_bit |= 1<<3;
 				}
 				DataMonitor_Send(0x14, key_bit);
@@ -317,59 +319,19 @@ void transmit(){
 				else if(step >30)
 					DataMonitor_Send(0x14, step);
 			} 
-			else 
+			else //shift is pressed
 			if(DBUS_CheckPush(KEY_R) && DBUS_CheckPush(KEY_CTRL)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(90, 0);
+				//init
 			}
 			else if(DBUS_CheckPush(KEY_R) && !DBUS_CheckPush(KEY_CTRL)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
-			}
-			else if(DBUS_CheckPush(KEY_Z)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], true);
-				DataMonitor_Send(0, LiftingMotorSetpoint[0]);
-			}
-			else if(DBUS_CheckPush(KEY_X)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = checkSetpoint(LiftingMotorSetpoint[0], false);
-				DataMonitor_Send(0, LiftingMotorSetpoint[0]);
-			}
-			else if(DBUS_CheckPush(KEY_C)){
-				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[2], true);
-				DataMonitor_Send(2, LiftingMotorSetpoint[2]);
-			}
-			else if(DBUS_CheckPush(KEY_V)){
-				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = checkSetpoint(LiftingMotorSetpoint[2], false);
-				DataMonitor_Send(2, LiftingMotorSetpoint[2]);
-			}
-			else if(!lower_pneumatic_prev && DBUS_CheckPush(KEY_Q)){
-				//pneumatic
-				lower_pneumatic_state = !lower_pneumatic_state;
-				pneumatic_control(1, lower_pneumatic_state);
-				pneumatic_control(2, lower_pneumatic_state);
-			}
-			else if(!upper_pneumatic_prev && DBUS_CheckPush(KEY_E)){
-				//pneumatic
-				if(upper_pneumatic_state == 0){
-					DataMonitor_Send(26, 0);	// turn off friction wheel
-					upper_pneumatic_state = 1;
-					pneumatic_control(3, true);	//extend the pneumatic
-				}
-				else if(upper_pneumatic_state == 1){
-					DataMonitor_Send(27, 0);	//friction wheel still off
-					upper_pneumatic_state = 2;	//pneumatic still extended
-				}
-				else if(upper_pneumatic_state == 2){
-					DataMonitor_Send(28,0);		//turn on friction wheel
-					upper_pneumatic_state = 0;
-					pneumatic_control(3, false);	//withdraw pneumatic
-				}
-				else
-					DataMonitor_Send(0x55, 0);	//keep communication
+				//all goes to zero
 			}
 			else
-					DataMonitor_Send(0x55, 0);	//keep communication
-		
+					DataMonitor_Send(0x55, 0);	//keep communication	
 		
 		}
 
@@ -393,13 +355,10 @@ void transmit(){
 			}	
 			else 
 				DataMonitor_Send(0x55, 0);	//keep communication
-			
-
-			
+	
 		}
 
-		lower_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_Q);
-		upper_pneumatic_prev = DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_E);
+		
 }
 
 

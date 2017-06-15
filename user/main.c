@@ -178,8 +178,13 @@ int main(void)
 					  	  //if(HERO!=RUNNING_MODE)
 									//HERO-=1;	
 								//switch_and_send();
-                          if(HERO != RUNNING_MODE)
-                              backState[HERO--]();
+                if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
+									backState[HERO--]();
+								else {
+									backState[HERO]();
+									HERO = UPPER_HORIZONTAL_PNEUMATIC_EXTENDS;
+
+								}
 					    }
 					  }
 					}
@@ -278,8 +283,8 @@ int main(void)
 					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
-				if(TIM_7_Counter % 20 == 0)
-					state_control();
+				//if(TIM_7_Counter % 20 == 0)
+					//state_control();
 			}
 			else {
 				//Dbus Offline
@@ -294,6 +299,8 @@ int main(void)
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				
 			}
+			if(TIM_7_Counter % 20 == 0)
+					state_control();
 			LastDBUSLeftSwitch = DBUS_ReceiveData.rc.switch_left;
 			LastDBUSRightSwitch = DBUS_ReceiveData.rc.switch_right;		
 			
@@ -312,12 +319,17 @@ int main(void)
 				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
 		
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
-				tft_clear_line(7);
+				
 //				tft_clear_line(3);
 //				tft_clear_line(4);
 //				tft_clear_line(5);
 				tft_clear_line(6);
-				tft_prints(1, 6, "LF:%d", LOAD_FLASH);
+				//tft_prints(1, 6, "LF:%d", LOAD_FLASH);
+				tft_prints(1, 6, "LF_fr:%d", CM1Encoder.filter_rate);
+				tft_clear_line(7);
+				tft_clear_line(8);
+				tft_prints(1,7,"LF:%d RF:%d",checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter) ,checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter) );
+				tft_prints(1,8,"LB:%d RB:%d",checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter) ,checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter));
 //				tft_clear_line(10);
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
 				//tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
@@ -325,7 +337,8 @@ int main(void)
 //				tft_prints(1,4,"pfd:%f", pitchPositionFeedback);
 //				tft_prints(1,5,"ssp:%f", pitchSpeedSetpoint);
 //				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
-				tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
+				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
+				tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
 				tft_update();
 			}	
 			

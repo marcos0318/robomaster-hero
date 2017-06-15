@@ -6,7 +6,8 @@
 #include "hero_param.h"
 #include "gimbal_control.h"
 
-
+extern volatile u32 G_counter;
+extern volatile u8 state_delay;
 
 extern volatile u8 upper_pneumatic_state ;
 extern volatile u8 lower_pneumatic_state ;
