@@ -215,7 +215,7 @@ void USART3_IRQHandler(void)
 			DANCING_MODE_FLAG = 0;
 			for(u8 i = 0; i < 4; i++)
 				//LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
-				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
+				LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1] + 10000;
 			//dancing mode ends
 			//need to set all LiftingMotors to raise up to the UP_SETPOINT
 			//turn off friction wheel

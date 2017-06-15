@@ -49,7 +49,7 @@ void Limit_Switch_init(){
 
 void LF_init(){
 	if(LeftFrontExpand){
-		if(num_of_touch(LeftFront)>15){
+		if(num_of_touch(LeftFront)>5){
 			LeftFrontExpand = 0;
 			LeftFrontReach = 1;
 			LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
@@ -72,7 +72,7 @@ void LF_init(){
 }
 void RF_init(){
 	if(RightFrontExpand){
-		if(num_of_touch(RightFront)>15){
+		if(num_of_touch(RightFront)>5){
 			RightFrontExpand = 0;
 			RightFrontReach = 1;
 			LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
@@ -97,7 +97,7 @@ void RF_init(){
 
 void LB_init(){
 	if(LeftBackExpand){
-		if(num_of_touch(LeftBack)>15){
+		if(num_of_touch(LeftBack)>5){
 			LeftBackExpand = 0;
 			LeftBackReach = 1;
 			LiftingMotorPositionLimit[3] = CM4Encoder.ecd_angle;
@@ -121,7 +121,7 @@ void LB_init(){
 
 void RB_init(){
 	if(RightBackExpand){
-		if(num_of_touch(RightBack)>15){
+		if(num_of_touch(RightBack)>5){
 			RightBackExpand = 0;
 			RightBackReach = 1;
 			LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
@@ -141,32 +141,6 @@ void RB_init(){
 	}
 	
 }
-/*
-void INIT_time_protection(u8 dir)
-{
-	if(dir){
-		//going up protection
-		LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle - TOTALLY_DOWN_SETPOINT;
-		
-	}
-	else{
-		//going down protection
-		LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
-		LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle + TOTALLY_DOWN_SETPOINT;
-	}
-}
-*/
-/*
-uint8_t TP_LeftFrontReachLower = 0;
-uint8_t TP_RightFrontReachLower = 0;
-uint8_t TP_RightBackReachLower = 0;
-uint8_t TP_LeftBackReachLower = 0;
-*/
 
 u8 TP_reach_lower_detection()
 {
@@ -192,25 +166,6 @@ u8 TP_reach_lower_detection()
 
 
 void initialization_process_full_init(){
-	/*
-	u8 HAS_ALL_REACHED_FLAG = 0;
-	u8 HAS_ALL_DOWN_FLAG = 0;
-	u8 ALL_TO_LIMIT_SWITCH = 0;
-	
-	extern volatile u32 TIM_7_counter;
-	extern volatile uint8_t INIT_protection_up_stop_flag;
-	extern volatile uint8_t INIT_protection_down_stop_flag;
-	extern volatile uint8_t INIT_protection_up_begin_flag;
-	extern volatile uint8_t INIT_protection_down_begin_flag;
-	extern volatile u32 INIT_protection_timer_begin;
-	extern volatile u32 INIT_protection_timer_reach;
-	extern volatile u32 INIT_protection_timer_down;
-	
-	void INIT_time_protection(u8 dir);
-	*/
-	
-	
-	
 	LF_init();
 	RF_init();
 	LB_init();

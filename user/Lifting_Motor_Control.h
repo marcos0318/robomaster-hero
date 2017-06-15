@@ -2,7 +2,7 @@
 #define LIFTING_MOTOR_CONTROL_H
 #include "main.h"
 #include "function_list.h"
-#define READ_TIME 30								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
+#define READ_TIME 10								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
 #define POWER_BUFFER_LENGTH 20
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200

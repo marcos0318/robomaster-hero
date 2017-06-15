@@ -23,7 +23,7 @@ volatile uint32_t Wheel2BrokenLineCounter = 1;
 volatile uint32_t Wheel3BrokenLineCounter = 1;
 volatile uint32_t Wheel4BrokenLineCounter = 1;
 
-
+volatile u8 LF_TOUCHED = 0, RF_TOUCHED = 0, LB_TOUCHED = 0, RB_TOUCHED = 0, ALL_TOUCHED = 0;
 
 void readFeedback(){
       LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
@@ -228,7 +228,26 @@ void TIM7_IRQHandler(void){
     {
 				++TIM_7_counter;
         ticks_msimg = get_ms_ticks();
-				update_GPIO_state();	//always update the GPIO state array
+				if(TIM_7_counter >= 3000){
+					if(TIM_7_counter == 3000) INIT_FLAG = 1;
+					update_GPIO_state();	//always update the GPIO state array
+					if(! (LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED)){
+						if(num_of_touch(LeftFront)>5) LF_TOUCHED = 1;
+						if(num_of_touch(RightFront)>5) RF_TOUCHED = 1;
+						if(num_of_touch(RightBack)>5) RB_TOUCHED = 1;
+						if(num_of_touch(LeftBack)>5) LB_TOUCHED = 1;		
+						INIT_protection_timer_begin = TIM_7_counter;
+					}
+					if(!ALL_TOUCHED) INIT_protection_timer_begin = TIM_7_counter;
+					if(!ALL_TOUCHED && LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED && 
+						(num_of_touch(LeftFront)==0) && (num_of_touch(RightFront)==0) && 
+						 (num_of_touch(LeftBack)==0)&& (num_of_touch(RightBack)==0))
+						ALL_TOUCHED = 1;
+				}
+				else{
+					INIT_FLAG = 0;
+					INIT_protection_timer_begin = TIM_7_counter;
+				}
 				if(TIM_7_counter % 20 == 0 )
 				{
 					CAN2BrokenLine = checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter)
@@ -236,13 +255,7 @@ void TIM7_IRQHandler(void){
 											|| checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter)
 											|| checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter);
 				}
-			/*
-			To do here:
-			if not in init state, still need to detect
-			if touch the GPIO switch for a long time
-			then unconditionally stop
-			And I will need to update the bias, lower_limit and upper_limit
-			*/
+	
 			
 			if(TIM_7_counter % 1000 == 0)
 			{
@@ -283,13 +296,11 @@ void TIM7_IRQHandler(void){
 			}
 			
 			
-				if(INIT_FLAG){
-						SPEED_LIMIT = 30000;
+				if(INIT_FLAG && ALL_TOUCHED){
 						initialization_process_full_init();
 					
 				}
 				if(!INIT_FLAG){
-					SPEED_LIMIT = 30000;
 					if(DANCING_MODE_FLAG){
 						for(u8 i = 0; i < 4; i++)
 						{
@@ -364,7 +375,8 @@ void TIM7_IRQHandler(void){
 					else BROKEN_CABLE = 0;
 					INIT_protection_up_begin_flag = 1;
 					INIT_FLAG = 1;
-					INIT_protection_timer_begin = TIM_7_counter;
+					if(!ALL_TOUCHED)
+						INIT_protection_timer_begin = TIM_7_counter;
 					for(uint8_t i=0; i<4; i++)
 						PIDClearError(&LiftingMotorState[i]);
 					Set_CM_Speed(CAN2,0,0,0,0);
