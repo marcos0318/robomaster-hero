@@ -51,6 +51,7 @@ void switch_and_send()
 		case RUNNING_MODE:
 			ChasisFlag = 1;
 			GimbalFlag = 3;
+		  direction = - output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
 			//withdraw lower pneumatic

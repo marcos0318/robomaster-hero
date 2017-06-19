@@ -13,6 +13,7 @@ void Back_To_RUNNING_MODE()
     //set flags and speed limit and direction
     ChasisFlag = 1;     //turn on gyro
     GimbalFlag = 3;     //recover gimbal control
+		direction = - output_angle*upperTotal/3600;
     filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
     speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
     //QWEASD back to normal control direction

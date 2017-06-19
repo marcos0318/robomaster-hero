@@ -60,7 +60,7 @@ struct fpid_control_states pitchSpeedState = {0,0,0};
 float pitchSpeedSetpoint = 0;
 float pitchSpeedFeedback = 0;
 float pitchSpeedMoveOutput = 0;
-int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
+int32_t pitchPosMultiplier = 2;       //DBUS mouse pitch control
 
 float ytotalPrev = 0;
 float rawpitchsetpoint = 333;
@@ -82,7 +82,7 @@ void keyboard_mouse_control() {
 	}
 	
   //restart the gimbal, clear the setpoint of the gimbal
-  if(ChasisFlag_Prev == 3 && (ChasisFlag == 1 || ChasisFlag == 2)) {
+  if( (ChasisFlag_Prev == 3 || ChasisFlag_Prev == 4) && (ChasisFlag == 1 || ChasisFlag == 2)) {
     direction = - output_angle*upperTotal/3600;
   }
 
@@ -277,7 +277,7 @@ void gimbal_pitch_control() {
 		rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
 
 	//limit pitch position
-	fwindowLimit(&rawpitchsetpoint, 1000/pitchPosMultiplier, 50/pitchPosMultiplier);
+	fwindowLimit(&rawpitchsetpoint, 1200/pitchPosMultiplier, 225/pitchPosMultiplier);
 
 
 	pitchPositionSetpoint = -rawpitchsetpoint * pitchPosMultiplier;
