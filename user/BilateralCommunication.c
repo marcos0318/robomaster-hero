@@ -117,6 +117,7 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 72) {
 			//load UP_SETPOINT
+			onStageMode();
 			if(getPositionSetpoint() == 2)
 			{
 				//load DANCING_MODE_RAISING_HEIGHT
@@ -135,6 +136,8 @@ void USART3_IRQHandler(void)
 		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
+			if(getPositionSetpoint() == 1)
+				runningMode();
 			DANCING_MODE_FLAG = 0;
 			for(uint8_t i = 0; i < 4; i++)
 				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
@@ -145,18 +148,22 @@ void USART3_IRQHandler(void)
 			//all go up to the limit switch
 			//ALL_TO_LIMIT_SWITCH = 1;
 			//INIT_FLAG = 1;
+			onStageMode();
 			for(u8 i = 0; i < 4; i++)
 								//LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
 					LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1];
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID() == 70){
+				if(getPositionSetpoint() == 1) goOnStageMode();
+					else offStageMode();
 		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + FLASH_MEM[0];
             LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + FLASH_MEM[0];
             LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2];
             LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3];    
 		}
 		else if(getID() == 71) {
+			goOnStageMode();
 			DANCING_MODE_FLAG = 0;
 			if(getPositionSetpoint() == 1)
 			{
@@ -174,6 +181,8 @@ void USART3_IRQHandler(void)
 		}
 		
 		else if(getID()==0xFF){
+			if(getPositionSetpoint() == 0) goOnStageMode();
+				else offStageMode();
 			GO_ON_STAGE_ONE_KEY=true;
 			broken_time=receive_time=get_ms_ticks();
 		}
@@ -203,6 +212,7 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 63){
 			//dancing mode begins
+			onStageMode();
 			INIT_FLAG = 0;
 			DANCING_MODE_FLAG = 1;
 		    LeftFrontReachUpper = 1;
@@ -212,6 +222,8 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();			
 		}
 		else if(getID() == 64){
+			if(getPositionSetpoint() == 1) onStageMode();
+			else offStageMode();
 			DANCING_MODE_FLAG = 0;
 			for(u8 i = 0; i < 4; i++)
 				//LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + UP_SETPOINT;
@@ -334,6 +346,7 @@ void USART3_IRQHandler(void)
 			
 		}
 		else if(getID()==26){
+			onStageMode();
 			FRICTION_WHEEL_STATE=false;
 			broken_time=receive_time=get_ms_ticks();
 		}
@@ -342,6 +355,7 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==28){
+			onStageMode();
 			FRICTION_WHEEL_STATE=true;
 			broken_time=receive_time=get_ms_ticks();
 		}

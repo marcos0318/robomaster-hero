@@ -2,12 +2,13 @@
 #define LIFTING_MOTOR_CONTROL_H
 #include "main.h"
 #include "function_list.h"
-#define READ_TIME 10								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
+#define READ_TIME 4								//detemine the length of the GPIO state buffer, now its 50ms, may be too long
 #define POWER_BUFFER_LENGTH 20
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
 #define SPEED_SETPOINT_LIMIT 1100
+#define SPEED_SETOPINT_LIMIT_INIT 900
 //#define UP_SETPOINT 260000						//determined by the height of the pneumatic, where pneumatice can be put on the stage precisely
 #define DOWN_SETPOINT 700//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 155000

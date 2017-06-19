@@ -90,13 +90,13 @@ int main(void)
 				tft_prints(1,5,"RBH:%f", (float)(CM3Encoder.ecd_angle - LiftingMotorBias[2]));
 //				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
 //				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
-//				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
+				tft_prints(1,7,"RF speed %d", LiftingMotorOutput[1]);
 				//tft_prints(1, 8, "LF%d RF%d ", gpio_read_input(LeftFront), gpio_read_input(RightFront));
 				//tft_prints(1, 9, "LB%d RB%d ", gpio_read_input(LeftBack), gpio_read_input(RightBack));
 				tft_prints(1, 9, "num_LB: %d", num_of_touch(LeftBack));
 				//tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
 				tft_prints(1,6, "US:%d", FLASH_MEM[0]);
-				tft_prints(1,7,"F0:%d",readFlash(0));
+				//tft_prints(1,7,"F0:%d",readFlash(0));
 				//tft_prints(1,8, "DM:%d", FLASH_MEM[1]);
 				//tft_prints(1,9, "F1:%d", readFlash(1));
         //for (int i=0;i<4;i++) 

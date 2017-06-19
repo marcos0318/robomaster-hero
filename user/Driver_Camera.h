@@ -30,5 +30,10 @@ void SetCameraChannel(int32_t signal, int32_t channel);
  */
 int32_t GetCameraChannel(int32_t signal);
 
+void goOnStageMode();
+void onStageMode();
+void offStageMode();
+void runningMode();
+
 #endif
 

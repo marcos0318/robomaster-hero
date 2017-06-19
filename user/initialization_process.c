@@ -49,7 +49,7 @@ void Limit_Switch_init(){
 
 void LF_init(){
 	if(LeftFrontExpand){
-		if(num_of_touch(LeftFront)>5){
+		if(num_of_touch(LeftFront)>2){
 			LeftFrontExpand = 0;
 			LeftFrontReach = 1;
 			LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
@@ -72,7 +72,7 @@ void LF_init(){
 }
 void RF_init(){
 	if(RightFrontExpand){
-		if(num_of_touch(RightFront)>5){
+		if(num_of_touch(RightFront)>2){
 			RightFrontExpand = 0;
 			RightFrontReach = 1;
 			LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
@@ -97,7 +97,7 @@ void RF_init(){
 
 void LB_init(){
 	if(LeftBackExpand){
-		if(num_of_touch(LeftBack)>5){
+		if(num_of_touch(LeftBack)>2){
 			LeftBackExpand = 0;
 			LeftBackReach = 1;
 			LiftingMotorPositionLimit[3] = CM4Encoder.ecd_angle;
@@ -121,7 +121,7 @@ void LB_init(){
 
 void RB_init(){
 	if(RightBackExpand){
-		if(num_of_touch(RightBack)>5){
+		if(num_of_touch(RightBack)>2){
 			RightBackExpand = 0;
 			RightBackReach = 1;
 			LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;

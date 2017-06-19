@@ -232,10 +232,10 @@ void TIM7_IRQHandler(void){
 					if(TIM_7_counter == 3000) INIT_FLAG = 1;
 					update_GPIO_state();	//always update the GPIO state array
 					if(! (LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED)){
-						if(num_of_touch(LeftFront)>5) LF_TOUCHED = 1;
-						if(num_of_touch(RightFront)>5) RF_TOUCHED = 1;
-						if(num_of_touch(RightBack)>5) RB_TOUCHED = 1;
-						if(num_of_touch(LeftBack)>5) LB_TOUCHED = 1;		
+						if(num_of_touch(LeftFront)>2) LF_TOUCHED = 1;
+						if(num_of_touch(RightFront)>2) RF_TOUCHED = 1;
+						if(num_of_touch(RightBack)>2) RB_TOUCHED = 1;
+						if(num_of_touch(LeftBack)>2) LB_TOUCHED = 1;		
 						INIT_protection_timer_begin = TIM_7_counter;
 					}
 					if(!ALL_TOUCHED) INIT_protection_timer_begin = TIM_7_counter;
@@ -266,13 +266,13 @@ void TIM7_IRQHandler(void){
 //				else SetCameraChannel((temp / 3), 0);
 //				SetCameraChannel((temp / 3) + 1, (temp % 3) + 1); 
 				
-				
+				/*
 				SetCameraChannel(1,1);
 				SetCameraChannel(2,1);
 				SetCameraChannel(3,1);
 				SetCameraChannel(4,1);
 				SetCameraChannel(5,1);
-				
+				*/
 				
 			}
 			
