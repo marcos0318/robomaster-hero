@@ -60,7 +60,7 @@ void switch_and_send()
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(5, 0);
+			DataMonitor_Send(5, 1);
 			//speed limit in chasis control
 			break;
 		case INTO_RI_MODE:
@@ -81,7 +81,7 @@ void switch_and_send()
 		case BACK_WHEEL_UP:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
             LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-			DataMonitor_Send(70, 0);		//ONE_KEY_DOWN_BACK			
+			DataMonitor_Send(70, 1);		//ONE_KEY_DOWN_BACK			
 			break;
 		case FRONT_WHEEL_UP:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
@@ -165,7 +165,7 @@ void switch_and_send()
 			break;
 		case DOWN_BACK_WHEEL:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFF, 0);		//ONE_KEY_UP_BACK		
+			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_BACK		
 			break;
 		
 	}

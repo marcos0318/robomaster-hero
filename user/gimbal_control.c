@@ -63,7 +63,7 @@ float pitchSpeedMoveOutput = 0;
 int32_t pitchPosMultiplier = 3;       //DBUS mouse pitch control
 
 float ytotalPrev = 0;
-float rawpitchsetpoint = 270;
+float rawpitchsetpoint = 333;
 
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
@@ -396,13 +396,16 @@ void TIM7_IRQHandler(void){
 					//SHIFT+F
 						HERO = RUNNING_MODE;
 						switch_and_send();
+						lower_pneumatic_state = 0;
+						pneumatic_control(1, 0);
+						pneumatic_control(2, 0);
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && SHIFT_G_G_DETECTOR && (TIM_7_Counter - SHIFT_G_timer) > 500) {
 					SHIFT_G_G_DETECTOR = 0;
 					//SHIFT+G
-						lower_pneumatic_state = 1;
-						pneumatic_control(1, 1);
-						pneumatic_control(2, 1);	
+						lower_pneumatic_state = 0;
+						pneumatic_control(1, 0);
+						pneumatic_control(2, 0);	
 						//jump to a special mode, after that mode, if press G, will jump to SPEED_LIMITATION
 						LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
 						DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT
@@ -411,9 +414,9 @@ void TIM7_IRQHandler(void){
 						speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 						//turn off gyro
 						ChasisFlag = 3;	
-						lower_pneumatic_state = 1;
-						pneumatic_control(1, 1);
-						pneumatic_control(2, 1);					
+						lower_pneumatic_state = 0;
+						pneumatic_control(1, 0);
+						pneumatic_control(2, 0);					
 						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
 					
 				}
@@ -463,9 +466,9 @@ void TIM7_IRQHandler(void){
 						//SHIFT+G+G
 						//jump to jump off island mode
 					SHIFT_G_G_DETECTOR = 0;
-						pneumatic_control(1, 0);
-						pneumatic_control(2, 0);
-						HERO = DOWN_FRONT_WHEEL;
+						//pneumatic_control(1, 0);
+						//pneumatic_control(2, 0);
+						HERO = VERTICAL_PNEUMATIC_WITHDRAWS;
 					switch_and_send();
 					DO_NOT_SAVE_TIME_SHIFT_G = 1;
 					
@@ -473,6 +476,7 @@ void TIM7_IRQHandler(void){
 				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_G_SPECIAL_MODE && !FOR_JOHN_G_PREV && FOR_JOHN_G)
 				{
 						HERO = SPEED_LIMITATION;
+						state_delay = 1;
 						switch_and_send();
 						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 0;
 				}
@@ -487,7 +491,7 @@ void TIM7_IRQHandler(void){
 				
 				
 				//INTO_RI lower pneumatic delay extention
-				if(INTO_RI_LPneu_flag == 1 && ((TIM_7_Counter - INTO_RI_LPneu_timer) > 3000))
+				if(INTO_RI_LPneu_flag == 1 && ((TIM_7_Counter - INTO_RI_LPneu_timer) > 1000))
 				{
 					INTO_RI_LPneu_flag = 0;
 					lower_pneumatic_state=true;
@@ -495,7 +499,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 1);
 				}
 				//SPEED_LIMITATION lower pneumatic delay withdrawl
-				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 2000))
+				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 1000))
 				{
 					SPEED_LIMITATION_LPneu_flag = 0;
 					lower_pneumatic_state=false;
@@ -503,7 +507,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 0);
 				}
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 2000))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 1000))
 				{
 					VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
 					pneumatic_control(4, false);
@@ -514,7 +518,7 @@ void TIM7_IRQHandler(void){
 					DataMonitor_Send(5, 0);
 				}
 				//Back_To_RUNNING_MODE: upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 2000))
+				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 1000))
 				{
 					B_RUNNING_MODE_UHPneu_LM_flag = 0;
 					pneumatic_control(4, 0);
@@ -526,7 +530,7 @@ void TIM7_IRQHandler(void){
 				}
 				
 				//Back_To_DANCING_MODE: upper vertical pneumatic delay extension, friction wheels delay being turned on
-				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 2000))
+				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 1000))
 				{
 					B_DANCING_MODE_UVPneu_FW_flag = 0;
 					pneumatic_control(4, true);

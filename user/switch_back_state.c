@@ -46,7 +46,7 @@ void Back_To_BACK_WHEEL_UP()
     ChasisFlag = 3;
     LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
     LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-    DataMonitor_Send(70, 0);
+    DataMonitor_Send(70, 1);
 }
 
 void Back_To_FRONT_WHEEL_UP()
@@ -101,7 +101,7 @@ void Back_To_DANCING_MODE()
     lower_pneumatic_state = false;
     pneumatic_control(1, 0);
     pneumatic_control(2, 0);
-		DataMonitor_Send(64, 0);
+		DataMonitor_Send(64, 1);
 }
 
 void Back_To_VERTICAL_PNEUMATIC_WITHDRAWS()
