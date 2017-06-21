@@ -82,6 +82,8 @@ int32_t speed_limitor = 660;
 int32_t angular_speed_limitor = FOR_JOHN_MAX_TURNING_SPEED;
 int32_t forward_speed;
 int32_t right_speed;
+float corrected_forward_speed;
+float corrected_right_speed;
 int32_t increment_of_angle;
 int32_t mouse_prev = 0;
 float gimbalNotOutGyroOutput = 0;

@@ -133,6 +133,8 @@ extern int32_t RC_dir_multiplier;
 extern int32_t angular_speed_limitor;
 extern int32_t forward_speed;
 extern int32_t right_speed;
+extern float corrected_forward_speed;
+extern float corrected_right_speed;
 extern int32_t increment_of_angle;
 extern int32_t mouse_prev;
 extern float gimbalNotOutGyroOutput;
