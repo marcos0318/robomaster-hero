@@ -213,7 +213,8 @@ void state_control(){
 	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV) && HERO != RUNNING_MODE){
     if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE)    
 		{
-			if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
+			if(HERO == RUNNING_MODE) {}
+			else if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
 				backState[HERO--]();
 			else {
 				backState[HERO]();

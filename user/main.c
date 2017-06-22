@@ -178,12 +178,12 @@ int main(void)
 					  	  //if(HERO!=RUNNING_MODE)
 									//HERO-=1;	
 								//switch_and_send();
-                if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
+								if(HERO == RUNNING_MODE) {}
+                else if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
 									backState[HERO--]();
 								else {
 									backState[HERO]();
 									HERO = UPPER_HORIZONTAL_PNEUMATIC_EXTENDS;
-
 								}
 					    }
 					  }
