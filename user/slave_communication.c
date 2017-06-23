@@ -203,9 +203,26 @@ void state_control(){
 	}
 	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV) && HERO != RUNNING_MODE){
 			
-				if(HERO!=DOWN_BACK_WHEEL)
+				if(HERO!=DOWN_BACK_WHEEL){
 					HERO+=1;
-				else HERO=RUNNING_MODE;
+					switch_and_send();
+				}
+				else {
+					HERO=RUNNING_MODE;
+					ChasisFlag = 1;
+					GimbalFlag = 3;
+					direction = - output_angle*upperTotal/3600;
+					filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+					speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+					//withdraw lower pneumatic
+					lower_pneumatic_state = false;
+					pneumatic_control(1, 0);
+					pneumatic_control(2, 0);
+					pneumatic_control(3, 0);
+					pneumatic_control(4, 0);
+					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+					DataMonitor_Send(5, 2);
+				}
 				G_counter = TIM_7_Counter;
 				state_delay = 1;
 			

@@ -160,10 +160,27 @@ int main(void)
 							//Left changed from middle to Up, similar to G, go to the next step
 					    if (DBUS_ReceiveData.rc.switch_left == 1 && LastDBUSLeftSwitch == 3) {
 					  	  //go to next state
-								if(HERO!=DOWN_BACK_WHEEL)
+								if(HERO!=DOWN_BACK_WHEEL){
 									HERO+=1;
-								else HERO=RUNNING_MODE;
-								switch_and_send();
+									switch_and_send();
+								}
+								else {
+									HERO=RUNNING_MODE;
+									ChasisFlag = 1;
+									GimbalFlag = 3;
+									direction = - output_angle*upperTotal/3600;
+									filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+									speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+									//withdraw lower pneumatic
+									lower_pneumatic_state = false;
+									pneumatic_control(1, 0);
+									pneumatic_control(2, 0);
+									pneumatic_control(3, 0);
+									pneumatic_control(4, 0);
+									LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+									DataMonitor_Send(5, 2);
+								}
+								
 								if(HERO == FRONT_WHEEL_UP || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS || HERO != BACK_WHEEL_UP ||HERO != SPEED_LIMITATION)
 								{								
 									LOAD_FLASH = 0;
