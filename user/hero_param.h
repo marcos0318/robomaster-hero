@@ -9,7 +9,7 @@
 #include <stdbool.h> 
 #include <math.h>
 
-#define BUFFER_LENGTH 300	
+#define BUFFER_LENGTH 50	
 #define POWER_BUFFER_LENGTH 20
 //#define CHASSIS_ANGULAR_VELOCITY_LIMIT 800
 #define MOVING_BOUND_1 200
@@ -109,6 +109,7 @@ extern int32_t kd_cameraSpeed;
 // Structure to strore PID data 
 extern struct pid_control_states states[4];
 extern int32_t wheel_setpoints[4];
+extern int32_t wheel_setpoints_buffered[4];
 extern int32_t wheel_feedbacks[4];
 extern int32_t wheel_outputs[4];
 
