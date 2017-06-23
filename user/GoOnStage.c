@@ -92,7 +92,7 @@ uint8_t num_of_touch(const GPIO* gpio){
 void speedProcess(){
 		//Control the cumulated error of the position pid process
 		for (int i = 0; i<4; i++) {
-			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 2000000);
+			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 1200000);
 		}
 		
 	
@@ -125,7 +125,7 @@ void speedProcess(){
     
 		//Before pid process contrl the cummulated error 
 		for (int i = 0; i < 4; i++) {
-			pid_limit_cumulated_error(&LiftingMotorState[i], 10000);
+			pid_limit_cumulated_error(&LiftingMotorState[i], 6000);
 		}
 		
 		
@@ -167,16 +167,16 @@ void setSetpoint(){
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_FRONT){
-			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+0;
-			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+0;
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
 		}
     if(ONE_KEY_UP_BACK){
 			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+FLASH_MEM[0];
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
 		}
     else if(ONE_KEY_DOWN_BACK){
-			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+0;
-			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+0;
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+DOWN_SETPOINT;
 		}
 				
     

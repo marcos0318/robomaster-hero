@@ -144,16 +144,16 @@ void RB_init(){
 
 u8 TP_reach_lower_detection()
 {
-	if(LiftingMotorBias[0] + TOTALLY_DOWN_SETPOINT - CM1Encoder.ecd_angle > -3500)
+	if(LiftingMotorBias[0] + TOTALLY_DOWN_SETPOINT - CM1Encoder.ecd_angle > -1700)
 		TP_LeftFrontReachLower = 1;
 	else TP_LeftFrontReachLower = 0;
-	if(LiftingMotorBias[1] + TOTALLY_DOWN_SETPOINT - CM2Encoder.ecd_angle > -3500)
+	if(LiftingMotorBias[1] + TOTALLY_DOWN_SETPOINT - CM2Encoder.ecd_angle > -1700)
 		TP_RightFrontReachLower = 1;
 	else TP_RightFrontReachLower = 0;
-	if(LiftingMotorBias[2] + TOTALLY_DOWN_SETPOINT - CM3Encoder.ecd_angle > -3500)
+	if(LiftingMotorBias[2] + TOTALLY_DOWN_SETPOINT - CM3Encoder.ecd_angle > -1700)
 		TP_RightBackReachLower = 1;
 	else TP_RightBackReachLower = 0;
-	if(LiftingMotorBias[3] + TOTALLY_DOWN_SETPOINT - CM4Encoder.ecd_angle > -3500)
+	if(LiftingMotorBias[3] + TOTALLY_DOWN_SETPOINT - CM4Encoder.ecd_angle > -1700)
 		TP_LeftBackReachLower = 1;
 	else TP_LeftBackReachLower = 0;
 	if(TP_LeftFrontReachLower && TP_LeftBackReachLower && TP_RightFrontReachLower && TP_RightBackReachLower)
@@ -211,31 +211,31 @@ void initialization_process_back_init(){
 
 
 void LF_Dancing(int32_t ul, int32_t ll){
-	if(CM1Encoder.ecd_angle - ul > -3500){
+	if(CM1Encoder.ecd_angle - ul > -1700){
 		LeftFrontReachUpper = 1;
 	}
-	if(ll - CM1Encoder.ecd_angle > -3500)
+	if(ll - CM1Encoder.ecd_angle > -1700)
 		LeftFrontReachLower = 1;
 }
 
 void RF_Dancing(int32_t ul, int32_t ll){
-	if(CM2Encoder.ecd_angle - ul > -3500)
+	if(CM2Encoder.ecd_angle - ul > -1700)
 		RightFrontReachUpper = 1;
-	if(ll - CM2Encoder.ecd_angle > -3500)
+	if(ll - CM2Encoder.ecd_angle > -1700)
 		RightFrontReachLower = 1;
 }
 
 void RB_Dancing(int32_t ul, int32_t ll){
-	if(CM3Encoder.ecd_angle - ul > -3500)
+	if(CM3Encoder.ecd_angle - ul > -1700)
 		RightBackReachUpper = 1;
-	if(ll - CM3Encoder.ecd_angle > -3500)
+	if(ll - CM3Encoder.ecd_angle > -1700)
 		RightBackReachLower = 1;
 }
 
 void LB_Dancing(int32_t ul, int32_t ll){
-	if(CM4Encoder.ecd_angle - ul > -3500)
+	if(CM4Encoder.ecd_angle - ul > -1700)
 		LeftBackReachUpper = 1;
-	if(ll - CM4Encoder.ecd_angle > -3500)
+	if(ll - CM4Encoder.ecd_angle > -1700)
 		LeftBackReachLower = 1;
 }
 

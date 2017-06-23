@@ -136,12 +136,20 @@ void USART3_IRQHandler(void)
 		else if(getID()==0x05){
 			//shift R
 			//all go to down limit
-			if(getPositionSetpoint() == 1)
+			if(getPositionSetpoint() == 1 || getPositionSetpoint() == 2)
 				runningMode();
 			DANCING_MODE_FLAG = 0;
-			for(uint8_t i = 0; i < 4; i++)
-				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i];
+			
 			FRICTION_WHEEL_STATE = false;
+			if(getPositionSetpoint() != 2){
+				for(uint8_t i = 0; i < 4; i++)
+				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i] + DOWN_SETPOINT;
+			}
+			else {
+				INIT_FLAG = 1;
+				INIT_protection_up_begin_flag = 1;
+				INIT_protection_timer_begin = TIM_7_counter;
+			}
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==69){
@@ -159,8 +167,8 @@ void USART3_IRQHandler(void)
 					else offStageMode();
 		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + FLASH_MEM[0];
             LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + FLASH_MEM[0];
-            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2];
-            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3];    
+            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2]+ DOWN_SETPOINT;
+            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3]+ DOWN_SETPOINT;    
 		}
 		else if(getID() == 71) {
 			goOnStageMode();
