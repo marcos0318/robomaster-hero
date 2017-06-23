@@ -95,6 +95,15 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 		
 	wheel_setpoints_adjust(&wheel_setpoints[0], &wheel_setpoints[1],&wheel_setpoints[2],&wheel_setpoints[3] , filter_rate_limit);
 	
+	for (int i=0; i<4; i++) {
+		if ( wheel_setpoints[i] > wheel_setpoints_buffered [i]) {
+			wheel_setpoints_buffered[i] += 1;
+		}
+		else if ( wheel_setpoints[i] < wheel_setpoints_buffered [i] ) {
+			wheel_setpoints_buffered[i] -= 1;
+		}
+	}
+	
 	//these are the feed back as the current state 
 	wheel_feedbacks[0] = CM1Encoder.filter_rate;
 	wheel_feedbacks[1] = CM2Encoder.filter_rate;
@@ -104,7 +113,7 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	//pid process to get the output as the torque
 	if ( GimbalFlag != 1 ) {
 	  for (int i=0; i<4; i++) {
-			wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints[i], &wheel_feedbacks[i], kp, ki, kd);
+			wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints_buffered[i], &wheel_feedbacks[i], kp, ki, kd);
 		}
 	    
 	}
@@ -112,6 +121,7 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	  for (int i=0; i<4; i++)
 	    wheel_outputs[i] = 0;
 	}
+
 
 
 }

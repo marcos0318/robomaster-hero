@@ -9,7 +9,6 @@ int32_t CAN2BrokenLineRecover = 0;
 int32_t GimbalFlag = 3;  
 int32_t ChasisFlag = 1;
 int32_t CameraFlag = 1;
-
 int32_t ChasisFlag_Prev = 1;
 
 int32_t LastDBUSLeftSwitch = 0;
@@ -60,6 +59,7 @@ int32_t kd_cameraSpeed = 1;
 // Structure to strore PID data 
 struct pid_control_states states[4] = {{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}};
 int32_t wheel_setpoints[4] = {0,0,0,0};
+int32_t wheel_setpoints_buffered[4] = {0,0,0,0};
 int32_t wheel_feedbacks[4] = {0,0,0,0};
 int32_t wheel_outputs[4] = {0,0,0,0};
 
