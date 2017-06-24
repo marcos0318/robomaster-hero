@@ -54,10 +54,17 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 
 	feedback_angle = output_angle;
 				
-	output_angle_speed = pid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);
+	output_angle_speed = fpid_process(&state_angle,&setpoint_angle, &feedback_angle, kp_chassisAngle, ki_chassisAngle, kd_chassisAngle);
 	
 	windowLimit(&output_angle_speed, FOR_JOHN_MAX_TURNING_SPEED, -FOR_JOHN_MAX_TURNING_SPEED);
 
+	//buffering the output angle speed 
+	if (output_angle_speed_buffered < output_angle_speed) output_angle_speed_buffered += 3.5;
+	else if (output_angle_speed_buffered > output_angle_speed) output_angle_speed_buffered -= 3.5;
+	
+	//give back the output value
+	output_angle_speed = output_angle_speed_buffered;
+	
 	int32_t max_wheel_setpoint = abs(forward_speed) + abs(right_speed);	
 
 	int32_t larger_abs_speed = max(abs(forward_speed), abs(right_speed));
@@ -68,6 +75,18 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	wheel_setpoints[3] = (- forward_speed + right_speed) * larger_abs_speed / max_wheel_setpoint ;
 	//but the code above is only for the moving back and forth, left and right
 					
+	for (int i=0; i<4; i++) {
+		if ( wheel_setpoints[i] > wheel_setpoints_buffered [i]) {
+			wheel_setpoints_buffered[i] += 1.6;
+		}
+		else if ( wheel_setpoints[i] < wheel_setpoints_buffered [i] ) {
+			wheel_setpoints_buffered[i] -= 1.6;
+		}
+		wheel_setpoints[i] = wheel_setpoints_buffered[i];
+	}
+	
+	
+	
 	for (int i=0; i<4; i++){
 		buffer_in(buffer[i], BUFFER_LENGTH, ticks_msimg , wheel_setpoints[i]);
 		wheel_setpoints[i] = buffer_out(buffer[i], BUFFER_LENGTH, ticks_msimg);
@@ -95,14 +114,7 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 		
 	wheel_setpoints_adjust(&wheel_setpoints[0], &wheel_setpoints[1],&wheel_setpoints[2],&wheel_setpoints[3] , filter_rate_limit);
 	
-	for (int i=0; i<4; i++) {
-		if ( wheel_setpoints[i] > wheel_setpoints_buffered [i]) {
-			wheel_setpoints_buffered[i] += 1;
-		}
-		else if ( wheel_setpoints[i] < wheel_setpoints_buffered [i] ) {
-			wheel_setpoints_buffered[i] -= 1;
-		}
-	}
+	
 	
 	//these are the feed back as the current state 
 	wheel_feedbacks[0] = CM1Encoder.filter_rate;
@@ -113,7 +125,7 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 	//pid process to get the output as the torque
 	if ( GimbalFlag != 1 ) {
 	  for (int i=0; i<4; i++) {
-			wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints_buffered[i], &wheel_feedbacks[i], kp, ki, kd);
+			wheel_outputs[i] = pid_process(&states[i], &wheel_setpoints[i], &wheel_feedbacks[i], kp, ki, kd);
 		}
 	    
 	}

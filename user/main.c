@@ -107,7 +107,7 @@ int main(void)
 						wheel_setpoints[i] = 0;
 						wheel_outputs[i]=0;
 					}
-					PIDClearError(&state_angle);			
+					fPIDClearError(&state_angle);			
 					Set_CM_Speed(CAN2,0,0,0,0);
 				}
 				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
@@ -296,7 +296,7 @@ int main(void)
 						wheel_setpoints[i] = 0;
 						wheel_outputs[i]=0;
 					}
-					PIDClearError(&state_angle);
+					fPIDClearError(&state_angle);
 					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
@@ -312,7 +312,7 @@ int main(void)
 					wheel_setpoints[i] = 0;
 					wheel_outputs[i]=0;
 				}
-				PIDClearError(&state_angle);
+				fPIDClearError(&state_angle);
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				
 			}
