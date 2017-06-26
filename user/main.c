@@ -356,6 +356,9 @@ int main(void)
 //				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
 				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
 				tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
+			  tft_clear_line(11);
+				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
+				tft_prints(1,11,":%d", chasis_turning_speed);
 				tft_update();
 			}	
 			

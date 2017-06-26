@@ -61,6 +61,9 @@ extern struct fpid_control_states pitchPositionState;
 extern u8 LeftJoystick;
 //velocity control
 
+extern int32_t output_angle_prev;
+extern int32_t chasis_turning_speed;
+
 extern float pitchSpeedSetpoint;
 extern float pitchSpeedFeedback;
 extern float pitchSpeedMoveOutput;

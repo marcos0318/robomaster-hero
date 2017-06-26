@@ -50,6 +50,9 @@ void switch_and_send()
 	switch(HERO){
 		case RUNNING_MODE:
 			ChasisFlag = 1;
+			if (DBUS_ReceiveData.mouse.press_right) {
+				ChasisFlag = 2;
+			}
 			GimbalFlag = 3;
 		  direction = - output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
