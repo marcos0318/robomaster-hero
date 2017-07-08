@@ -416,6 +416,7 @@ void TIM7_IRQHandler(void){
 						pneumatic_control(1, 0);
 						pneumatic_control(2, 0);					
 						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
+						HERO = INTO_RI_MODE;
 					
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && !FOR_JOHN_SHIFT_F && FOR_JOHN_SHIFT_F_PREV){

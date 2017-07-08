@@ -48,12 +48,14 @@ enum modeControl HERO = RUNNING_MODE;
 void switch_and_send()
 {
 	switch(HERO){
-		case RUNNING_MODE:
+		case RUNNING_MODE:		
+		if (!FOR_JOHN_SHIFT_G_SPECIAL_MODE) {
 			ChasisFlag = 1;
 			GimbalFlag = 3;
 		  direction = - output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+		}
 			//withdraw lower pneumatic
 			lower_pneumatic_state = false;
 			pneumatic_control(1, 0);
@@ -207,7 +209,7 @@ void state_control(){
 					HERO+=1;
 					switch_and_send();
 				}
-				else {
+				else if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE){
 					HERO=RUNNING_MODE;
 					ChasisFlag = 1;
 					GimbalFlag = 3;

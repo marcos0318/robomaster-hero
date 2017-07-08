@@ -273,7 +273,7 @@ int main(void)
 
 
 				if(CAN2BrokenLine == 0){
-					if(HERO == RUNNING_MODE && GimbalFlag != 1)
+					if(HERO == RUNNING_MODE && GimbalFlag != 1 && !FOR_JOHN_SHIFT_G_SPECIAL_MODE)
 						ChasisFlag = 1;
 					
 					tft_clear_line(2);
