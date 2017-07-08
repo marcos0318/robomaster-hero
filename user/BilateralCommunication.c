@@ -186,6 +186,10 @@ void USART3_IRQHandler(void)
 			
       for(u8 i = 0; i < 4; i++)
          LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
+			if(getPositionSetpoint() == 2) {
+				for(u8 i = 0; i < 4; i++)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT;
+			}
 		}
 		
 		else if(getID()==0xFF){
