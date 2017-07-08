@@ -404,11 +404,9 @@ void TIM7_IRQHandler(void){
 					SHIFT_G_G_DETECTOR = 0;
 					//SHIFT+G
 						lower_pneumatic_state = 0;
-						pneumatic_control(1, 0);
-						pneumatic_control(2, 0);	
 						//jump to a special mode, after that mode, if press G, will jump to SPEED_LIMITATION
 						LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-						DataMonitor_Send(71, 0);		//ONE_KEY_DOWN_FRONT
+						DataMonitor_Send(71, 2);		//ONE_KEY_DOWN_FRONT
 						//reverse QWEASD
 						filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 						speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
