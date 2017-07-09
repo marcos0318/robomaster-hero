@@ -28,6 +28,9 @@
 #define FOR_JOHN_INTO_RI_MAX_SPEED 300		//Shift and Control are meaningless here
 #define FOR_JOHN_QE_INC 120
 
+
+extern int32_t shootingWheelSpeed;
+
 /***************************/
 /***** Global Flags   ******/
 /***************************/
