@@ -1,15 +1,19 @@
+#define JUDGE_FILE
+
 #include "judge.h"
 #include "main.h"
 
+#define GET_BUFFER(x) JUDGE_DataBuffer[(uint8_t)(JUDGE_NextDecodeOffset+(x))]
+
 InfantryJudge_Struct InfantryJudge;
 
-uint8_t JudgeDataBuffer[JudgeBufferLength];
+uint8_t JUDGE_DataBuffer[JUDGE_BUFFER_LENGTH];
 
 //HKUST RM2017 mainboad judge : USART3
 
 void judging_system_init(void){ 
 
-		DMA_InitTypeDef     DMA_InitStructure;
+	DMA_InitTypeDef     DMA_InitStructure;
     NVIC_InitTypeDef	NVIC_InitStructure;
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
 	
@@ -24,7 +28,7 @@ void judging_system_init(void){
     GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
     
 		
-		USART_InitTypeDef   USART_InitStructure;
+	USART_InitTypeDef   USART_InitStructure;
     
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 	
@@ -35,29 +39,30 @@ void judging_system_init(void){
     USART_InitStructure.USART_StopBits              =   USART_StopBits_1;
     USART_InitStructure.USART_WordLength            =   USART_WordLength_8b;
     USART_Init(USART3, &USART_InitStructure);
-    USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
+    //USART_DMACmd(USART3, USART_DMAReq_Rx, ENABLE);
     USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
     USART_Cmd(USART3, ENABLE);
 		
-		    //USART3
-		NVIC_InitStructure.NVIC_IRQChannel						=	USART3_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelCmd					=	ENABLE;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority	=	8;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority			=	0;
-		NVIC_Init(&NVIC_InitStructure);
-		USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);
+    //USART3
+	NVIC_InitStructure.NVIC_IRQChannel						=	USART3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd					=	ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority	=	8;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority			=	0;
+	NVIC_Init(&NVIC_InitStructure);
+	USART_ITConfig(USART3, USART_IT_IDLE, ENABLE);
 			
-		  //UART3_RX
+			/*
+    //UART3_RX
     DMA_InitStructure.DMA_Channel           =   DMA_Channel_4;
     DMA_InitStructure.DMA_PeripheralBaseAddr=   (uint32_t)(&USART3->DR);
-    DMA_InitStructure.DMA_Memory0BaseAddr   =   (uint32_t)(JudgeDataBuffer);
+    DMA_InitStructure.DMA_Memory0BaseAddr   =   (uint32_t)(JUDGE_DataBuffer);
     DMA_InitStructure.DMA_DIR               =   DMA_DIR_PeripheralToMemory;
-    DMA_InitStructure.DMA_BufferSize        =   JudgeBufferLength;
+    DMA_InitStructure.DMA_BufferSize        =   JUDGE_BUFFER_LENGTH;
     DMA_InitStructure.DMA_PeripheralInc     =   DMA_PeripheralInc_Disable;
     DMA_InitStructure.DMA_MemoryInc         =   DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_MemoryDataSize    =   DMA_MemoryDataSize_Byte;
     DMA_InitStructure.DMA_PeripheralDataSize=   DMA_PeripheralDataSize_Byte;
-    DMA_InitStructure.DMA_Mode              =   DMA_Mode_Normal;
+    DMA_InitStructure.DMA_Mode              =   DMA_Mode_Circular;
     DMA_InitStructure.DMA_Priority          =   DMA_Priority_Medium;
     DMA_InitStructure.DMA_FIFOMode          =   DMA_FIFOMode_Disable;
     DMA_InitStructure.DMA_FIFOThreshold     =   DMA_FIFOThreshold_Full;
@@ -65,11 +70,72 @@ void judging_system_init(void){
     DMA_InitStructure.DMA_PeripheralBurst   =   DMA_PeripheralBurst_Single;
     DMA_Init(DMA1_Stream1, &DMA_InitStructure);
     DMA_Cmd(DMA1_Stream1, ENABLE);
+		*/
+		
+		
+		
+		
+				//enable Dbus related clock
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
+		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE);
+	
+		//init pin that has been chosen on the RM2017 board
+    //GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_UART4);
+	  GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_UART4);
+	
+		GPIO_InitStructure.GPIO_Mode   =   GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_OType  =   GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Pin    =   GPIO_Pin_1;
+    GPIO_InitStructure.GPIO_PuPd   =   GPIO_PuPd_UP;
+    GPIO_InitStructure.GPIO_Speed  =   GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    
+		//init for double side transmission
+    USART_InitStructure.USART_BaudRate              =   115200;
+    USART_InitStructure.USART_HardwareFlowControl   =   USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode                  =   USART_Mode_Rx;
+    USART_InitStructure.USART_Parity                =   USART_Parity_No;
+    USART_InitStructure.USART_StopBits              =   USART_StopBits_1;
+    USART_InitStructure.USART_WordLength            =   USART_WordLength_8b;
+    USART_Init(UART4, &USART_InitStructure);
+		USART_Cmd(UART4, ENABLE);	
+		
+		//init NVIC, interrupt enable
+		NVIC_InitStructure.NVIC_IRQChannel						=	UART4_IRQn;
+		NVIC_InitStructure.NVIC_IRQChannelCmd					=	ENABLE;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority	=	1;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority			=	0;
+		NVIC_Init(&NVIC_InitStructure);
+		USART_ITConfig(UART4, USART_IT_IDLE, ENABLE);
+		
+		//UART4 RX DMA config
+    USART_DMACmd(UART4, USART_DMAReq_Rx, ENABLE);
+		DMA_DeInit(DMA1_Stream2); 
+    DMA_InitStructure.DMA_Channel           =   DMA_Channel_4;
+    DMA_InitStructure.DMA_PeripheralBaseAddr=   (uint32_t)(&UART4->DR);
+    DMA_InitStructure.DMA_Memory0BaseAddr   =   (uint32_t)(JUDGE_DataBuffer);
+    DMA_InitStructure.DMA_DIR               =   DMA_DIR_PeripheralToMemory;
+    DMA_InitStructure.DMA_BufferSize        =   JUDGE_BUFFER_LENGTH;
+    DMA_InitStructure.DMA_PeripheralInc     =   DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc         =   DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_MemoryDataSize    =   DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_PeripheralDataSize=   DMA_PeripheralDataSize_Byte;
+    DMA_InitStructure.DMA_Mode              =   DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority          =   DMA_Priority_Medium;
+    DMA_InitStructure.DMA_FIFOMode          =   DMA_FIFOMode_Disable;
+    DMA_InitStructure.DMA_FIFOThreshold     =   DMA_FIFOThreshold_Full;
+    DMA_InitStructure.DMA_MemoryBurst       =   DMA_MemoryBurst_Single;
+    DMA_InitStructure.DMA_PeripheralBurst   =   DMA_PeripheralBurst_Single;
+    DMA_Init(DMA1_Stream2, &DMA_InitStructure);
+    DMA_Cmd(DMA1_Stream2, ENABLE);
+
+Judge_InitConfig();
 }
 
 
 
-/***********************************    ??    DJI????CRC?????   ??  ***********************************/
+/***********************************  CRC  ***********************************/
 //crc8 generator polynomial:G(x)=x8+x5+x4+1
 const unsigned char CRC8_INIT = 0xff;
 const unsigned char CRC8_TAB[256] =
@@ -119,6 +185,16 @@ unsigned int Verify_CRC8_Check_Sum(unsigned char *pchMessage, unsigned int dwLen
     return ( ucExpected == pchMessage[dwLength-1] );
 }
 
+uint8_t GetCRC8(uint8_t idx, uint8_t len, uint8_t ucCRC8) {
+  while (len--)
+    ucCRC8 = CRC8_TAB[ucCRC8^JUDGE_DataBuffer[idx++]];
+  return ucCRC8;
+}
+
+unsigned int VerifyCRC8(uint8_t idx, uint8_t len) {
+  uint8_t ucExpected = GetCRC8(idx, len-1, CRC8_INIT);
+  return ucExpected == JUDGE_DataBuffer[(uint8_t)(idx+len-1)];
+}
 
 /*
 ** Descriptions: append CRC8 to the end of data
@@ -228,7 +304,7 @@ void Append_CRC16_Check_Sum(uint8_t * pchMessage,uint32_t dwLength)
     pchMessage[dwLength-2] = (u8)(wCRC & 0x00ff);
     pchMessage[dwLength-1] = (u8)((wCRC >> 8)& 0x00ff);
 }
-/***********************************    ??    DJI????CRC?????   ??  ***********************************/   
+/***********************************  CRC  ***********************************/   
   
 
 /**
@@ -238,102 +314,141 @@ void Append_CRC16_Check_Sum(uint8_t * pchMessage,uint32_t dwLength)
   */
 void Judge_InitConfig(void)
 {
-    InfantryJudge.RealVoltage = 25.2F;
+    JUDGE_FrameCounter = 0;
+    JUDGE_Started = 0;
+    JUDGE_RemainByte = 0;
+
+    InfantryJudge.RealVoltage = 0;
     InfantryJudge.RealCurrent = 0;
+    InfantryJudge.RemainTime = 0;
     InfantryJudge.LastBlood = 1500;
     InfantryJudge.LastShotSpeed = 23.5;
-
+    InfantryJudge.LastShotFreq = 1.0;
+    InfantryJudge.RemainBuffer = 60.0;
+    InfantryJudge.LastHartID = 0;
+    InfantryJudge.ArmorDecrease = 0;
+    InfantryJudge.OverShootSpeedDecrease = 0;
+    InfantryJudge.OverShootFreqDecrease = 0;
+    InfantryJudge.OverPowerDecrease = 0;
+    InfantryJudge.ModuleOfflineDecrease = 0;
+    InfantryJudge.Updated = 0;
 }
 
+/**
+  * @brief  This function handles UART3 interrupt request.  
+  * @param  None
+  * @retval None
+  */
+void UART4_IRQHandler(void) {
+    static uint8_t dum;
+    dum = UART4->DR;
+    dum = UART4->SR;
 
+    JUDGE_Decode(DMA1_Stream2->NDTR); 
 
+    UNUSED(dum);
+}
 
-u8 UARTtemp1;
-FormatTrans FT;
-void USART3_IRQHandler(void)
-{
-    UARTtemp1 = USART3->DR;
-    UARTtemp1 = USART3->SR;
-    
-    DMA_Cmd(DMA1_Stream1, DISABLE);
-    
-#ifndef USE_SIMULATED_JUDGE
-		//???????????????????????
-    if((DMA1_Stream1->NDTR == JudgeBufferLength - JudgeFrameLength_1) && 
-        (Verify_CRC16_Check_Sum(JudgeDataBuffer, 38 + 8) == 1) &&
-        (JudgeDataBuffer[4] == 1))
-    {
+uint8_t judgeFrameDataLength;
+uint8_t judgeFrameTotalLength;
+void JUDGE_Decode(uint32_t length) {
+    static uint8_t repeatFlag;
 
-        //??????
-        FT.U[3] = JudgeDataBuffer[15];
-        FT.U[2] = JudgeDataBuffer[14];
-        FT.U[1] = JudgeDataBuffer[13];
-        FT.U[0] = JudgeDataBuffer[12];
-        InfantryJudge.RealVoltage = FT.F;
-        
-        //???????
-        FT.U[3] = JudgeDataBuffer[19];
-        FT.U[2] = JudgeDataBuffer[18];
-        FT.U[1] = JudgeDataBuffer[17];
-        FT.U[0] = JudgeDataBuffer[16];
-        InfantryJudge.RealCurrent = FT.F;
-        
-        //??????
-        InfantryJudge.LastBlood = ((int16_t)JudgeDataBuffer[11] << 8) | JudgeDataBuffer[10];
-        
-		}
-    //?????????
-    else if((DMA1_Stream1->NDTR == JudgeBufferLength - JudgeFrameLength_1 - JudgeFrameLength_2) && 
-        (Verify_CRC16_Check_Sum(JudgeDataBuffer, 3 + 8) == 1) &&
-        (JudgeDataBuffer[4] == 2))
-    {
-
-        //???????
-        if(!(JudgeDataBuffer[6] >> 4))
-        {
-            //????????ID
-            InfantryJudge.LastHartID = JudgeDataBuffer[6] & 0x0F;
-
+    if (!JUDGE_Started)
+      for (uint32_t i = 0; i < JUDGE_BUFFER_LENGTH; ++i)
+        if (JUDGE_DataBuffer[i] == JUDGE_FRAME_HEADER
+            && VerifyCRC8(i, JUDGE_FRAME_HEADER_LENGTH)) {
+          JUDGE_Started = 1;
+          JUDGE_NextDecodeOffset = i;
         }
-    }
-    //???????
-    else if((DMA1_Stream1->NDTR == JudgeBufferLength - JudgeFrameLength_1 - JudgeFrameLength_3) && 
-        (Verify_CRC16_Check_Sum(JudgeDataBuffer, 16 + 8) == 1) &&
-        (JudgeDataBuffer[4] == 3))
-    {
-        
-        //???????
-        FT.U[3] = JudgeDataBuffer[9];
-        FT.U[2] = JudgeDataBuffer[8];
-        FT.U[1] = JudgeDataBuffer[7];
-        FT.U[0] = JudgeDataBuffer[6];
-        InfantryJudge.LastShotSpeed = FT.F;
-        
-    }
-#else // USE_SIMULATED_JUDGE
-    if (DMA1_Stream1->NDTR == JudgeBufferLength-10) {
-        FT.U[0] = JudgeDataBuffer[2];
-        FT.U[1] = JudgeDataBuffer[3];
-        FT.U[2] = JudgeDataBuffer[4];
-        FT.U[3] = JudgeDataBuffer[5];
-        InfantryJudge.RealVoltage = FT.F;
 
-        FT.U[0] = JudgeDataBuffer[6];
-        FT.U[1] = JudgeDataBuffer[7];
-        FT.U[2] = JudgeDataBuffer[8];
-        FT.U[3] = JudgeDataBuffer[9];
-        InfantryJudge.RealCurrent = FT.F;
+    if (JUDGE_Started) {
+      JUDGE_RemainByte = JUDGE_BUFFER_LENGTH-length-1;
+      JUDGE_RemainByte -= JUDGE_NextDecodeOffset+1;
 
-        InfantryJudge.LastBlood = ((uint16_t)JudgeDataBuffer[1]<<8) | JudgeDataBuffer[0];
+      repeatFlag = 1;
+      while (JUDGE_RemainByte >= JUDGE_FRAME_HEADER_LENGTH && repeatFlag
+          && VerifyCRC8(JUDGE_NextDecodeOffset, JUDGE_FRAME_HEADER_LENGTH)) {
+        repeatFlag = 0;
+        judgeFrameDataLength = GET_BUFFER(1);
+        judgeFrameTotalLength = judgeFrameDataLength + JUDGE_EXTRA_LENGTH;
+        if (JUDGE_RemainByte >= judgeFrameTotalLength) {
+          ++JUDGE_FrameCounter;
+
+          /* Decode */
+          JUDGE_DecodeFrame(GET_BUFFER(5));
+          
+          /* Update data pointer */
+          JUDGE_NextDecodeOffset += judgeFrameTotalLength;
+          JUDGE_RemainByte -= judgeFrameTotalLength;
+          repeatFlag = 1;
+        }
+      }
     }
-#endif
-	
+}
 
-    //????DMA
-    DMA_ClearFlag(DMA1_Stream1, DMA_FLAG_TCIF1 | DMA_FLAG_HTIF1);
-    
-		while(DMA_GetCmdStatus(DMA1_Stream1) != DISABLE);
-    DMA_SetCurrDataCounter(DMA1_Stream1, JudgeBufferLength);
-    DMA_Cmd(DMA1_Stream1, ENABLE);
-    
+void JUDGE_DecodeFrame(uint8_t type) {
+  volatile FormatTrans FT;
+  if (type == 1) {
+    InfantryJudge.RemainTime = ((uint32_t)GET_BUFFER(10)<<24)|((uint32_t)GET_BUFFER(9)<<16)|((uint32_t)GET_BUFFER(8)<<8)|((uint32_t)GET_BUFFER(7));
+
+    FT.U[0] = GET_BUFFER(13);
+    FT.U[1] = GET_BUFFER(14);
+    FT.U[2] = GET_BUFFER(15);
+    FT.U[3] = GET_BUFFER(16);
+    InfantryJudge.RealVoltage = FT.F;
+
+    FT.U[0] = GET_BUFFER(17);
+    FT.U[1] = GET_BUFFER(18);
+    FT.U[2] = GET_BUFFER(19);
+    FT.U[3] = GET_BUFFER(20);
+    InfantryJudge.RealCurrent = FT.F;
+
+    FT.U[0] = GET_BUFFER(38);
+    FT.U[1] = GET_BUFFER(39);
+    FT.U[2] = GET_BUFFER(40);
+    FT.U[3] = GET_BUFFER(41);
+    InfantryJudge.RemainBuffer = FT.F;
+
+    InfantryJudge.LastBlood = ((uint16_t)GET_BUFFER(12)<<8)|GET_BUFFER(11);
+    InfantryJudge.Updated = 1;
+  }
+  else if (type == 2) {
+    uint8_t way = GET_BUFFER(7)>>4;
+    uint16_t delta = ((uint16_t)GET_BUFFER(9)<<8)|GET_BUFFER(8);
+    switch (way) {
+      case 0: // armor damage
+        InfantryJudge.LastHartID = GET_BUFFER(7)&0x0F;
+        InfantryJudge.ArmorDecrease += delta;
+        break;
+      case 1: // over speed
+        InfantryJudge.OverShootSpeedDecrease += delta;
+        break;
+      case 2: // over frequency
+        InfantryJudge.OverShootFreqDecrease += delta;
+        break;
+      case 3: // over power
+        InfantryJudge.OverPowerDecrease += delta;
+        break;
+      case 4: // module offline
+        InfantryJudge.ModuleOfflineDecrease += delta;
+        break;
+      case 6: // violation
+        // InfantryJudge.violationDamage += delta;
+        break;
+    }
+  }
+  else if (type == 3) {
+    FT.U[0] = GET_BUFFER(7);
+    FT.U[1] = GET_BUFFER(8);
+    FT.U[2] = GET_BUFFER(9);
+    FT.U[3] = GET_BUFFER(10);
+    InfantryJudge.LastShotSpeed = FT.F;
+
+    FT.U[0] = GET_BUFFER(11);
+    FT.U[1] = GET_BUFFER(12);
+    FT.U[2] = GET_BUFFER(13);
+    FT.U[3] = GET_BUFFER(14);
+    InfantryJudge.LastShotFreq = FT.F;
+  }
 }

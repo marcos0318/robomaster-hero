@@ -1,6 +1,8 @@
 #include "hero_param.h"
 
 
+int32_t shootingWheelSpeed = 0;
+
 int32_t DBUSBrokenLineRecover = 0;
 int32_t CAN1BrokenLineRecover = 0;
 int32_t CAN2BrokenLineRecover = 0;
@@ -14,9 +16,9 @@ int32_t ChasisFlag_Prev = 1;
 int32_t LastDBUSLeftSwitch = 0;
 int32_t LastDBUSRightSwitch = 0;
 
-int32_t kp_chassisAngle = 2;
-int32_t ki_chassisAngle = 0;
-int32_t kd_chassisAngle = 1;
+float kp_chassisAngle = 2.7;
+float ki_chassisAngle = 0;
+float kd_chassisAngle = 1;
 
 //int32_t powerPID[3] = {10, 3, 0};
 int32_t kp_power = 10;
@@ -36,14 +38,14 @@ int32_t xtotal_chasis = 0;
 int32_t xtotal_chasis_prev = 0;
 
 //float gimbalPositionPID[3] = {0.5, 0.00032, 22};
-float kp_gimbalPosition = 0.3;
-float ki_gimbalPosition = 0.0000;
-float kd_gimbalPosition = 0;
+float kp_gimbalPosition = 1.2;
+float ki_gimbalPosition = 0.00001;
+float kd_gimbalPosition = 1;
 
 //float pitchPositionPID[3] = {0.4, 0.0003, 12};
 float kp_pitchPosition = 0.4;
-float ki_pitchPosition = 0.0000;
-float kd_pitchPosition = 0;
+float ki_pitchPosition = 0.000005;
+float kd_pitchPosition = 1;
 
 //float cameraPositionPID[3] = {0.3, 0.00, 1};
 float kp_cameraPosition = 0.3;
@@ -51,7 +53,7 @@ float ki_cameraPosition = 0.00;
 float kd_cameraPosition = 0.1;
 
 //int32_t cameraSpeedPID[3] = {80, 4, 1};
-int32_t kp_cameraSpeed = 80;
+int32_t kp_cameraSpeed = 100;
 int32_t ki_cameraSpeed = 4;
 int32_t kd_cameraSpeed = 1;
 
@@ -59,18 +61,19 @@ int32_t kd_cameraSpeed = 1;
 // Structure to strore PID data 
 struct pid_control_states states[4] = {{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}};
 int32_t wheel_setpoints[4] = {0,0,0,0};
-int32_t wheel_setpoints_buffered[4] = {0,0,0,0};
+float wheel_setpoints_buffered[4] = {0,0,0,0};
+int32_t wheel_setpoints_round[4] = {0,0,0,0};
 int32_t wheel_feedbacks[4] = {0,0,0,0};
 int32_t wheel_outputs[4] = {0,0,0,0};
 
 int32_t kp = 80, ki = 4, kd = 1; // What is the physical meaning of this one?
 
 //The control of angle of chasis
-struct pid_control_states state_angle = {0,0,0};
-int32_t setpoint_angle 	= 0;
-int32_t feedback_angle = 0;
+struct fpid_control_states state_angle = {0,0,0};
+float setpoint_angle 	= 0;
+float feedback_angle = 0;
 int32_t output_angle_speed = 0;
-
+int32_t output_angle_speed_buffered = 0;
 
 
 

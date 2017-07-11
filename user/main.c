@@ -10,7 +10,8 @@ bool SetpointStatic = false;
 enum State GimbalState; 	
 extern enum modeControl HERO;
 
-
+extern volatile uint32_t foo;
+extern volatile float bar;
 
 void init(){
 
@@ -30,7 +31,7 @@ void init(){
 	gyro_cal();
 	TIM5_Int_Init(24, 13124);// 256hz //3.9xx ms for gyro usage
 	DataMonitor_Init();
-	ENCODER_Init();
+	//ENCODER_Init();
 	GUN_Init();
   TIM7_Int_Init(83,999);
 }
@@ -60,10 +61,23 @@ int main(void)
 
 		if (ticks_msimg != get_ms_ticks()){
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
-
 			
 			
-			DBUS_data_analysis();		
+			if (ticks_msimg % 20 == 0) {
+				shootingWheelSpeed = convertToShootingSpeed( InfantryJudge.RealVoltage );
+				
+				if (shootingWheelSpeed > 2000 ) {
+					shootingWheelSpeed = 2000;
+				}
+				
+				if (shootingWheelSpeed < 0) {
+						shootingWheelSpeed = 0;
+				}
+			}
+			
+			
+			DBUS_data_analysis();	
+			//GUN_SetMotion();
 			//check 
 			if(ticks_msimg % 20 == 0){
 				DBUSBrokenLine = checkBrokenLine(ticks_msimg, DBUSBrokenLineCounter);
@@ -107,7 +121,7 @@ int main(void)
 						wheel_setpoints[i] = 0;
 						wheel_outputs[i]=0;
 					}
-					PIDClearError(&state_angle);			
+					fPIDClearError(&state_angle);			
 					Set_CM_Speed(CAN2,0,0,0,0);
 				}
 				if(DBUSBrokenLine_prev == 1 && DBUSBrokenLine == 0){
@@ -296,7 +310,7 @@ int main(void)
 						wheel_setpoints[i] = 0;
 						wheel_outputs[i]=0;
 					}
-					PIDClearError(&state_angle);
+					fPIDClearError(&state_angle);
 					//Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				}
 
@@ -312,7 +326,7 @@ int main(void)
 					wheel_setpoints[i] = 0;
 					wheel_outputs[i]=0;
 				}
-				PIDClearError(&state_angle);
+				fPIDClearError(&state_angle);
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);	
 				
 			}
@@ -355,7 +369,14 @@ int main(void)
 //				tft_prints(1,5,"ssp:%f", pitchSpeedSetpoint);
 //				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
 				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
-				tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
+				tft_clear_line(10);
+				tft_prints(1, 10, "shooSpd: %d", shootingWheelSpeed);
+				//tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
+			  
+				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
+				//tft_prints(1,11,":%d", chasis_turning_speed);
+				tft_clear_line(11);
+				tft_prints(1, 11, "V S: %.1f %.1f", InfantryJudge.RealVoltage, InfantryJudge.LastShotSpeed );
 				tft_update();
 			}	
 			

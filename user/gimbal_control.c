@@ -34,7 +34,7 @@ float gimbalSpeedFeedback = 0;
 
 struct fpid_control_states gimbalSpeedState = {0,0,0};
 
-int32_t outsideLimit = 670;
+int32_t outsideLimit = 1000;
 
 int32_t turningConst = 2430;
 //key control for chasis turning
@@ -56,6 +56,15 @@ struct fpid_control_states pitchPositionState = {0,0,0};
 
 //velocity control
 struct fpid_control_states pitchSpeedState = {0,0,0};
+
+
+
+int32_t output_angle_prev = 0;
+int32_t yaw_interval = 30;
+int32_t yaw_counter = 0;
+int32_t chasis_turning_speed = 0;
+
+
 //struct inc_pid_states pitchSpeedMoveState;// gimbalSpeedStaticState;
 float pitchSpeedSetpoint = 0;
 float pitchSpeedFeedback = 0;
@@ -70,7 +79,7 @@ void keyboard_mouse_control() {
 
 	//move in the window
 	if (abs(direction + output_angle*upperTotal / 3600) <= outsideLimit) 
-		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*14);
+		direction += (-DBUS_ReceiveData.rc.ch2 / 300 + -(xtotal - pre_xtotal)*13);
 
   //if is in the qe turnning state, just do not correct the direction
 	//direction correction 
@@ -97,7 +106,7 @@ void keyboard_mouse_control() {
 				is_qe_turning = true;
         direction -= turningConst;
 		}
-		setpoint_angle = -direction * 3600/upperTotal;
+		if (! DBUS_ReceiveData.mouse.press_right) setpoint_angle = -direction * 3600/upperTotal;
     gimbalPositionSetpoint = direction +  output_angle*upperTotal/3600;
 		
 
@@ -195,13 +204,26 @@ void keyboard_mouse_control() {
  	ChasisFlag_Prev = ChasisFlag;
 	KEY_Q_PREV=DBUS_CheckPush(KEY_Q);
 	KEY_E_PREV=DBUS_CheckPush(KEY_E);
-	if ( abs(setpoint_angle - output_angle) < 100) {
+	if ( abs((int)(setpoint_angle - output_angle)) < 100) {
 		is_qe_turning = false;
 	}
+	
+	
 }
 
 void gimbal_yaw_control(){
+	yaw_counter += 1;
+	float magicConst = 7;
+	
+	if (yaw_counter == yaw_interval) {
+		chasis_turning_speed = output_angle - output_angle_prev;
+		//update output_angle_prev
+		output_angle_prev = output_angle;
+		yaw_counter = 0;
+		
+	}
 
+	
 	isGimbalPositionSetpointIncrease = (bufferedGimbalPositionSetpoint < gimbalPositionSetpoint);
 
 	if(isGimbalPositionSetpointIncrease){
@@ -220,8 +242,12 @@ void gimbal_yaw_control(){
 	
 	gimbalPositionFeedback = GMYawEncoder.ecd_angle;
 	gimbalSpeedSetpoint = fpid_process(&gimbalPositionState, &bufferedGimbalPositionSetpoint, &gimbalPositionFeedback, kp_gimbalPosition, ki_gimbalPosition, kd_gimbalPosition);
+	//Correct the speed so as to eliminate the overshot
+	
+	gimbalSpeedSetpoint += magicConst * chasis_turning_speed;
+	
 	//Limit the output
-	fwindowLimit(&gimbalSpeedSetpoint, 80, -80);
+	fwindowLimit(&gimbalSpeedSetpoint, 500, -500);
 	
 	//Get the speed here
 	//incPIDsetpoint(&gimbalSpeedMoveState, gimbalSpeedSetpoint);
@@ -243,6 +269,8 @@ void gimbal_yaw_control(){
 		//incPIDClearError(&gimbalSpeedMoveState);
 		gimbalSpeedMoveOutput = 0;
 	}
+	
+	
 }
 
 void gimbal_pitch_control() {
@@ -272,7 +300,7 @@ void gimbal_pitch_control() {
 
 
 
-	rawpitchsetpoint +=  DBUS_ReceiveData.mouse.ytotal - ytotalPrev;
+	rawpitchsetpoint +=  (float)(DBUS_ReceiveData.mouse.ytotal - ytotalPrev) * 1.5;
 	if(LeftJoystick)
 		rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
 

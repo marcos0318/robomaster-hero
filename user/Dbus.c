@@ -68,6 +68,10 @@ void Dbus_init(void){
     DMA_Init(DMA2_Stream5, &DMA_InitStructure);
     DMA_Cmd(DMA2_Stream5, ENABLE);
 		DBUSBrokenLineCounter = 0;	
+		
+		
+		
+		
 }
 
 /**
@@ -115,7 +119,7 @@ void DBUS_DataDecoding(void)
    * ����ͨ��:15   14   13   12   11   10   9   8   7   6     5     4   3   2   1
    *          V    C    X	  Z    G    F    R   E   Q  CTRL  SHIFT  D   A   S   W
 ************************************************************************************/
-    GUN_SetMotion();
+    
 }
 
 

@@ -9,7 +9,7 @@
 #include <stdbool.h> 
 #include <math.h>
 
-#define BUFFER_LENGTH 50	
+#define BUFFER_LENGTH 10	
 #define POWER_BUFFER_LENGTH 20
 //#define CHASSIS_ANGULAR_VELOCITY_LIMIT 800
 #define MOVING_BOUND_1 200
@@ -27,6 +27,9 @@
 #define FOR_JOHN_CTRL_MAX_RUNNING_SPEED 300		//Ctrl has higher precedence than Shift
 #define FOR_JOHN_INTO_RI_MAX_SPEED 300		//Shift and Control are meaningless here
 #define FOR_JOHN_QE_INC 120
+
+
+extern int32_t shootingWheelSpeed;
 
 /***************************/
 /***** Global Flags   ******/
@@ -63,9 +66,9 @@ extern int32_t LastDBUSRightSwitch;
 /***************************/
 
 //int32_t chassisAnglePID[3] = {1, 0, 1};
-extern int32_t kp_chassisAngle;
-extern int32_t ki_chassisAngle;
-extern int32_t kd_chassisAngle;
+extern float kp_chassisAngle;
+extern float ki_chassisAngle;
+extern float kd_chassisAngle;
 
 //int32_t powerPID[3] = {10, 3, 0};
 extern int32_t kp_power;
@@ -109,17 +112,19 @@ extern int32_t kd_cameraSpeed;
 // Structure to strore PID data 
 extern struct pid_control_states states[4];
 extern int32_t wheel_setpoints[4];
-extern int32_t wheel_setpoints_buffered[4];
+extern float wheel_setpoints_buffered[4];
+extern int32_t wheel_setpoints_round[4];
 extern int32_t wheel_feedbacks[4];
 extern int32_t wheel_outputs[4];
 
 extern int32_t kp, ki, kd; // What is the physical meaning of this one?
 
 //The control of angle of chasis
-extern struct pid_control_states state_angle;
-extern int32_t setpoint_angle;
-extern int32_t feedback_angle;
+extern struct fpid_control_states state_angle;
+extern float setpoint_angle;
+extern float feedback_angle;
 extern int32_t output_angle_speed;
+extern int32_t output_angle_speed_buffered;
 
 
 
