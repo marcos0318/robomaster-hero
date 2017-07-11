@@ -63,14 +63,11 @@ int main(void)
 			ticks_msimg = get_ms_ticks();  //maximum 1000000	
 			
 			
-			if (ticks_msimg % 50 == 0) {
-				if (DBUS_ReceiveData.rc.ch0 < -20)
-					shootingWheelSpeed -= 1;
-				if (DBUS_ReceiveData.rc.ch0 > 20)
-					shootingWheelSpeed += 1;
+			if (ticks_msimg % 20 == 0) {
+				shootingWheelSpeed = convertToShootingSpeed( InfantryJudge.RealVoltage );
 				
-				if (shootingWheelSpeed > 1200 ) {
-					shootingWheelSpeed = 1200;
+				if (shootingWheelSpeed > 2000 ) {
+					shootingWheelSpeed = 2000;
 				}
 				
 				if (shootingWheelSpeed < 0) {
@@ -379,7 +376,7 @@ int main(void)
 				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
 				//tft_prints(1,11,":%d", chasis_turning_speed);
 				tft_clear_line(11);
-				tft_prints(1, 11, "V C: %.1f %.1f", InfantryJudge.RealVoltage, InfantryJudge.RealCurrent );
+				tft_prints(1, 11, "V S: %.1f %.1f", InfantryJudge.RealVoltage, InfantryJudge.LastShotSpeed );
 				tft_update();
 			}	
 			

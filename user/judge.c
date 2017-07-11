@@ -318,7 +318,7 @@ void Judge_InitConfig(void)
     JUDGE_Started = 0;
     JUDGE_RemainByte = 0;
 
-    InfantryJudge.RealVoltage = 25.2F;
+    InfantryJudge.RealVoltage = 0;
     InfantryJudge.RealCurrent = 0;
     InfantryJudge.RemainTime = 0;
     InfantryJudge.LastBlood = 1500;

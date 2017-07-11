@@ -7,6 +7,7 @@
 #include "PID.h"
 #include "ticks.h"
 #include "hero_param.h"
+#include "helper_functions.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -76,12 +77,12 @@ void GUN_BSP_Init(void) {
     // TIM1 (friction wheel, 400Hz)
     TIM_TimeBaseInitStructure.TIM_ClockDivision =   TIM_CKD_DIV1;
     TIM_TimeBaseInitStructure.TIM_CounterMode   =   TIM_CounterMode_Up;
-    TIM_TimeBaseInitStructure.TIM_Period        =   2500-1;
-    TIM_TimeBaseInitStructure.TIM_Prescaler     =   (uint32_t) (((SystemCoreClock / 1) / 1000000)-1); // 1MHz clock
+    TIM_TimeBaseInitStructure.TIM_Period        =   9999;
+    TIM_TimeBaseInitStructure.TIM_Prescaler     =   41; // 1MHz clock
     TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStructure);
 
     TIM_OCInitStructure.TIM_OCMode       =   TIM_OCMode_PWM1;
-    TIM_OCInitStructure.TIM_Pulse        =   1000;
+    TIM_OCInitStructure.TIM_Pulse        =   4000;
     TIM_OCInitStructure.TIM_OutputState  =   TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_OutputNState =   TIM_OutputNState_Enable;
     TIM_OCInitStructure.TIM_OCPolarity   =   TIM_OCPolarity_High;
@@ -154,8 +155,8 @@ void GUN_SetMotion(void) {
     // friction wheel
     if(get_ms_ticks() > 20000){
 			if (!(DBUS_ReceiveData.rc.switch_right == 1 && DBUS_ReceiveData.rc.switch_left == 1) && !DBUSBrokenLine) {
-					FRIC_SET_THRUST_L(700);
-					FRIC_SET_THRUST_R(700);
+					FRIC_SET_THRUST_L(shootingWheelSpeed);
+					FRIC_SET_THRUST_R(shootingWheelSpeed);
 			}
 			else {
 					FRIC_SET_THRUST_L(0);

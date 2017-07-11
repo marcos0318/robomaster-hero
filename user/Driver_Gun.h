@@ -14,8 +14,8 @@
 #define POKE_DIR_PIN                            GPIO_Pin_1
 #define POKE_DIR                                1
 #define POKE_SET_PWM(x)                         TIM_SetCompare1(TIM2, (x))
-#define FRIC_SET_THRUST_L(x)                    TIM_SetCompare1(TIM1, 1000+(x))
-#define FRIC_SET_THRUST_R(x)                    TIM_SetCompare2(TIM1, 1000+(x))
+#define FRIC_SET_THRUST_L(x)                    TIM_SetCompare1(TIM1, 4000+(x))
+#define FRIC_SET_THRUST_R(x)                    TIM_SetCompare2(TIM1, 4000+(x))
 
 extern struct pid_control_states gunSpeedMoveState;
 extern int32_t gunSpeed;	

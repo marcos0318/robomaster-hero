@@ -1,4 +1,36 @@
 #include "helper_functions.h"
+
+
+
+int32_t convertToShootingSpeed(float v) {
+	int base = 990;
+  if (v >= 26.3) {
+    return base;
+  } 
+  else if ( v > 26 ) {
+    return (int)(-10 * (v - 26) + base + 3); 
+  }
+  else if ( v > 25.5 ) {
+    return (int)(-2 * (v - 25.5) + base + 4);
+  }
+  else if ( v > 25 ) {
+    return (int)(-4 * (v - 25) + base + 6);
+  }
+  else if ( v > 24.5 ) {
+    return (int)(-2 * (v - 24.5) + base + 7);
+  }
+  else if ( v > 24 ) {
+    return (int)(-40 * (v - 24) + base + 27 );
+  }
+  else if ( v > 20 ) {
+    return (int)(-61.81 * (v - 21.8) + base + 163);
+  }
+  else return 0;
+
+}
+
+
+
 //The buffer functions 
 int32_t buffer_out(int32_t* b, int32_t length, int32_t counter){
 	int32_t b_output = 0;

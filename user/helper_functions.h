@@ -20,4 +20,5 @@ void windowLimit(int32_t* dst, int32_t upperLimit, int32_t lowerLimit);
 void fwindowLimit(float* dst, int32_t upperLimit, int32_t lowerLimit);
 uint8_t checkBrokenLine(uint32_t ticks, uint32_t counter);
 
+extern int32_t convertToShootingSpeed(float v);
 #endif
