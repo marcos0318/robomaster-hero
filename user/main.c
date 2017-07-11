@@ -33,7 +33,10 @@ void init(){
 	DataMonitor_Init();
 	//ENCODER_Init();
 	GUN_Init();
-  TIM7_Int_Init(83,999);
+  	TIM7_Int_Init(83,999);
+	HERO = REVERSE_RUNNING_MODE;
+	filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+	speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
 }
 
 
@@ -165,35 +168,38 @@ int main(void)
 								HERO = RUNNING_MODE;
 								switch_and_send();
 					    }
-							else GimbalFlag = 3;
-					  }
 						else GimbalFlag = 3;
+					  }
+					  else GimbalFlag = 3;
 					  if (DBUS_ReceiveData.rc.switch_right == 3 ) {
 					    GimbalFlag = 3;
 							//Right middle, control by Remote Controller
 							//Left changed from middle to Up, similar to G, go to the next step
 					    if (DBUS_ReceiveData.rc.switch_left == 1 && LastDBUSLeftSwitch == 3) {
 					  	  //go to next state
-								if(HERO!=DOWN_BACK_WHEEL){
-									HERO+=1;
-									switch_and_send();
-								}
-								else {
-									HERO=RUNNING_MODE;
-									ChasisFlag = 1;
-									GimbalFlag = 3;
-									direction = - output_angle*upperTotal/3600;
-									filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
-									speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
-									//withdraw lower pneumatic
-									lower_pneumatic_state = false;
-									pneumatic_control(1, 0);
-									pneumatic_control(2, 0);
-									pneumatic_control(3, 0);
-									pneumatic_control(4, 0);
-									LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-									DataMonitor_Send(5, 2);
-								}
+							if(HERO!=DOWN_BACK_WHEEL && HERO != FRONT_WHEEL_DOWN){
+								HERO+=1;
+								switch_and_send();
+							}
+							else if(HERO == DOWN_BACK_WHEEL){
+								HERO=RUNNING_MODE;
+								ChasisFlag = 1;
+								GimbalFlag = 3;
+								direction = - output_angle*upperTotal/3600;
+								filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+								speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+								//withdraw lower pneumatic
+								lower_pneumatic_state = false;
+								pneumatic_control(1, 0);
+								pneumatic_control(2, 0);
+								pneumatic_control(3, 0);
+								pneumatic_control(4, 0);
+								LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+								DataMonitor_Send(5, 2);
+							} else if(HERO == FRONT_WHEEL_DOWN) {
+								HERO = INTO_RI_MODE;
+								switch_and_send();
+							}
 								
 								if(HERO == FRONT_WHEEL_UP || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS || HERO != BACK_WHEEL_UP ||HERO != SPEED_LIMITATION)
 								{								
@@ -209,15 +215,22 @@ int main(void)
 					  	  //if(HERO!=RUNNING_MODE)
 									//HERO-=1;	
 								//switch_and_send();
-								if(HERO == RUNNING_MODE) {}
-                else if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
-									backState[HERO--]();
-								else {
-									backState[HERO]();
-									HERO = UPPER_HORIZONTAL_PNEUMATIC_EXTENDS;
-								}
-					    }
-					  }
+							if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
+							else if(HERO == BACK_WHEEL_DOWN) {
+								HERO = REVERSE_RUNNING_MODE;
+								DataMonitor_Send(5, 1);
+							}
+							else if(HERO == FRONT_WHEEL_DOWN) {
+								HERO = BACK_WHEEL_DOWN;
+								switch_and_send();
+							}
+							else if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
+								backState[HERO--]();
+							else {
+								backState[HERO]();
+								HERO = UPPER_HORIZONTAL_PNEUMATIC_EXTENDS;
+					    	}
+						}
 					}
 					if(DBUS_ReceiveData.rc.switch_left == 3 && DBUS_ReceiveData.rc.switch_right == 3 && (HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION)){
 						//Left Middle, Right Middle						DONE
@@ -278,6 +291,17 @@ int main(void)
 						//turn on left joystick control for gimbal
 						LeftJoystick = 1;
 						step = 0;
+					}
+
+					if(LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right)) {
+						if(DBUS_ReceiveData.rc.switch_right == 3 ) {
+							HERO = RUNNING_MODE;
+							switch_and_send();
+						}
+						else if(DBUS_ReceiveData.rc.switch_right == 2) {
+							HERO = REVERSE_RUNNING_MODE;
+							switch_and_send();
+						}
 					}
 					  
 				}

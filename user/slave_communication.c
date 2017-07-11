@@ -40,8 +40,7 @@ volatile u32 VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer = 0;
 
 u8 G_counter_for_John=0;
 
-
-enum modeControl HERO = RUNNING_MODE;
+enum modeControl HERO = REVERSE_RUNNING_MODE;
 
 
 
@@ -55,14 +54,13 @@ void switch_and_send()
 				ChasisFlag = 2;
 			}
 			GimbalFlag = 3;
-		  direction = - output_angle*upperTotal/3600;
+		  	direction = -output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
 		}
 			//withdraw lower pneumatic
 			lower_pneumatic_state = false;
 			pneumatic_control(1, 0);
-			pneumatic_control(2, 0);
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
@@ -173,6 +171,28 @@ void switch_and_send()
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
 			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_BACK		
 			break;
+		case REVERSE_RUNNING_MODE:
+			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+			speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
+			GimbalFlag = 3;
+			direction = -output_angle*upperTotal/3600;
+			lower_pneumatic_state = false;
+			pneumatic_control(1, 0);
+			pneumatic_control(3, 0);
+			pneumatic_control(4, 0);
+			DataMonitor_Send(5, 1);
+			break;
+		case BACK_WHEEL_DOWN:
+			pneumatic_control(1, 1);
+			pneumatic_control(2, 1);
+			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
+			DataMonitor_Send(0xFB, 0);		//ONE_KEY_UP_BACK		
+			break;
+		case FRONT_WHEEL_DOWN:
+			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
+            LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
+			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_FRONT	
+			break;
 		
 	}
 }
@@ -208,11 +228,11 @@ void state_control(){
 	}
 	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_G)&&(!KEY_G_PREV) && HERO != RUNNING_MODE){
 			
-				if(HERO!=DOWN_BACK_WHEEL){
+				if(HERO!=DOWN_BACK_WHEEL && HERO != FRONT_WHEEL_DOWN){
 					HERO+=1;
 					switch_and_send();
 				}
-				else if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE){
+				else if(HERO == DOWN_BACK_WHEEL){
 					HERO=RUNNING_MODE;
 					ChasisFlag = 1;
 					GimbalFlag = 3;
@@ -227,15 +247,26 @@ void state_control(){
 					pneumatic_control(4, 0);
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 					DataMonitor_Send(5, 2);
+				} else if(HERO == FRONT_WHEEL_DOWN) {
+					HERO = INTO_RI_MODE;
+					switch_and_send();
 				}
 				G_counter = TIM_7_Counter;
 				state_delay = 1;
 			
 	}
 	if(!DBUS_CheckPush(KEY_SHIFT) && DBUS_CheckPush(KEY_F)&&(!KEY_F_PREV) && HERO != RUNNING_MODE){
-    if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE)    
+    	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE)    
 		{
-			if(HERO == RUNNING_MODE) {}
+			if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
+			else if(HERO == BACK_WHEEL_DOWN) {
+				HERO = REVERSE_RUNNING_MODE;
+				DataMonitor_Send(5, 1);
+			}
+			else if(HERO == FRONT_WHEEL_DOWN) {
+				HERO = BACK_WHEEL_DOWN;
+				switch_and_send();
+			}
 			else if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS)
 				backState[HERO--]();
 			else {

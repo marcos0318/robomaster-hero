@@ -38,15 +38,18 @@ extern enum modeControl{
 	
 	RUNNING_MODE,												//0
 	INTO_RI_MODE,												//1
-	BACK_WHEEL_UP,											//3
-	FRONT_WHEEL_UP,											//4
-	SPEED_LIMITATION,										//5
-	UPPER_HORIZONTAL_PNEUMATIC_EXTENDS,  //6
-	CATCH_GOLF,													//7
-	DANCING_MODE,												//8
-	VERTICAL_PNEUMATIC_WITHDRAWS,				//9
-	DOWN_FRONT_WHEEL,										//12
-	DOWN_BACK_WHEEL											//13
+	BACK_WHEEL_UP,											//2
+	FRONT_WHEEL_UP,											//3
+	SPEED_LIMITATION,										//4
+	UPPER_HORIZONTAL_PNEUMATIC_EXTENDS,  					//5
+	CATCH_GOLF,													//6
+	DANCING_MODE,												//7
+	VERTICAL_PNEUMATIC_WITHDRAWS,								//8
+	DOWN_FRONT_WHEEL,										//9
+	DOWN_BACK_WHEEL											//10
+	REVERSE_RUNNING_MODE;									//11
+	BACK_WHEEL_DOWN;										//12
+	FRONT_WHEEL_DOWN;										//13
 } HERO;
 //0. RUNNING_MODE
 //  a. withdraw lower pneumatic
