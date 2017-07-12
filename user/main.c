@@ -33,10 +33,7 @@ void init(){
 	DataMonitor_Init();
 	//ENCODER_Init();
 	GUN_Init();
-  	TIM7_Int_Init(83,999);
-	HERO = REVERSE_RUNNING_MODE;
-	filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
-	speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
+  TIM7_Int_Init(83,999);
 }
 
 
@@ -168,7 +165,7 @@ int main(void)
 								HERO = RUNNING_MODE;
 								switch_and_send();
 					    }
-						else GimbalFlag = 3;
+							else GimbalFlag = 3;
 					  }
 					  else GimbalFlag = 3;
 					  if (DBUS_ReceiveData.rc.switch_right == 3 ) {
@@ -217,8 +214,12 @@ int main(void)
 								//switch_and_send();
 							if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
 							else if(HERO == BACK_WHEEL_DOWN) {
-								HERO = REVERSE_RUNNING_MODE;
+								HERO = LOWER_PNEUMATIC;
 								DataMonitor_Send(5, 1);
+							}
+							else if(HERO == LOWER_PNEUMATIC) {
+								HERO = REVERSE_RUNNING_MODE;
+								pneumatic_control(1,0);
 							}
 							else if(HERO == FRONT_WHEEL_DOWN) {
 								HERO = BACK_WHEEL_DOWN;
@@ -293,7 +294,7 @@ int main(void)
 						step = 0;
 					}
 
-					if(LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right)) {
+					if(LastDBUSRightSwitch != DBUS_ReceiveData.rc.switch_right) {
 						if(DBUS_ReceiveData.rc.switch_right == 3 ) {
 							HERO = RUNNING_MODE;
 							switch_and_send();
@@ -303,7 +304,7 @@ int main(void)
 							switch_and_send();
 						}
 					}
-					  
+				} 
 				}
 				else {
 					GimbalFlag = 1;

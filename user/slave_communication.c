@@ -172,6 +172,7 @@ void switch_and_send()
 			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_BACK		
 			break;
 		case REVERSE_RUNNING_MODE:
+			ChasisFlag = 4;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
 			GimbalFlag = 3;
@@ -181,6 +182,10 @@ void switch_and_send()
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			DataMonitor_Send(5, 1);
+			break;
+		case LOWER_PNEUMATIC:
+			pneumatic_control(1, 1);
+			pneumatic_control(2, 1);
 			break;
 		case BACK_WHEEL_DOWN:
 			pneumatic_control(1, 1);
@@ -260,8 +265,12 @@ void state_control(){
 		{
 			if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
 			else if(HERO == BACK_WHEEL_DOWN) {
-				HERO = REVERSE_RUNNING_MODE;
+				HERO = LOWER_PNEUMATIC;
 				DataMonitor_Send(5, 1);
+			}
+			else if(HERO == LOWER_PNEUMATIC) {
+				HERO = REVERSE_RUNNING_MODE;
+				pneumatic_control(1,0);
 			}
 			else if(HERO == FRONT_WHEEL_DOWN) {
 				HERO = BACK_WHEEL_DOWN;

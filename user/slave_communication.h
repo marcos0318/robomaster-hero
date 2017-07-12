@@ -46,10 +46,11 @@ extern enum modeControl{
 	DANCING_MODE,												//7
 	VERTICAL_PNEUMATIC_WITHDRAWS,								//8
 	DOWN_FRONT_WHEEL,										//9
-	DOWN_BACK_WHEEL											//10
-	REVERSE_RUNNING_MODE;									//11
-	BACK_WHEEL_DOWN;										//12
-	FRONT_WHEEL_DOWN;										//13
+	DOWN_BACK_WHEEL,											//10
+	REVERSE_RUNNING_MODE,									//11
+	LOWER_PNEUMATIC,											//12
+	BACK_WHEEL_DOWN,										//13
+	FRONT_WHEEL_DOWN										//14
 } HERO;
 //0. RUNNING_MODE
 //  a. withdraw lower pneumatic

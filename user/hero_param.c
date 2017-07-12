@@ -101,7 +101,7 @@ bool Fprev = false;
 // NOT intend to use pid control, but still consider using close-loop control
 
 int32_t filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
-int32_t speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+int32_t speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
 int32_t RC_dir_multiplier = 1;
 
 //int32_t power_buffer[POWER_BUFFER_LENGTH];
