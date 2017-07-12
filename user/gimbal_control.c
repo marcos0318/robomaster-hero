@@ -74,6 +74,8 @@ int32_t pitchPosMultiplier = 2;       //DBUS mouse pitch control
 float ytotalPrev = 0;
 float rawpitchsetpoint = 333;
 
+u8 KEY_R_PREV = 0;
+u8 gimbalFlagPrev = 3;
 void keyboard_mouse_control() {
 	xtotal =  DBUS_ReceiveData.mouse.xtotal;
 
@@ -429,7 +431,6 @@ void TIM7_IRQHandler(void){
 						switch_and_send();
 						lower_pneumatic_state = 0;
 						pneumatic_control(1, 0);
-						pneumatic_control(2, 0);
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && SHIFT_G_G_DETECTOR && (TIM_7_Counter - SHIFT_G_timer) > 500) {
 					SHIFT_G_G_DETECTOR = 0;
@@ -495,12 +496,22 @@ void TIM7_IRQHandler(void){
 					
 						//SHIFT+G+G
 						//jump to jump off island mode
-					SHIFT_G_G_DETECTOR = 0;
+						SHIFT_G_G_DETECTOR = 0;
 						//pneumatic_control(1, 0);
 						//pneumatic_control(2, 0);
+						if(HERO != DANCING_MODE){
 						HERO = VERTICAL_PNEUMATIC_WITHDRAWS;
-					switch_and_send();
-					DO_NOT_SAVE_TIME_SHIFT_G = 1;
+						DataMonitor_Send(5, 5);
+						lower_pneumatic_state=true;
+						upper_pneumatic_state = 1;
+						pneumatic_control(1, 1);
+						pneumatic_control(3, 0);
+						pneumatic_control(4, 0);
+						ChasisFlag=4;	
+						filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+						speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
+						}
+						DO_NOT_SAVE_TIME_SHIFT_G = 1;
 					
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_G_SPECIAL_MODE && !FOR_JOHN_G_PREV && FOR_JOHN_G)
@@ -519,7 +530,7 @@ void TIM7_IRQHandler(void){
 			}
 				
 				
-				
+				/*
 				//INTO_RI lower pneumatic delay extention
 				if(INTO_RI_LPneu_flag == 1 && ((TIM_7_Counter - INTO_RI_LPneu_timer) > 1000))
 				{
@@ -528,6 +539,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(1, 1);
 					pneumatic_control(2, 1);
 				}
+				*/
 				//SPEED_LIMITATION lower pneumatic delay withdrawl
 				if(SPEED_LIMITATION_LPneu_flag == 1 && ((TIM_7_Counter - SPEED_LIMITATION_LPneu_timer) > 1000))
 				{
@@ -537,9 +549,9 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 0);
 				}
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) == 1000))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) == 1500))
 				{
-					pneumatic_control(4, false);
+					pneumatic_control(3, false);
 				}
 				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
 				{
@@ -549,7 +561,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(3, false);
 					//Lifting Motors go down
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-					DataMonitor_Send(5, 0);
+					DataMonitor_Send(5, 4);
 				}
 				//Back_To_RUNNING_MODE: upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
 				if(B_RUNNING_MODE_UHPneu_LM_flag == 1 && ((TIM_7_Counter - B_RUNNING_MODE_UHPneu_LM_timer) > 1000))
@@ -570,6 +582,17 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(4, 1);
 					DataMonitor_Send(63, 0);
 				}
+				
+				if(DBUS_CheckPush(KEY_R) && KEY_R_PREV == 0 && HERO == VERTICAL_PNEUMATIC_WITHDRAWS){
+					gimbalFlagPrev = GimbalFlag;
+				}
+				if(DBUS_CheckPush(KEY_R) && HERO == VERTICAL_PNEUMATIC_WITHDRAWS) {
+					GimbalFlag = 4;
+				}
+				if(!DBUS_CheckPush(KEY_R) && KEY_R_PREV == 1 && HERO == VERTICAL_PNEUMATIC_WITHDRAWS){
+					GimbalFlag = gimbalFlagPrev;
+				}
+				KEY_R_PREV = DBUS_CheckPush(KEY_R);
   		
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);

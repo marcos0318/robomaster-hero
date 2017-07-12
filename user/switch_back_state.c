@@ -21,7 +21,6 @@ void Back_To_RUNNING_MODE()
     //first withdraw the lower pneumatic and upper vertical pneumatic
     lower_pneumatic_state = 0;
     pneumatic_control(1, 0);
-    pneumatic_control(2, 0);
 
     //need to delay DataMonitor_Send and upper horizontal pneumatic
     B_RUNNING_MODE_UHPneu_LM_flag = 1;
@@ -101,14 +100,14 @@ void Back_To_DANCING_MODE()
     speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
     lower_pneumatic_state = false;
     pneumatic_control(1, 0);
-    pneumatic_control(2, 0);
 		DataMonitor_Send(64, 1);
 }
 
 void Back_To_VERTICAL_PNEUMATIC_WITHDRAWS()
 {
+		pneumatic_control(1, 0);
     LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-    DataMonitor_Send(5, 0);
+    DataMonitor_Send(5, 4);
 }
 
 void Back_To_DOWN_FRONT_WHEEL()

@@ -76,9 +76,10 @@ void switch_and_send()
 			ChasisFlag = 3;
 			//extend lower pneumatic
 			//do it in the interrupt
-			INTO_RI_LPneu_flag = 1;
-			INTO_RI_LPneu_timer = TIM_7_Counter;
-			
+			//INTO_RI_LPneu_flag = 1;
+			//INTO_RI_LPneu_timer = TIM_7_Counter;
+			lower_pneumatic_state=true;
+			pneumatic_control(1, 1);
 			break;
 		case BACK_WHEEL_UP:
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
@@ -148,8 +149,7 @@ void switch_and_send()
 			VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 1;
 			VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer = TIM_7_Counter;
 			lower_pneumatic_state=true;
-			pneumatic_control(1, 1);
-			pneumatic_control(2, 1);
+			pneumatic_control(1, 0);
 			ChasisFlag=4;	
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED;
@@ -180,10 +180,6 @@ void switch_and_send()
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			DataMonitor_Send(5, 3);
-			break;
-		case LOWER_PNEUMATIC:
-			pneumatic_control(1, 1);
-			pneumatic_control(2, 1);
 			break;
 		case BACK_WHEEL_DOWN:
 			pneumatic_control(1, 1);
@@ -297,7 +293,7 @@ void state_control(){
 	}
 	else SHIFT_G=false;
 
-	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch)){
+	if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS && (!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch))){
 			switch_and_send();
 	}	
 	

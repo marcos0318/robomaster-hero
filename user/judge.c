@@ -339,11 +339,12 @@ void Judge_InitConfig(void)
   * @param  None
   * @retval None
   */
+u32 counter = 0;
 void UART4_IRQHandler(void) {
     static uint8_t dum;
     dum = UART4->DR;
     dum = UART4->SR;
-
+		counter++;
     JUDGE_Decode(DMA1_Stream2->NDTR); 
 
     UNUSED(dum);

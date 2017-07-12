@@ -167,7 +167,8 @@ int main(void)
 					    }
 							else GimbalFlag = 3;
 					  }
-					  else GimbalFlag = 3;
+				
+					else GimbalFlag = 3;
 					  if (DBUS_ReceiveData.rc.switch_right == 3 ) {
 					    GimbalFlag = 3;
 							//Right middle, control by Remote Controller
@@ -188,7 +189,6 @@ int main(void)
 								//withdraw lower pneumatic
 								lower_pneumatic_state = false;
 								pneumatic_control(1, 0);
-								pneumatic_control(2, 0);
 								pneumatic_control(3, 0);
 								pneumatic_control(4, 0);
 								LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
@@ -227,6 +227,7 @@ int main(void)
 					    	}
 						}
 					}
+				}
 					if(DBUS_ReceiveData.rc.switch_left == 3 && DBUS_ReceiveData.rc.switch_right == 3 && (HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION)){
 						//Left Middle, Right Middle						DONE
 						//can only manipulate LiftingMotor by RC under BACK_WHEEL_UP and SPEED_LIMITATION mode				DONE
@@ -298,7 +299,7 @@ int main(void)
 							switch_and_send();
 						}
 					}
-				} 
+				 
 				}
 				else {
 					GimbalFlag = 1;
@@ -389,7 +390,7 @@ int main(void)
 //				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
 				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
 				tft_clear_line(10);
-				tft_prints(1, 10, "shooSpd: %d", shootingWheelSpeed);
+				tft_prints(1, 10, "shooSpd: %d", counter);
 				//tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
 			  
 				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
