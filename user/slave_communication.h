@@ -48,7 +48,6 @@ extern enum modeControl{
 	DOWN_FRONT_WHEEL,										//9
 	DOWN_BACK_WHEEL,											//10
 	REVERSE_RUNNING_MODE,									//11
-	LOWER_PNEUMATIC,											//12
 	BACK_WHEEL_DOWN,										//13
 	FRONT_WHEEL_DOWN										//14
 } HERO;

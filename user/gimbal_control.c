@@ -539,7 +539,7 @@ void TIM7_IRQHandler(void){
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
 				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) == 1000))
 				{
-					pneumatic_control(3, false);
+					pneumatic_control(4, false);
 				}
 				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
 				{
@@ -567,7 +567,7 @@ void TIM7_IRQHandler(void){
 				if(B_DANCING_MODE_UVPneu_FW_flag == 1 && ((TIM_7_Counter - B_DANCING_MODE_UVPneu_FW_timer) > 1000))
 				{
 					B_DANCING_MODE_UVPneu_FW_flag = 0;
-					pneumatic_control(4, true);
+					pneumatic_control(4, 1);
 					DataMonitor_Send(63, 0);
 				}
   		

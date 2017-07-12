@@ -48,7 +48,6 @@ void switch_and_send()
 {
 	switch(HERO){
 		case RUNNING_MODE:		
-		if (!FOR_JOHN_SHIFT_G_SPECIAL_MODE) {
 			ChasisFlag = 1;
 			if (DBUS_ReceiveData.mouse.press_right) {
 				ChasisFlag = 2;
@@ -57,14 +56,13 @@ void switch_and_send()
 		  	direction = -output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
-		}
 			//withdraw lower pneumatic
 			lower_pneumatic_state = false;
 			pneumatic_control(1, 0);
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(5, 1);
+			DataMonitor_Send(5, 3);
 			//speed limit in chasis control
 			break;
 		case INTO_RI_MODE:
@@ -118,8 +116,8 @@ void switch_and_send()
 			else DataMonitor_Send(72,0);
 			LOAD_FLASH = 0;
 			upper_pneumatic_state = 0;
-			pneumatic_control(3, true);	
-			pneumatic_control(4, false);
+			pneumatic_control(3, 1);	
+			pneumatic_control(4, 0);
             lower_pneumatic_state=false;
 			pneumatic_control(1, 0);
 			pneumatic_control(2, 0);
@@ -129,12 +127,12 @@ void switch_and_send()
 			DataMonitor_Send(28,0);			//turn on friciton wheel
 			//upper_pneumatic_state = 0;
 			//pneumatic_control(3, true);		
-			pneumatic_control(4, true);
+			pneumatic_control(4, 1);
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case DANCING_MODE:
-			pneumatic_control(4, true);
+			pneumatic_control(4, 1);
 			DataMonitor_Send(63, 0);
 			//LiftingMotors oscillate
 			ChasisFlag = 3;
@@ -142,7 +140,7 @@ void switch_and_send()
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
 			break;
 		case VERTICAL_PNEUMATIC_WITHDRAWS:
-			pneumatic_control(4, false);
+			pneumatic_control(4, 0);
 			DataMonitor_Send(64, 0);
 			//LiftingMotors stop oscillate
 			//and turn off the friction wheel			
@@ -181,7 +179,7 @@ void switch_and_send()
 			pneumatic_control(1, 0);
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
-			DataMonitor_Send(5, 1);
+			DataMonitor_Send(5, 3);
 			break;
 		case LOWER_PNEUMATIC:
 			pneumatic_control(1, 1);
@@ -196,7 +194,7 @@ void switch_and_send()
 		case FRONT_WHEEL_DOWN:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
             LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_FRONT	
+			DataMonitor_Send(0xFF, 0);		//ONE_KEY_UP_FRONT	
 			break;
 		
 	}
@@ -265,12 +263,9 @@ void state_control(){
 		{
 			if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
 			else if(HERO == BACK_WHEEL_DOWN) {
-				HERO = LOWER_PNEUMATIC;
-				DataMonitor_Send(5, 1);
-			}
-			else if(HERO == LOWER_PNEUMATIC) {
 				HERO = REVERSE_RUNNING_MODE;
-				pneumatic_control(1,0);
+				pneumatic_control(1, 0);
+				DataMonitor_Send(5, 3);
 			}
 			else if(HERO == FRONT_WHEEL_DOWN) {
 				HERO = BACK_WHEEL_DOWN;
@@ -304,7 +299,6 @@ void state_control(){
 
 	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch)){
 			switch_and_send();
-		//DataMonitor_Send(0x55, 0);
 	}	
 	
 	
@@ -319,13 +313,6 @@ void transmit(){
 		if (RC_CTRL || (DBUS_CheckPush(KEY_CTRL) && !DBUS_CheckPush(KEY_SHIFT) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))) 
 		{
 			//CTRL + FGCV
-			/*
-			if(HERO != BACK_WHEEL_UP && HERO != SPEED_LIMITATION){
-					LOAD_FLASH = 0;
-					step = 0;
-			}
-			else LOAD_FLASH = 1;
-			*/
 			if(step == 0 && !RC_CTRL){
 			int16_t key_bit = 0;
 			if(DBUS_CheckPush(KEY_F) ){
@@ -353,13 +340,6 @@ void transmit(){
 		if (RC_CTRL_SHIFT || DBUS_CheckPush(KEY_SHIFT)) { //SHIFT is pressed
 			if(RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))){
 				//CTRL + SHIFT + FGCV
-				/*
-				if(HERO != BACK_WHEEL_UP && HERO != SPEED_LIMITATION){
-					step = 0;
-					LOAD_FLASH = 0;
-				}
-				else LOAD_FLASH = 1;
-				*/
 				if(step == 0 && !RC_CTRL_SHIFT){
 				int16_t key_bit = 0;
 				if(DBUS_CheckPush(KEY_F)){

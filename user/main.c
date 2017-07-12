@@ -209,17 +209,11 @@ int main(void)
 					    }
 					    if (DBUS_ReceiveData.rc.switch_left == 2 && LastDBUSLeftSwitch == 3) {
 								//go to prev state
-					  	  //if(HERO!=RUNNING_MODE)
-									//HERO-=1;	
-								//switch_and_send();
 							if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE) {}
 							else if(HERO == BACK_WHEEL_DOWN) {
-								HERO = LOWER_PNEUMATIC;
-								DataMonitor_Send(5, 1);
-							}
-							else if(HERO == LOWER_PNEUMATIC) {
 								HERO = REVERSE_RUNNING_MODE;
-								pneumatic_control(1,0);
+								pneumatic_control(1, 0);
+								DataMonitor_Send(5, 3);
 							}
 							else if(HERO == FRONT_WHEEL_DOWN) {
 								HERO = BACK_WHEEL_DOWN;
