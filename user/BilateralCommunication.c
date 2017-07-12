@@ -211,7 +211,10 @@ void USART3_IRQHandler(void)
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFB){
-			ONE_KEY_DOWN_BACK=true;
+			LiftingMotorPositionSetpoint[2]=LiftingMotorBias[2]+FLASH_MEM[0];
+			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
+			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
+			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFA){

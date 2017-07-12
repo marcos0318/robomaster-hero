@@ -284,15 +284,16 @@ void TIM7_IRQHandler(void){
 			  GUN_Init();
 				
 			if(TIM_7_counter>10000){
-				if(!FRICTION_WHEEL_STATE)
-					friction_wheel_setpoint=0;
-				else {
-					if(friction_wheel_setpoint < 350)
-						friction_wheel_setpoint+=1;
+				if(!FRICTION_WHEEL_STATE){
+					FRIC_SET_THRUST_L(0);
+					FRIC_SET_THRUST_R(0);
+					FRIC_SET_THRUST_M(0);
 				}
-				FRIC_SET_THRUST_L(friction_wheel_setpoint);
-				FRIC_SET_THRUST_R(friction_wheel_setpoint);
-				FRIC_SET_THRUST_M(friction_wheel_setpoint);
+				else if(!DANCING_MODE_FLAG){
+				FRIC_SET_THRUST_L(600);
+				FRIC_SET_THRUST_R(600);
+				FRIC_SET_THRUST_M(600);
+				}
 			}
 			
 			

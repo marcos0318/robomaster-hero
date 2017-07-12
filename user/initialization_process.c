@@ -263,13 +263,19 @@ void DancingMode(int32_t* ul, int32_t* ll)
 		//only if all reaches lower limit will all lifting motors expand together
 		for(u8 i = 0; i < 4; i++)
 			LiftingMotorPositionSetpoint[i] = ul[i];
-        clear();
-			}
+			clear();
+			FRIC_SET_THRUST_L(600);
+			FRIC_SET_THRUST_R(0);
+			FRIC_SET_THRUST_M(600);
+	}
 	if(LeftFrontReachUpper && RightFrontReachUpper && RightBackReachUpper && LeftBackReachUpper){
 		//only if all reaches upper limit will all lifting motors go down together
 		for(u8 i = 0; i < 4; i++)
 			LiftingMotorPositionSetpoint[i] = ll[i];
-		clear();		
+		clear();	
+		FRIC_SET_THRUST_L(600);
+		FRIC_SET_THRUST_R(600);
+		FRIC_SET_THRUST_M(600);		
 	}
 	
 }
