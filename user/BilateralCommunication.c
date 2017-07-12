@@ -138,6 +138,8 @@ void USART3_IRQHandler(void)
 			//all go to down limit
 			if(getPositionSetpoint() == 1 || getPositionSetpoint() == 2)
 				runningMode();
+			else if(getPositionSetpoint() == 3)
+				goOnStageMode();
 			DANCING_MODE_FLAG = 0;
 			
 			FRICTION_WHEEL_STATE = false;
@@ -215,6 +217,7 @@ void USART3_IRQHandler(void)
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
+			goOnStageMode();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFA){

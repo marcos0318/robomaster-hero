@@ -53,8 +53,8 @@ void CameraInit(void) {
   
   for (int32_t i = 0; i < CAMERA_SIG_CNT; ++i)
     CameraState[i] = 0;
-	
-	runningMode();
+	  goOnStageMode();
+	//runningMode();
 }
 
 void SetCameraChannel(int32_t signal, int32_t channel) {

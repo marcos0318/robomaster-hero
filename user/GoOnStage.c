@@ -203,8 +203,8 @@ void TIM7_Int_Init(u16 period,u16 psc)//make timer interrupt by 1ms interrupt on
     TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure);
     
     //TIM_SelectOutputTrigger(TIM3,TIM_TRGOSource_Update);
-    /*—°‘Òupdate event?˜Œ™TRGO,¿°”vTIM3¥•?¢ADCÕ®µ¿ */
-    //vø?ˆ?® ±÷‹?/O· ¯?Û¥•?¢“ª¥Œ
+    /*ï¿½ï¿½ï¿½ï¿½update event?ï¿½ï¿½ï¿½TRGO,ï¿½ï¿½ï¿½vTIM3ï¿½ï¿½?ï¿½ADCÕ®ï¿½ï¿½ */
+    //vï¿½?ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½?/Oï¿½ï¿½ï¿½?Û¥ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½
     TIM_ClearFlag(TIM7, TIM_FLAG_Update);
     TIM_ITConfig(TIM7,TIM_IT_Update,ENABLE);
     TIM_Cmd(TIM7, ENABLE);
@@ -217,7 +217,7 @@ void TIM7_Int_Init(u16 period,u16 psc)//make timer interrupt by 1ms interrupt on
     NVIC_Init(&NVIC_InitStructure);
     
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7 , ENABLE);
-    /*œ»pÿ±’µ»¥? p”v*/
+    /*ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½pï¿½v*/
     
 }
 
@@ -227,7 +227,7 @@ void TIM7_IRQHandler(void){
     if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
     {
 				++TIM_7_counter;
-        ticks_msimg = get_ms_ticks();
+        		ticks_msimg = get_ms_ticks();
 				if(TIM_7_counter >= 3000){
 					if(TIM_7_counter == 3000) INIT_FLAG = 1;
 					update_GPIO_state();	//always update the GPIO state array
@@ -256,25 +256,6 @@ void TIM7_IRQHandler(void){
 											|| checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter);
 				}
 	
-			
-			if(TIM_7_counter % 1000 == 0)
-			{
-//				u32 temp = TIM_7_counter / 1000;
-//				temp %= 15;
-//				if(!(temp / 3))  
-//					SetCameraChannel(5, 0);
-//				else SetCameraChannel((temp / 3), 0);
-//				SetCameraChannel((temp / 3) + 1, (temp % 3) + 1); 
-				
-				/*
-				SetCameraChannel(1,1);
-				SetCameraChannel(2,1);
-				SetCameraChannel(3,1);
-				SetCameraChannel(4,1);
-				SetCameraChannel(5,1);
-				*/
-				
-			}
 			
 			//friction wheel initialization needs to be delayed
 			if(TIM_7_counter == 3000)
