@@ -152,14 +152,14 @@ void keyboard_mouse_control() {
   }
 
 	//if is qe turning the gimbalsestpint is zero
-	if (is_qe_turning) {
+	if (is_qe_turning || GimbalFlag == 4) {
 		gimbalPositionSetpoint = 0;
 	}
   
 	//Check gimbal flag
 	
 	
-	if ( GimbalFlag == 2 || GimbalFlag == 1 ) {
+	if ( GimbalFlag == 2 || GimbalFlag == 1) {
 		direction = - output_angle*upperTotal/3600;
 	} 
 	
@@ -304,6 +304,9 @@ void gimbal_pitch_control() {
 	if(LeftJoystick)
 		rawpitchsetpoint +=  (float)DBUS_ReceiveData.rc.ch3 * 0.0007;
 
+	if (GimbalFlag == 4) {
+		rawpitchsetpoint = 999999; //max
+	}
 	//limit pitch position
 	fwindowLimit(&rawpitchsetpoint, 1200/pitchPosMultiplier, 225/pitchPosMultiplier);
 

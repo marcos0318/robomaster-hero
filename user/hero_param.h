@@ -38,6 +38,7 @@ extern int32_t GimbalFlag;
 //Gimbal Flag: 1. All release and PID clear to 0
 //             2. Return to Center
 //             3. Control Mode
+//						 4. Look down
 
 extern int32_t ChasisFlag;
 //Chasis Flag: 1. Follow mode with gyro
