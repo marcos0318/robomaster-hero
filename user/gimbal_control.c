@@ -34,7 +34,7 @@ float gimbalSpeedFeedback = 0;
 
 struct fpid_control_states gimbalSpeedState = {0,0,0};
 
-int32_t outsideLimit = 1000;
+int32_t outsideLimit = 1500;
 
 int32_t turningConst = 2430;
 //key control for chasis turning
@@ -197,10 +197,10 @@ void keyboard_mouse_control() {
 
 
 	//Used for protection				
-	if(gimbalPositionSetpoint > 900)
-		gimbalPositionSetpoint = 900;
-	else if (gimbalPositionSetpoint < -900)
-		gimbalPositionSetpoint = -900;
+	if(gimbalPositionSetpoint > outsideLimit)
+		gimbalPositionSetpoint = outsideLimit;
+	else if (gimbalPositionSetpoint < -outsideLimit)
+		gimbalPositionSetpoint = -outsideLimit;
   //Update data
 	pre_xtotal = xtotal;
  	ChasisFlag_Prev = ChasisFlag;
@@ -215,7 +215,7 @@ void keyboard_mouse_control() {
 
 void gimbal_yaw_control(){
 	yaw_counter += 1;
-	float magicConst = 7;
+	float magicConst = 5;
 	
 	if (yaw_counter == yaw_interval) {
 		chasis_turning_speed = output_angle - output_angle_prev;
@@ -229,13 +229,13 @@ void gimbal_yaw_control(){
 	isGimbalPositionSetpointIncrease = (bufferedGimbalPositionSetpoint < gimbalPositionSetpoint);
 
 	if(isGimbalPositionSetpointIncrease){
-		bufferedGimbalPositionSetpoint += 5;
+		bufferedGimbalPositionSetpoint += 7;
 
 		if (bufferedGimbalPositionSetpoint > gimbalPositionSetpoint)
 			bufferedGimbalPositionSetpoint = gimbalPositionSetpoint;
 	}
 	else {
-		bufferedGimbalPositionSetpoint -= 5;
+		bufferedGimbalPositionSetpoint -= 7;
 
 		if(bufferedGimbalPositionSetpoint < gimbalPositionSetpoint) 
 			bufferedGimbalPositionSetpoint = gimbalPositionSetpoint;

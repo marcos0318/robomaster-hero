@@ -356,46 +356,39 @@ int main(void)
 			
 			
 			
-			if(ticks_msimg%20==0){
-				//tft_clear();
-				tft_clear_line(9);
-				tft_prints(1, 9, "state:%d", (int)HERO);
-				tft_prints(1,2, "ticks:%d", ticks_msimg);
+			if(ticks_msimg%20==0){			
+				tft_clear_line(2);
 				tft_clear_line(3);
 				tft_clear_line(4);
 				tft_clear_line(5);
+				tft_clear_line(6);
+				tft_clear_line(7);
+				tft_clear_line(8);
+				tft_clear_line(9);
+				tft_clear_line(10);
+				tft_clear_line(11);
+				tft_prints(1,2, "ticks:%d", ticks_msimg);
 				tft_prints(1,3, "DBUS:%d %d %d", DBUSBrokenLineCounter, DBUSBrokenLine, DBUSBrokenLineRecover);
 				tft_prints(1,4, "CAN1:%d %d %d", CAN1BrokenLineCounter, CAN1BrokenLine, CAN1BrokenLineRecover);
 				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);
-		
+				tft_prints(1,6, "Y:%d P:%d G:%d", checkBrokenLine(ticks_msimg, YawBrokenLineCounter), checkBrokenLine(ticks_msimg, PitchBrokenLineCounter), checkBrokenLine(ticks_msimg, GunBrokenLineCounter));			
+				tft_prints(1,7, "LF:%d RF:%d",checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter), checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter));
+				tft_prints(1,8, "LB:%d RB:%d",checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter), checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter));
+				tft_prints(1,9, "state:%d", (int)HERO);
+				tft_prints(1,10,"GF:%d CF:%d", GimbalFlag, ChasisFlag);
+				tft_prints(1,11,"JV:%.1f SSP:%d", InfantryJudge.RealVoltage, shootingWheelSpeed);
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
-				
-//				tft_clear_line(3);
-//				tft_clear_line(4);
-//				tft_clear_line(5);
-				tft_clear_line(6);
-				//tft_prints(1, 6, "LF:%d", LOAD_FLASH);
-				tft_prints(1, 6, "LF_fr:%d", CM1Encoder.filter_rate);
-				tft_clear_line(7);
-				tft_clear_line(8);
-				tft_prints(1,7,"LF:%d RF:%d",checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter) ,checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter) );
-				tft_prints(1,8,"LB:%d RB:%d",checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter) ,checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter));
-//				tft_clear_line(10);
+				//tft_prints(1,6, "LF:%d", LOAD_FLASH);				
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
 				//tft_prints(1,8,"gyro:%dfr:%d", output_angle, wheel_feedbacks[0] );
-//				tft_prints(1,3,"psp:%f", pitchPositionSetpoint);
-//				tft_prints(1,4,"pfd:%f", pitchPositionFeedback);
-//				tft_prints(1,5,"ssp:%f", pitchSpeedSetpoint);
-//				tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
-				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);	
-				tft_clear_line(10);
-				tft_prints(1, 10, "shooSpd: %d", counter);
-				//tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);
-			  
+				//tft_prints(1,3,"psp:%f", pitchPositionSetpoint);
+				//tft_prints(1,4,"pfd:%f", pitchPositionFeedback);
+				//tft_prints(1,5,"ssp:%f", pitchSpeedSetpoint);
+				//tft_prints(1,6,"sfd:%f",pitchSpeedFeedback );
+				//tft_prints(1,10,"wout:%d",wheel_outputs[0]);					
+				//tft_prints(1,10,"ss:%d d:%d",FOR_JOHN_SHIFT_G_SPECIAL_MODE, state_delay);			  
 				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
-				//tft_prints(1,11,":%d", chasis_turning_speed);
-				tft_clear_line(11);
-				tft_prints(1, 11, "V S: %.1f %d", InfantryJudge.RealVoltage, shootingWheelSpeed);
+				//tft_prints(1,11,":%d", chasis_turning_speed);	
 				tft_update();
 			}	
 			
