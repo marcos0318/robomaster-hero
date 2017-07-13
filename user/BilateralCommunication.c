@@ -140,12 +140,22 @@ void USART3_IRQHandler(void)
 				runningMode();
 			else if(getPositionSetpoint() == 3)
 				goOnStageMode();
+			else if(getPositionSetpoint() == 4 || getPositionSetpoint() == 5)
+				offStageMode();
 			DANCING_MODE_FLAG = 0;
 			
 			FRICTION_WHEEL_STATE = false;
 			if(getPositionSetpoint() != 2){
-				for(uint8_t i = 0; i < 4; i++)
-				LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i] + DOWN_SETPOINT;
+				if(getPositionSetpoint() != 4){
+					for(uint8_t i = 0; i < 4; i++)
+					LiftingMotorPositionSetpoint[i]=LiftingMotorBias[i] + DOWN_SETPOINT;
+				}
+				else if(getPositionSetpoint() == 4){
+					for(u8 i = 0; i <= 1; i++)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT_FRONT + 20000;
+				for(u8 i = 2; i <= 3; i++)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT_BACK;
+				}
 			}
 			else {
 				INIT_FLAG = 1;
@@ -189,8 +199,11 @@ void USART3_IRQHandler(void)
       for(u8 i = 0; i < 4; i++)
          LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
 			if(getPositionSetpoint() == 2) {
-				for(u8 i = 0; i < 4; i++)
-						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT;
+				for(u8 i = 0; i <= 1; i++)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT_FRONT;
+				for(u8 i = 2; i <= 3; i++)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT_BACK;
+				
 			}
 		}
 		
