@@ -1,8 +1,9 @@
 #include "helper_functions.h"
-
+#include "judge.h"
 
 
 int32_t convertToShootingSpeed(float v) {
+	counter++;
 	int base = 990;
   if (v >= 26.3) {
     return base;
@@ -25,7 +26,7 @@ int32_t convertToShootingSpeed(float v) {
   else if ( v > 20 ) {
     return (int)(-61.81 * (v - 21.8) + base + 163);
   }
-  else return 0;
+  else return base;//for when the judging system return 0 V.. Normally wont happen
 
 }
 

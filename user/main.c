@@ -31,7 +31,6 @@ void init(){
 	gyro_cal();
 	TIM5_Int_Init(24, 13124);// 256hz //3.9xx ms for gyro usage
 	DataMonitor_Init();
-	//ENCODER_Init();
 	GUN_Init();
   TIM7_Int_Init(83,999);
 }
@@ -396,7 +395,7 @@ int main(void)
 				//tft_prints(1,11,":%.1f", gimbalSpeedSetpoint);
 				//tft_prints(1,11,":%d", chasis_turning_speed);
 				tft_clear_line(11);
-				tft_prints(1, 11, "V S: %.1f %.1f", InfantryJudge.RealVoltage, InfantryJudge.LastShotSpeed );
+				tft_prints(1, 11, "V S: %.1f %d", InfantryJudge.RealVoltage, shootingWheelSpeed);
 				tft_update();
 			}	
 			

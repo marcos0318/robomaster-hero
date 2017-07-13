@@ -157,6 +157,7 @@ void GUN_SetMotion(void) {
 			if (!(DBUS_ReceiveData.rc.switch_right == 1 && DBUS_ReceiveData.rc.switch_left == 1) && !DBUSBrokenLine) {
 					FRIC_SET_THRUST_L(shootingWheelSpeed);
 					FRIC_SET_THRUST_R(shootingWheelSpeed);
+					
 			}
 			else {
 					FRIC_SET_THRUST_L(0);
