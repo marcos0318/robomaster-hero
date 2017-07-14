@@ -209,6 +209,7 @@ void state_control(){
 	if(!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !DBUS_CheckPush(KEY_SHIFT) && KEY_G_PREV && !DBUS_CheckPush(KEY_G)) {
 		if((G_counter_for_John > 30) && HERO == RUNNING_MODE) {
 			HERO=INTO_RI_MODE;
+			switch_and_send();
 			state_switch=true;
 			G_counter = TIM_7_Counter;
 			state_delay = 1;
@@ -241,7 +242,6 @@ void state_control(){
 					//withdraw lower pneumatic
 					lower_pneumatic_state = false;
 					pneumatic_control(1, 0);
-					pneumatic_control(2, 0);
 					pneumatic_control(3, 0);
 					pneumatic_control(4, 0);
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
@@ -280,7 +280,7 @@ void state_control(){
 			backState[1]();
 		}
 	}
-	
+	/*
 	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
 		    //HERO=RUNNING_MODE;  		
 		    SHIFT_F=true;
@@ -296,7 +296,7 @@ void state_control(){
 	if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS && (!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch))){
 			switch_and_send();
 	}	
-	
+	*/
 	
 	KEY_G_PREV=DBUS_CheckPush(KEY_G);
 	KEY_F_PREV=DBUS_CheckPush(KEY_F);

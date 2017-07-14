@@ -567,7 +567,7 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(3, 0);
 					//Lifting Motors go down
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-					DataMonitor_Send(5, 0);
+					DataMonitor_Send(5, 1);
 				}
 				
 				//Back_To_DANCING_MODE: upper vertical pneumatic delay extension, friction wheels delay being turned on
