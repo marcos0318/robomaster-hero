@@ -53,7 +53,7 @@ void switch_and_send()
 				ChasisFlag = 2;
 			}
 			GimbalFlag = 3;
-		  	direction = -output_angle*upperTotal/3600;
+		  direction = -output_angle*upperTotal/3600;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
 			//withdraw lower pneumatic
@@ -62,7 +62,7 @@ void switch_and_send()
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(5, 3);
+			DataMonitor_Send(5, 1);
 			//speed limit in chasis control
 			break;
 		case INTO_RI_MODE:
@@ -337,24 +337,24 @@ void transmit(){
 			if(RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)))){
 				//CTRL + SHIFT + FGCV
 				if(step == 0 && !RC_CTRL_SHIFT){
-				int16_t key_bit = 0;
-				if(DBUS_CheckPush(KEY_F)){
-					LiftingMotorSetpoint[0] += 200;
-					key_bit |= 1<<0;
-				}
-				if(DBUS_CheckPush(KEY_G)){
-					LiftingMotorSetpoint[1] += 200;
-					key_bit |= 1<<1;
-				} 
-				if(DBUS_CheckPush(KEY_C)){
-					LiftingMotorSetpoint[3] += 200;
-					key_bit |= 1<<2;
-				}
-				if(DBUS_CheckPush(KEY_V)){
-					LiftingMotorSetpoint[2] += 200;
-					key_bit |= 1<<3;
-				}
-				DataMonitor_Send(0x14, key_bit);
+					int16_t key_bit = 0;
+					if(DBUS_CheckPush(KEY_F)){
+						LiftingMotorSetpoint[0] += 200;
+						key_bit |= 1<<0;
+					}
+					if(DBUS_CheckPush(KEY_G)){
+						LiftingMotorSetpoint[1] += 200;
+						key_bit |= 1<<1;
+					} 
+					if(DBUS_CheckPush(KEY_C)){
+						LiftingMotorSetpoint[3] += 200;
+						key_bit |= 1<<2;
+					}
+					if(DBUS_CheckPush(KEY_V)){
+						LiftingMotorSetpoint[2] += 200;
+						key_bit |= 1<<3;
+					}
+					DataMonitor_Send(0x14, key_bit);
 				}
 				else if(step >30)
 					DataMonitor_Send(0x14, step);
@@ -370,13 +370,10 @@ void transmit(){
 				DataMonitor_Send(5, 0);
 				//all goes to zero
 			}
-			else
-					DataMonitor_Send(0x55, 0);	//keep communication	
-		
+			else DataMonitor_Send(0x55, 0);	//keep communication			
 		}
 
 		else { //SHIFT is not pressed
-
 			if(DBUS_CheckPush(KEY_X)){
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
 				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
@@ -393,9 +390,7 @@ void transmit(){
 				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
 				DataMonitor_Send(0xF9, LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK					
 			}	
-			else 
-				DataMonitor_Send(0x55, 0);	//keep communication
-	
+			else DataMonitor_Send(0x55, 0);	//keep communication	
 		}
 
 		

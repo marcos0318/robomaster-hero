@@ -427,28 +427,27 @@ void TIM7_IRQHandler(void){
 				if(!DBUS_CheckPush(KEY_CTRL) && SHIFT_F_F_DETECTOR &&(TIM_7_Counter - SHIFT_F_timer) > 500) {
 					SHIFT_F_F_DETECTOR = 0;
 					//SHIFT+F
-						HERO = RUNNING_MODE;
-						switch_and_send();
-						lower_pneumatic_state = 0;
-						pneumatic_control(1, 0);
+					HERO = RUNNING_MODE;
+					switch_and_send();
+					lower_pneumatic_state = 0;
+					pneumatic_control(1, 0);
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && SHIFT_G_G_DETECTOR && (TIM_7_Counter - SHIFT_G_timer) > 500) {
 					SHIFT_G_G_DETECTOR = 0;
 					//SHIFT+G
-						lower_pneumatic_state = 0;
-						//jump to a special mode, after that mode, if press G, will jump to SPEED_LIMITATION
-						LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-						DataMonitor_Send(71, 2);		//ONE_KEY_DOWN_FRONT
-						//reverse QWEASD
-						filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
-						speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
-						//turn off gyro
-						ChasisFlag = 3;	
-						lower_pneumatic_state = 0;
-						pneumatic_control(1, 0);
-						pneumatic_control(2, 0);					
-						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
-						HERO = INTO_RI_MODE;
+					lower_pneumatic_state = 0;
+					//jump to a special mode, after that mode, if press G, will jump to SPEED_LIMITATION
+					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
+					DataMonitor_Send(71, 2);		//ONE_KEY_DOWN_FRONT
+					//reverse QWEASD
+					filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+					speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+					//turn off gyro
+					ChasisFlag = 3;	
+					lower_pneumatic_state = 0;
+					pneumatic_control(1, 0);					
+					FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
+					HERO = INTO_RI_MODE;
 					
 				}
 				if(!DBUS_CheckPush(KEY_CTRL) && !FOR_JOHN_SHIFT_F && FOR_JOHN_SHIFT_F_PREV){
@@ -463,8 +462,7 @@ void TIM7_IRQHandler(void){
 						SHIFT_F_F_DETECTOR = 0;
 					}
 				}
-				if(!DBUS_CheckPush(KEY_CTRL) && !FOR_JOHN_SHIFT_G && FOR_JOHN_SHIFT_G_PREV){
-					
+				if(!DBUS_CheckPush(KEY_CTRL) && !FOR_JOHN_SHIFT_G && FOR_JOHN_SHIFT_G_PREV){					
 					if(!DO_NOT_SAVE_TIME_SHIFT_G){
 						SHIFT_G_timer = TIM_7_Counter;
 						DO_NOT_SAVE_TIME_SHIFT_G = 0;
@@ -475,8 +473,7 @@ void TIM7_IRQHandler(void){
 						DO_NOT_SAVE_TIME_SHIFT_G = 0;
 					}
 				}
-				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_F && !FOR_JOHN_SHIFT_F_PREV && ((TIM_7_Counter - SHIFT_F_timer) < 500)){
-					
+				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_F && !FOR_JOHN_SHIFT_F_PREV && ((TIM_7_Counter - SHIFT_F_timer) < 500)){					
 					//SHIFT+F+F
 						//upper pneumatic extends
 						if(SHIFT_F_F_up_state == 0){
@@ -492,13 +489,10 @@ void TIM7_IRQHandler(void){
 						DO_NOT_SAVE_TIME_SHIFT_F = 1;
 				}
 				
-				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_G && !FOR_JOHN_SHIFT_G_PREV && ((TIM_7_Counter - SHIFT_G_timer) < 500)){
-					
+				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_G && !FOR_JOHN_SHIFT_G_PREV && ((TIM_7_Counter - SHIFT_G_timer) < 500)){					
 						//SHIFT+G+G
 						//jump to jump off island mode
 						SHIFT_G_G_DETECTOR = 0;
-						//pneumatic_control(1, 0);
-						//pneumatic_control(2, 0);
 						if(HERO != DANCING_MODE){
 						HERO = VERTICAL_PNEUMATIC_WITHDRAWS;
 						DataMonitor_Send(5, 5);
@@ -549,16 +543,17 @@ void TIM7_IRQHandler(void){
 					pneumatic_control(2, 0);
 				}
 				//VERTICAL_PNEUMATIC_WITHDRAWS upper horizontal pneumatic delay withdrawl, LiftingMotors delay withdrawal
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) == 1500))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) == 2000))
 				{
-					pneumatic_control(3, false);
+					pneumatic_control(3, 0);
+					pneumatic_control(4, 0);
 				}
-				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 3000))
+				if(VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag == 1 && ((TIM_7_Counter - VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_timer) > 4000))
 				{
 					VERTICAL_PNEUMATIC_WITHDRAWS_UHPneu_LM_flag = 0;
-					pneumatic_control(4, false);
+					pneumatic_control(4, 0);
 					upper_pneumatic_state = 1;
-					pneumatic_control(3, false);
+					pneumatic_control(3, 0);
 					//Lifting Motors go down
 					LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 					DataMonitor_Send(5, 4);
