@@ -420,22 +420,32 @@ void JUDGE_DecodeFrame(uint8_t type) {
     switch (way) {
       case 0: // armor damage
         InfantryJudge.LastHartID = GET_BUFFER(7)&0x0F;
+        InfantryJudge.BulletDecrease += delta;
         InfantryJudge.ArmorDecrease += delta;
         break;
-      case 1: // over speed
+      case 1: // golf damage
+        InfantryJudge.LastHartID = GET_BUFFER(7)&0x0F;
+        InfantryJudge.GolfDecrease += delta;
+        InfantryJudge.ArmorDecrease += delta;
+        break;
+      case 2: // crash damage
+        InfantryJudge.LastHartID = GET_BUFFER(7)&0x0F;
+        InfantryJudge.CrashDecrease += delta;
+        break;
+      case 3: // over speed
         InfantryJudge.OverShootSpeedDecrease += delta;
         break;
-      case 2: // over frequency
+      case 4: // over frequency
         InfantryJudge.OverShootFreqDecrease += delta;
         break;
-      case 3: // over power
+      case 5: // over power
         InfantryJudge.OverPowerDecrease += delta;
         break;
-      case 4: // module offline
+      case 6: // module offline
         InfantryJudge.ModuleOfflineDecrease += delta;
         break;
-      case 6: // violation
-        // InfantryJudge.violationDamage += delta;
+      case 7: // fault
+        InfantryJudge.FaultDecrease += delta;
         break;
     }
   }
@@ -451,5 +461,55 @@ void JUDGE_DecodeFrame(uint8_t type) {
     FT.U[2] = GET_BUFFER(13);
     FT.U[3] = GET_BUFFER(14);
     InfantryJudge.LastShotFreq = FT.F;
+
+    FT.U[0] = GET_BUFFER(15);
+    FT.U[1] = GET_BUFFER(16);
+    FT.U[2] = GET_BUFFER(17);
+    FT.U[3] = GET_BUFFER(18);
+    InfantryJudge.GolfShotSpeed = FT.F;
+
+    FT.U[0] = GET_BUFFER(19);
+    FT.U[1] = GET_BUFFER(20);
+    FT.U[2] = GET_BUFFER(21);
+    FT.U[3] = GET_BUFFER(22);
+    InfantryJudge.GolfShotFreq = FT.F;
+  }
+  else if (type == 4) {
+    uint8_t state;
+
+    state = GET_BUFFER(7);
+    InfantryJudge.MySide = state & 0x03;
+    InfantryJudge.BaseState[0] = (state>>2)&0x03;
+    InfantryJudge.BaseState[1] = (state>>4)&0x03;
+    InfantryJudge.HeroOnStage[0] = (state>>6)&0x01;
+    InfantryJudge.HeroOnStage[1] = (state>>7)&0x01;
+
+    state = GET_BUFFER(8);
+    InfantryJudge.AirportState[0] = (state>>0)&0x0F;
+    InfantryJudge.AirportState[1] = (state>>4)&0x0F;
+
+    state = GET_BUFFER(9);
+    InfantryJudge.StandState[0] = (state>>0)&0x0F;
+    InfantryJudge.StandState[1] = (state>>4)&0x0F;
+    state = GET_BUFFER(10);
+    InfantryJudge.StandState[2] = (state>>0)&0x0F;
+    InfantryJudge.StandState[3] = (state>>4)&0x0F;
+    state = GET_BUFFER(11);
+    InfantryJudge.StandState[4] = (state>>0)&0x0F;
+    InfantryJudge.StandState[5] = (state>>4)&0x0F;
+ 
+    state = GET_BUFFER(12);
+    InfantryJudge.SupplyState[0] = (state>>0)&0x0F;
+    InfantryJudge.SupplyState[1] = (state>>4)&0x0F;
+    InfantryJudge.AddBulletCount[0] =
+      (GET_BUFFER(14)<<8)|GET_BUFFER(13);
+    InfantryJudge.AddBulletCount[1] =
+      (GET_BUFFER(16)<<8)|GET_BUFFER(15);
+
+    state = GET_BUFFER(17);
+    InfantryJudge.RuneState[0] = (state>>0)&0x0F;
+    InfantryJudge.RuneState[1] = (state>>4)&0x0F;
+
+    InfantryJudge.AddDefendPercent = GET_BUFFER(18);
   }
 }

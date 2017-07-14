@@ -376,7 +376,7 @@ int main(void)
 				tft_prints(1,8, "LB:%d RB:%d",checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter), checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter));
 				tft_prints(1,9, "state:%d", (int)HERO);
 				tft_prints(1,10,"GF:%d CF:%d", GimbalFlag, ChasisFlag);
-				tft_prints(1,11,"JV:%.1f SSP:%d", InfantryJudge.RealVoltage, shootingWheelSpeed);
+				tft_prints(1,11,"id:%.1f", InfantryJudge.LastHartID);
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
 				//tft_prints(1,6, "LF:%d", LOAD_FLASH);				
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
