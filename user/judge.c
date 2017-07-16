@@ -324,6 +324,7 @@ void Judge_InitConfig(void)
     InfantryJudge.LastBlood = 1500;
     InfantryJudge.LastShotSpeed = 23.5;
     InfantryJudge.LastShotFreq = 1.0;
+		InfantryJudge.LastTick = 0;
     InfantryJudge.RemainBuffer = 60.0;
     InfantryJudge.LastHartID = 0;
     InfantryJudge.ArmorDecrease = 0;
