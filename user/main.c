@@ -374,9 +374,9 @@ int main(void)
 				tft_prints(1,6, "Y:%d P:%d G:%d", checkBrokenLine(ticks_msimg, YawBrokenLineCounter), checkBrokenLine(ticks_msimg, PitchBrokenLineCounter), checkBrokenLine(ticks_msimg, GunBrokenLineCounter));			
 				tft_prints(1,7, "LF:%d RF:%d",checkBrokenLine(ticks_msimg, Wheel1BrokenLineCounter), checkBrokenLine(ticks_msimg, Wheel2BrokenLineCounter));
 				tft_prints(1,8, "LB:%d RB:%d",checkBrokenLine(ticks_msimg, Wheel4BrokenLineCounter), checkBrokenLine(ticks_msimg, Wheel3BrokenLineCounter));
-				tft_prints(1,9, "state:%d", (int)HERO);
-				tft_prints(1,10,"GF:%d CF:%d", GimbalFlag, ChasisFlag);
-				tft_prints(1,11,"id:%.1f", InfantryJudge.LastHartID);
+				tft_prints(1,9, "state:%d GF:%d CF:%d", (int)HERO, GimbalFlag, ChasisFlag);
+				tft_prints(1,10,"AR:%d B:%d G:%d", InfantryJudge.ArmorDecrease, InfantryJudge.BulletDecrease, InfantryJudge.GolfDecrease);
+				tft_prints(1,11,"OS:%d OF:%d", InfantryJudge.OverShootSpeedDecrease,InfantryJudge.OverShootFreqDecrease);
 				//tft_prints(1,6,"dir:%d    Gf:%d", direction, GimbalFlag);
 				//tft_prints(1,6, "LF:%d", LOAD_FLASH);				
 				//tft_prints(1,7,"spA:%d    Cf:%d", setpoint_angle, ChasisFlag);
