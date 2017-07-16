@@ -30,6 +30,15 @@ int32_t convertToShootingSpeed(float v) {
 
 }
 
+int32_t fixShootingSpeed ( int32_t speed, int32_t timeSinceLastShoot, int32_t increase, int32_t period) {
+	if (timeSinceLastShoot > period) {
+		return speed;
+	}
+	else {
+		return (speed + increase * (period - timeSinceLastShoot) / period); 
+	}
+	
+}
 
 
 //The buffer functions 

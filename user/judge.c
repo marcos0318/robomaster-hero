@@ -473,6 +473,7 @@ void JUDGE_DecodeFrame(uint8_t type) {
     FT.U[2] = GET_BUFFER(21);
     FT.U[3] = GET_BUFFER(22);
     InfantryJudge.GolfShotFreq = FT.F;
+		InfantryJudge.LastTick = get_ms_ticks();
   }
   else if (type == 4) {
     uint8_t state;

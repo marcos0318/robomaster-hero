@@ -69,6 +69,7 @@ typedef struct {
     float LastShotFreq;
     float GolfShotSpeed;
     float GolfShotFreq;
+		int32_t LastTick;
 
   //0x0004
     uint8_t MySide; // 0: red 1: blue

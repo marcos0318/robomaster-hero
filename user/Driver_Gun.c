@@ -177,7 +177,7 @@ void GUN_SetMotion(void) {
 
     shoot = jumpPress || (((pressCount & 0x000FU) == 0)&&pressCount);
     shoot = shoot && (DBUS_ReceiveData.rc.switch_right != 1);
-    shoot = shoot && (ticks_msimg - lastTick > 220);
+    shoot = shoot && (ticks_msimg - lastTick > 250);
     if (shoot) {
         GUN_ShootOne();
         lastTick = ticks_msimg;
@@ -188,9 +188,9 @@ void GUN_ShootOne(void) {
 	
 	
 	if(dir)
-    GUN_Data.pokeTargetAngle += 1140;
+    GUN_Data.pokeTargetAngle += 360 * 19 / 6;
 	else 
-		GUN_Data.pokeTargetAngle -= 1140;
+		GUN_Data.pokeTargetAngle -= 360 * 19 / 6;
 	if(GMballfeedEncoder.ecd_angle>16777151){
 		GMballfeedEncoder.ecd_angle=GUN_Data.pokeTargetAngle=0;
 	}
