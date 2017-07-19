@@ -587,6 +587,9 @@ void TIM7_IRQHandler(void){
 				if(!DBUS_CheckPush(KEY_R) && KEY_R_PREV == 1 && HERO == VERTICAL_PNEUMATIC_WITHDRAWS){
 					GimbalFlag = gimbalFlagPrev;
 				}
+				if(DBUS_CheckPush(KEY_R) && KEY_R_PREV == 0 && (HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS || HERO == CATCH_GOLF || HERO == DANCING_MODE)){
+					DataMonitor_Send(0xFD,0);
+				}
 				KEY_R_PREV = DBUS_CheckPush(KEY_R);
   		
     }

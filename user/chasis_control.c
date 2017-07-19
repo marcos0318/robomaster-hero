@@ -7,23 +7,44 @@ void DBUS_data_analysis(){
 	speed_limitor  = 660;
 	//speed_multiplier = filter_rate_limit;
 	angular_speed_limitor = FOR_JOHN_MAX_TURNING_SPEED;
-	if(HERO == RUNNING_MODE){
+	if(HERO == RUNNING_MODE || HERO == REVERSE_RUNNING_MODE || HERO == BACK_WHEEL_DOWN || HERO == FRONT_WHEEL_DOWN){
 		if(DBUS_CheckPush(KEY_W)||DBUS_CheckPush(KEY_A)||DBUS_CheckPush(KEY_S)||DBUS_CheckPush(KEY_D)){
 			if(DBUS_CheckPush(KEY_CTRL)){	//control
 				filter_rate_limit = FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
-				speed_multiplier= FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
+				if(speed_multiplier> 0) speed_multiplier = FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
+				else speed_multiplier = -FOR_JOHN_CTRL_MAX_RUNNING_SPEED;
 			}
 			else if(!DBUS_CheckPush(KEY_SHIFT)){	//normal
 				filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
-				speed_multiplier= FOR_JOHN_MAX_RUNNING_SPEED;
+				if(speed_multiplier> 0) speed_multiplier= FOR_JOHN_MAX_RUNNING_SPEED;
+				else speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
 			}
 			else if(DBUS_CheckPush(KEY_SHIFT)){	//shift
 				filter_rate_limit = FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;
-				speed_multiplier= FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;
+				if(speed_multiplier> 0) speed_multiplier= FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;
+				else speed_multiplier = -FOR_JOHN_SHIFT_MAX_RUNNING_SPEED;				
 			}
 		}
 			
 	}
+	else 
+		if(DBUS_CheckPush(KEY_W)||DBUS_CheckPush(KEY_A)||DBUS_CheckPush(KEY_S)||DBUS_CheckPush(KEY_D)){
+			if(DBUS_CheckPush(KEY_CTRL)){	//control
+				filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED * 0.5;
+				if(speed_multiplier> 0) speed_multiplier = FOR_JOHN_INTO_RI_MAX_SPEED * 0.5;
+				else speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED * 0.5;
+			}
+			else if(!DBUS_CheckPush(KEY_SHIFT)){	//normal
+				filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
+				if(speed_multiplier> 0) speed_multiplier= FOR_JOHN_INTO_RI_MAX_SPEED;
+				else speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
+			}
+			else if(DBUS_CheckPush(KEY_SHIFT)){	//shift
+				filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED * 1.5;
+				if(speed_multiplier> 0) speed_multiplier= FOR_JOHN_INTO_RI_MAX_SPEED * 1.5;
+				else speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED * 1.5;				
+			}
+		}
 	forward_speed = (DBUS_ReceiveData.rc.ch1 + DBUS_CheckPush(KEY_W)*660 - DBUS_CheckPush(KEY_S)*660) * speed_multiplier/speed_limitor;
 	right_speed =   (DBUS_ReceiveData.rc.ch0 + DBUS_CheckPush(KEY_D)*660 - DBUS_CheckPush(KEY_A)*660) * speed_multiplier/speed_limitor;
 	
@@ -98,10 +119,15 @@ void turning_speed_limit_control(uint32_t ticks_msimg){
 
 		//Use Q and E to control direction
 		if (ChasisFlag == 4 || ChasisFlag == 3) {
+			if(DBUS_CheckPush(KEY_Q) || DBUS_CheckPush(KEY_E)) {
+				int32_t tempQE = FOR_JOHN_QE_INC;
+				if(DBUS_CheckPush(KEY_CTRL)) tempQE *= 0.5;
+				else if(DBUS_CheckPush(KEY_SHIFT) ) tempQE *= 1.5;
 			if(DBUS_CheckPush(KEY_Q))
-				wheel_setpoints[i] += FOR_JOHN_QE_INC;
+				wheel_setpoints[i] += tempQE;
 			if(DBUS_CheckPush(KEY_E))
-				wheel_setpoints[i] -= FOR_JOHN_QE_INC;
+				wheel_setpoints[i] -= tempQE;
+			}
 			if(LeftJoystick)
 				wheel_setpoints[i] -= DBUS_ReceiveData.rc.ch2 / 5;
 		}

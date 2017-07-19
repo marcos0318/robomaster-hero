@@ -157,14 +157,6 @@ int main(void)
 				 	      GimbalFlag = 1;
 								//Left switch and Right switch all up:  release all control
 					    }
-					    else if (DBUS_ReceiveData.rc.switch_right == 2) {
-								GimbalFlag = 3;
-								//Left up, Right down: controlled by keyboard, mouse (competition mode)
-								//all need to go back to initial position
-								//go to the state 0
-								HERO = RUNNING_MODE;
-								switch_and_send();
-					    }
 							else GimbalFlag = 3;
 					  }
 				

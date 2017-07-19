@@ -170,7 +170,7 @@ void switch_and_send()
 			DataMonitor_Send(0xFF, 1);		//ONE_KEY_UP_BACK		
 			break;
 		case REVERSE_RUNNING_MODE:
-			ChasisFlag = 4;
+			ChasisFlag = 1;
 			filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
 			speed_multiplier = -FOR_JOHN_MAX_RUNNING_SPEED;
 			GimbalFlag = 3;
@@ -280,23 +280,6 @@ void state_control(){
 			backState[1]();
 		}
 	}
-	/*
-	if(DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_F_PREV)){
-		    //HERO=RUNNING_MODE;  		
-		    SHIFT_F=true;
-	}
-	else SHIFT_F=false;
-	if(DBUS_CheckPush(KEY_G) && DBUS_CheckPush(KEY_SHIFT) && (!KEY_SHIFT_G_PREV)){
-
-			//HERO=SPEED_LIMITATION;
-			SHIFT_G=true;
-	}
-	else SHIFT_G=false;
-
-	if(HERO != VERTICAL_PNEUMATIC_WITHDRAWS && (!FOR_JOHN_SHIFT_G_SPECIAL_MODE && !SHIFT_G_G_DETECTOR && !SHIFT_F_F_DETECTOR && ((DBUS_CheckPush(KEY_G)&&!KEY_G_PREV) || (DBUS_CheckPush(KEY_F)&&!KEY_F_PREV) || SHIFT_F || SHIFT_G || state_switch))){
-			switch_and_send();
-	}	
-	*/
 	
 	KEY_G_PREV=DBUS_CheckPush(KEY_G);
 	KEY_F_PREV=DBUS_CheckPush(KEY_F);
