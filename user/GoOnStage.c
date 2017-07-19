@@ -288,7 +288,9 @@ void TIM7_IRQHandler(void){
 						{
 							//lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
 							//upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
-							upper_limit[i]=LiftingMotorBias[i] + FLASH_MEM[1];
+							int32_t height = FLASH_MEM[1] - DANCING_MODE_UP_DOWN_DIFF / 2;
+							if (height <= DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF) height = DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF;
+							upper_limit[i]=LiftingMotorBias[i] + height;
 							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
 						}
 						DancingMode(upper_limit, lower_limit);

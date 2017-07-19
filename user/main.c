@@ -72,49 +72,48 @@ int main(void)
 			
 			if(ticks_msimg % 500 ==0) {
 				//tft_clear();
-				tft_clear_line(2);
-				tft_prints(1,2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
+				for(u8 i=2;i<11;i++) 
+          tft_clear_line(i); 
+				tft_prints(1, 2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
+				tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
+				tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
+				tft_prints(1, 5,"LBH:%f", (float)(CM4Encoder.ecd_angle-LiftingMotorBias[3]));
+				tft_prints(1, 6, "F1:%d F2:%d", FLASH_MEM[0], FLASH_MEM[1]);
+				tft_prints(1, 7,"ch1:%d ch3%d", GetCameraChannel(1), GetCameraChannel(3));
+				tft_prints(1, 8, "LF%d %d RF%d %d", gpio_read_input(LeftFront),num_of_touch(LeftFront), gpio_read_input(RightFront), num_of_touch(RightFront));
+				tft_prints(1, 9, "LB%d %d RB%d %d", gpio_read_input(LeftBack),num_of_touch(LeftBack), gpio_read_input(RightBack), num_of_touch(RightBack));
+				tft_prints(1,10,"L %d",HAS_RECEIVED_LOAD);
+				u8 temp1 = getID();
+				u8 temp2 = getPositionSetpoint();
+				tft_prints(1,11,"ID: %d kb:%d", temp1, temp2);
 				//tft_prints(1,4,"btime %d", broken_time);
 				//tft_prints(1,5,"rtime %d", receive_time);
-				for(u8 i=3;i<10;i++) 
-          tft_clear_line(i); 
+				//tft_prints(1, 7,"RB sp %d", LiftingMotorPositionSetpoint[2]);
 				//for(uint8_t i=0;i<4;i++) 
           //tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
 				//tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
-				tft_prints(1,7,"RB sp %d", LiftingMotorPositionSetpoint[2]);
 				//tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
 				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
 				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
-				tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
-				tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
 				
 				//tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
 				//tft_prints(1,4,"RFH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
-				tft_prints(1,5,"LBH:%f", (float)(CM4Encoder.ecd_angle-LiftingMotorBias[3]));
+
 //				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
 //				tft_prints(1,6,"RF fr %d", CM2Encoder.filter_rate);
 //				tft_prints(1,8,"RF speed %d", LiftingMotorOutput[1]);
-				tft_prints(1, 8, "LF%d %d RF%d %d", gpio_read_input(LeftFront),num_of_touch(LeftFront), gpio_read_input(RightFront), num_of_touch(RightFront));
-				tft_prints(1, 9, "LB%d %d RB%d %d", gpio_read_input(LeftBack),num_of_touch(LeftBack), gpio_read_input(RightBack), num_of_touch(RightBack));
 				//tft_prints(1, 9, "num_LB: %d", num_of_touch(LeftBack));
 				//tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
-				tft_prints(1,6, "US:%d", FLASH_MEM[0]);
 				//tft_prints(1,7,"F0:%d",readFlash(0));
 				//tft_prints(1,8, "DM:%d", FLASH_MEM[1]);
 				//tft_prints(1,9, "F1:%d", readFlash(1));
         //for (int i=0;i<4;i++) 
-          //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
-				u8 temp1 = getID();
-				tft_clear_line(10);
-				tft_prints(1,10,"L %d",HAS_RECEIVED_LOAD);
-				
+        //tft_prints(1,i+2,"Bias%d %d",i+1, LiftingMotorBias[i]); 
 				//tft_prints(1,10, "ID:%d", temp);
 				//tft_prints(1,10, "R_F:%d D_F: %d", HAS_ALL_REACHED_FLAG, HAS_ALL_DOWN_FLAG);
-				tft_clear_line(11);
 				//tft_prints(1,11,"BT:%d RT:%d DT:d",INIT_protection_timer_begin, INIT_protection_timer_reach, INIT_protection_timer_down);
 				//tft_prints(1, 11, "UBF:%d DBF:%d", INIT_protection_up_begin_flag, INIT_protection_down_begin_flag);
-				u8 temp2 = getPositionSetpoint();
-				tft_prints(1,11,"ID: %d kb:%d", temp1, temp2);
+				
 				tft_update();
 			}
 	

@@ -2,7 +2,7 @@
 #define DRIVER_CAMERA_H
 
 #include <stm32f4xx.h>
-
+#include "BilateralCommunication.h"
 #ifndef DRIVER_CAMERA_FILE
   #define DRIVER_CAMERA_EXT extern
 #else

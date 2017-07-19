@@ -89,7 +89,7 @@ void LiftingMotorInit(){
 	FLASH_MEM[0] = (u32)(readFlash(0));
 	if(FLASH_MEM[0] < 35000 || FLASH_MEM[0] > 130000) FLASH_MEM[0]= 130000;	//for first recording protection
 	FLASH_MEM[1] = (u32)(readFlash(1));
-	if(FLASH_MEM[1] < 17000 || FLASH_MEM[1] > 130000) FLASH_MEM[1] = 26600;	//for first recording protection
+	if(FLASH_MEM[1] < 30000 || FLASH_MEM[1] > 130000) FLASH_MEM[1] = 30000;	//for first recording protection
 	//update LiftingMotorUpperLimit[4] by UP_SETPOINT
 	//for(u8 i = 0; i < 4; i++)
 		//LiftingMotorUpperLimit[i] = UP_SETPOINT;

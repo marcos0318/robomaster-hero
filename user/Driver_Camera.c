@@ -210,27 +210,33 @@ int32_t GetCameraChannel(int32_t signal) {
 }
 
 void goOnStageMode() {
-	SetCameraChannel(1, 1);
-	SetCameraChannel(2, 2);
-	SetCameraChannel(3, 1);
+	if(c == 0) {
+		SetCameraChannel(1, 1);			//L
+		SetCameraChannel(3, 1);			//R
+	}
+	SetCameraChannel(2, 2);	
 	SetCameraChannel(4, 2);
 }
 
 void onStageMode() {
-	SetCameraChannel(1, 2);
-	SetCameraChannel(2, 3);
-	SetCameraChannel(3, 2);
+	if(c == 0) {
+		SetCameraChannel(1, 2);			//offStage L
+		SetCameraChannel(3, 2);			//offStage R
+	}
+	SetCameraChannel(2, 3);	
 	SetCameraChannel(4, 2);
 }
 
 void offStageMode() {
-	SetCameraChannel(1, 2);
+	c = 0;
+	SetCameraChannel(1, 2);			//offStage L
 	SetCameraChannel(2, 1);
-	SetCameraChannel(3, 2);
+	SetCameraChannel(3, 2);			//offStage R
 	SetCameraChannel(4, 2);	
 }
 
 void runningMode() {
+	c = 0;
 	SetCameraChannel(1, 3);	//?
 	SetCameraChannel(2, 1);	//?
 	SetCameraChannel(3, 3);
