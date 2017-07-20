@@ -245,20 +245,27 @@ void GUN_PokeSpeedControl(void) {
 		*/
 		curr_angle=GMballfeedEncoder.ecd_angle;
 		gunPositionSetpoint=GUN_Data.pokeTargetAngle;
+		if (DBUSBrokenLine == 0) {
+			gunSpeedSetpoint = (int32_t)fpid_process(&gunPositionState,&gunPositionSetpoint, &curr_angle,gunpos_kp,gunpos_ki,gunpos_kd );
+			gunPositionState.cummulated_error = 0;
+			//gunSpeedSetpoint=300;
+			//Limit the output
+			if (gunSpeedSetpoint > 250) gunSpeedSetpoint = 250;
+			else if (gunSpeedSetpoint < -250) gunSpeedSetpoint = -250;
+			curr_speed=GMballfeedEncoder.filter_rate;
 		
-		gunSpeedSetpoint = (int32_t)fpid_process(&gunPositionState,&gunPositionSetpoint, &curr_angle,gunpos_kp,gunpos_ki,gunpos_kd );
-		gunPositionState.cummulated_error = 0;
-		//gunSpeedSetpoint=300;
-		//Limit the output
-		if (gunSpeedSetpoint > 250) gunSpeedSetpoint = 250;
-		else if (gunSpeedSetpoint < -250) gunSpeedSetpoint = -250;
-		curr_speed=GMballfeedEncoder.filter_rate;
-		spSp = current_cummulated;
+			Cerror = targetAngleBuffer;
+			pidLimitI(&gunSpeedMoveState,200000);
 		
-		Cerror = targetAngleBuffer;
-		pidLimitI(&gunSpeedMoveState,200000);
-		gunSpeed=pid_process(&gunSpeedMoveState,&gunSpeedSetpoint,&curr_speed,gunSpeedKp,gunSpeedKi,gunSpeedKd);
-	
+			gunSpeed=pid_process(&gunSpeedMoveState,&gunSpeedSetpoint,&curr_speed,gunSpeedKp,gunSpeedKi,gunSpeedKd);
+		}
+		else {
+			gunPositionState.cummulated_error = 0;
+			gunSpeedMoveState.cummulated_error = 0;
+			GUN_Data.pokeTargetAngle = curr_angle;
+			gunSpeedSetpoint = curr_speed;
+			gunSpeed = 0;
+		}
 		error=(int32_t)gunPositionState.cummulated_error;
 		}
 /*

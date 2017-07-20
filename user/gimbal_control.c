@@ -310,7 +310,7 @@ void gimbal_pitch_control() {
 		rawpitchsetpoint = 999999; //max
 	}
 	//limit pitch position
-	fwindowLimit(&rawpitchsetpoint, 1200/pitchPosMultiplier, 225/pitchPosMultiplier);
+	fwindowLimit(&rawpitchsetpoint, 1100/pitchPosMultiplier, 200/pitchPosMultiplier);
 
 
 	pitchPositionSetpoint = -rawpitchsetpoint * pitchPosMultiplier;
@@ -403,7 +403,7 @@ void TIM7_IRQHandler(void){
 			gimbal_pitch_control();
 			GUN_PokeControl();
 			if(CAN1BrokenLine == 0)
-				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput,pitchSpeedMoveOutput,gunSpeed,cameraSpeedOutput);
+				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput, pitchSpeedMoveOutput, gunSpeed, cameraSpeedOutput);
 			
 				if(state_delay){
 					if(HERO == SPEED_LIMITATION || HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
