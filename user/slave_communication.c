@@ -349,6 +349,20 @@ void transmit(){
 				//init
 			}
 			else if(DBUS_CheckPush(KEY_R) && !DBUS_CheckPush(KEY_CTRL)){
+				HERO = RUNNING_MODE;
+				ChasisFlag = 1;
+				if (DBUS_ReceiveData.mouse.press_right) {
+					ChasisFlag = 2;
+				}
+				GimbalFlag = 3;
+				direction = -output_angle*upperTotal/3600;
+				filter_rate_limit = FOR_JOHN_MAX_RUNNING_SPEED;
+				speed_multiplier = FOR_JOHN_MAX_RUNNING_SPEED;
+				//withdraw lower pneumatic
+				lower_pneumatic_state = false;
+				pneumatic_control(1, 0);
+				pneumatic_control(3, 0);
+				pneumatic_control(4, 0);
 				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
 				DataMonitor_Send(5, 0);
 				//all goes to zero

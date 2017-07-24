@@ -591,6 +591,13 @@ void TIM7_IRQHandler(void){
 					DataMonitor_Send(0xFD,0);
 				}
 				KEY_R_PREV = DBUS_CheckPush(KEY_R);
+				if(HERO == INTO_RI_MODE || HERO == BACK_WHEEL_UP || HERO == FRONT_WHEEL_UP ||
+					HERO == SPEED_LIMITATION || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS || HERO == CATCH_GOLF || HERO == DANCING_MODE) {
+					if (DBUS_ReceiveData.mouse.press_right) {
+						ChasisFlag = 4;
+					}
+					else ChasisFlag = 3;
+				}
   		
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);
