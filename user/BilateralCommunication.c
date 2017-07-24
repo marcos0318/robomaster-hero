@@ -272,8 +272,9 @@ void USART3_IRQHandler(void)
 			//turn off friction wheel
 			if(getPositionSetpoint() == 0) {
 				for(u8 i = 0; i < 4; i++) {
-					LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1] + 20000;
-					if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]) LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i];
+					if(LiftingMotorBias[i] + FLASH_MEM[1] + 20000 > LiftingMotorPositionLimit[i] - 5000)
+						LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - 5000;
+					else LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + FLASH_MEM[1] + 20000;
 				}
 				FRICTION_WHEEL_STATE = false;
 				offStageMode();

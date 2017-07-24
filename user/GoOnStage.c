@@ -89,10 +89,6 @@ uint8_t num_of_touch(const GPIO* gpio){
 
 
 void speedProcess(){
-		for(u8 i = 0; i < 4; i++) {
-			if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]) LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i];
-			else if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]) LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i];
-		}
 		//Control the cumulated error of the position pid process
 		for (int i = 0; i<4; i++) {
 			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 1200000);
@@ -295,7 +291,6 @@ void TIM7_IRQHandler(void){
 							if (height <= DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF) height = DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF;
 							upper_limit[i]=LiftingMotorBias[i] + height;
 							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
-							if(upper_limit[i] > LiftingMotorPositionLimit[i]) upper_limit[i] = LiftingMotorPositionLimit[i];
 							if(lower_limit[i] < LiftingMotorBias[i]) lower_limit[i] = LiftingMotorBias[i];
 						}
 						DancingMode(upper_limit, lower_limit);
