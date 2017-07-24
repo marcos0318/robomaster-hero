@@ -1,4 +1,3 @@
-
 #include "GoOnStage.h"
 static u32 ticks_msimg = 0;
 volatile u32 TIM_7_counter = 0;
@@ -90,6 +89,10 @@ uint8_t num_of_touch(const GPIO* gpio){
 
 
 void speedProcess(){
+		for(u8 i = 0; i < 4; i++) {
+			if(LiftingMotorPositionSetpoint[i] > LiftingMotorPositionLimit[i]) LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i];
+			else if(LiftingMotorPositionSetpoint[i] < LiftingMotorBias[i]) LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i];
+		}
 		//Control the cumulated error of the position pid process
 		for (int i = 0; i<4; i++) {
 			fpid_limit_cumulated_error(&LiftingMotorPositionState[i], 1200000);
@@ -232,10 +235,10 @@ void TIM7_IRQHandler(void){
 					if(TIM_7_counter == 3000) INIT_FLAG = 1;
 					update_GPIO_state();	//always update the GPIO state array
 					if(! (LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED)){
-						if(num_of_touch(LeftFront)>2) LF_TOUCHED = 1;
-						if(num_of_touch(RightFront)>2) RF_TOUCHED = 1;
-						if(num_of_touch(RightBack)>2) RB_TOUCHED = 1;
-						if(num_of_touch(LeftBack)>2) LB_TOUCHED = 1;		
+						if(num_of_touch(LeftFront)>=4) LF_TOUCHED = 1;
+						if(num_of_touch(RightFront)>=4) RF_TOUCHED = 1;
+						if(num_of_touch(RightBack)>=4) RB_TOUCHED = 1;
+						if(num_of_touch(LeftBack)>=4) LB_TOUCHED = 1;		
 						INIT_protection_timer_begin = TIM_7_counter;
 					}
 					if(!ALL_TOUCHED) INIT_protection_timer_begin = TIM_7_counter;
@@ -292,6 +295,8 @@ void TIM7_IRQHandler(void){
 							if (height <= DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF) height = DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF;
 							upper_limit[i]=LiftingMotorBias[i] + height;
 							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
+							if(upper_limit[i] > LiftingMotorPositionLimit[i]) upper_limit[i] = LiftingMotorPositionLimit[i];
+							if(lower_limit[i] < LiftingMotorBias[i]) lower_limit[i] = LiftingMotorBias[i];
 						}
 						DancingMode(upper_limit, lower_limit);
 					}
@@ -357,10 +362,10 @@ void TIM7_IRQHandler(void){
 					if((broken_time-receive_time)>3000)
 						BROKEN_CABLE=1;
 					else BROKEN_CABLE = 0;
-					INIT_protection_up_begin_flag = 1;
-					INIT_FLAG = 1;
-					if(!ALL_TOUCHED)
-						INIT_protection_timer_begin = TIM_7_counter;
+					INIT_protection_up_begin_flag = 0;
+					INIT_FLAG = 0;
+//					if(!ALL_TOUCHED)
+//						INIT_protection_timer_begin = TIM_7_counter;
 					for(uint8_t i=0; i<4; i++)
 						PIDClearError(&LiftingMotorState[i]);
 					Set_CM_Speed(CAN2,0,0,0,0);
