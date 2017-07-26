@@ -357,8 +357,8 @@ void TIM7_IRQHandler(void){
 					if((broken_time-receive_time)>3000)
 						BROKEN_CABLE=1;
 					else BROKEN_CABLE = 0;
-					INIT_protection_up_begin_flag = 0;
-					INIT_FLAG = 0;
+					//INIT_protection_up_begin_flag = 0;
+					//INIT_FLAG = 0;
 //					if(!ALL_TOUCHED)
 //						INIT_protection_timer_begin = TIM_7_counter;
 					for(uint8_t i=0; i<4; i++)

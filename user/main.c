@@ -78,8 +78,8 @@ int main(void)
 				tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
 				tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
 				tft_prints(1, 5,"LBH:%f", (float)(CM4Encoder.ecd_angle-LiftingMotorBias[3]));
-				tft_prints(1, 6, "F1:%d F2:%d", FLASH_MEM[0], FLASH_MEM[1]);
-				tft_prints(1, 7,"ch1:%d ch3%d", GetCameraChannel(1), GetCameraChannel(3));
+				tft_prints(1, 6,"LFH:%f", (float)(CM1Encoder.ecd_angle-LiftingMotorBias[0]));
+				tft_prints(1, 7, "F1:%d F2:%d", FLASH_MEM[0], FLASH_MEM[1]);
 				tft_prints(1, 8, "LF%d %d RF%d %d", gpio_read_input(LeftFront),num_of_touch(LeftFront), gpio_read_input(RightFront), num_of_touch(RightFront));
 				tft_prints(1, 9, "LB%d %d RB%d %d", gpio_read_input(LeftBack),num_of_touch(LeftBack), gpio_read_input(RightBack), num_of_touch(RightBack));
 				tft_prints(1,10,"L %d",HAS_RECEIVED_LOAD);
