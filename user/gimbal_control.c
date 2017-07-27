@@ -406,12 +406,17 @@ void TIM7_IRQHandler(void){
 				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput, pitchSpeedMoveOutput, gunSpeed, cameraSpeedOutput);
 			
 				if(state_delay){
-					if(HERO == SPEED_LIMITATION || HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
+					if(HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
 						if((TIM_7_Counter - G_counter) > 1000){
 							state_delay = 0;
 						}
 					}
-					else if((TIM_7_Counter - G_counter) > 2000){
+					else if(HERO != SPEED_LIMITATION){
+						if((TIM_7_Counter - G_counter) > 2000)
+							state_delay = 0;
+					}
+					else {
+						if((TIM_7_Counter - G_counter) > 3000)
 							state_delay = 0;
 					}
 				}
