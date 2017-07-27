@@ -197,7 +197,7 @@ void switch_and_send()
 }
 
 void state_control(){
-	if(state_delay || RC_CTRL || RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT)))){
+	if(state_delay || FOR_JOHN_SHIFT_G_SPECIAL_MODE || RC_CTRL || RC_CTRL_SHIFT || (DBUS_CheckPush(KEY_CTRL) && (DBUS_CheckPush(KEY_F)||DBUS_CheckPush(KEY_G)||DBUS_CheckPush(KEY_C)||DBUS_CheckPush(KEY_V)||DBUS_CheckPush(KEY_SHIFT)))){
 		KEY_G_PREV=DBUS_CheckPush(KEY_G);
 		KEY_F_PREV=DBUS_CheckPush(KEY_F);
 		KEY_SHIFT_F_PREV = DBUS_CheckPush(KEY_F) && DBUS_CheckPush(KEY_SHIFT);

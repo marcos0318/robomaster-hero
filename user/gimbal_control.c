@@ -450,7 +450,9 @@ void TIM7_IRQHandler(void){
 					//turn off gyro
 					ChasisFlag = 3;	
 					lower_pneumatic_state = 0;
-					pneumatic_control(1, 0);					
+					pneumatic_control(1, 0);	
+					pneumatic_control(3, 0);
+					pneumatic_control(4, 0);
 					FOR_JOHN_SHIFT_G_SPECIAL_MODE = 1;
 					HERO = INTO_RI_MODE;
 					
@@ -516,8 +518,9 @@ void TIM7_IRQHandler(void){
 				if(!DBUS_CheckPush(KEY_CTRL) && FOR_JOHN_SHIFT_G_SPECIAL_MODE && !FOR_JOHN_G_PREV && FOR_JOHN_G)
 				{
 						HERO = SPEED_LIMITATION;
-						state_delay = 1;
 						switch_and_send();
+						state_delay = 1;
+						G_counter = TIM_7_Counter;
 						FOR_JOHN_SHIFT_G_SPECIAL_MODE = 0;
 				}
 
