@@ -101,12 +101,12 @@ void speedProcess(){
 			
     }
     
-
+	u32 tempSpeedSetpointLimit = INIT_FLAG ? INIT_SPEED_SETPOINT_LIMIT : SPEED_SETPOINT_LIMIT; 
     
     //to correct the output to get a reasonable speed
     for(uint8_t i=0;i<4;i++){
-        if(LiftingMotorSpeedSetpoint[i]>SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=SPEED_SETPOINT_LIMIT;
-        else if(LiftingMotorSpeedSetpoint[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpoint[i]=-SPEED_SETPOINT_LIMIT;
+        if(LiftingMotorSpeedSetpoint[i]>tempSpeedSetpointLimit) LiftingMotorSpeedSetpoint[i]=tempSpeedSetpointLimit;
+        else if(LiftingMotorSpeedSetpoint[i]<-tempSpeedSetpointLimit) LiftingMotorSpeedSetpoint[i]=-tempSpeedSetpointLimit;
     }
     
     //to use buffered speed to do the real control 
@@ -118,8 +118,8 @@ void speedProcess(){
     
     //to limit the buffered speed again. Ideally these lines are useless, but just add them to protect
     for(uint8_t i=0;i<4;i++){
-        if(LiftingMotorSpeedSetpointBuffered[i]>SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpointBuffered[i]=SPEED_SETPOINT_LIMIT;
-        else if(LiftingMotorSpeedSetpointBuffered[i]<-SPEED_SETPOINT_LIMIT) LiftingMotorSpeedSetpointBuffered[i]=-SPEED_SETPOINT_LIMIT;
+        if(LiftingMotorSpeedSetpointBuffered[i]>tempSpeedSetpointLimit) LiftingMotorSpeedSetpointBuffered[i]=tempSpeedSetpointLimit;
+        else if(LiftingMotorSpeedSetpointBuffered[i]<-tempSpeedSetpointLimit) LiftingMotorSpeedSetpointBuffered[i]=-tempSpeedSetpointLimit;
     }
     
 		//Before pid process contrl the cummulated error 

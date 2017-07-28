@@ -244,13 +244,13 @@ void (*Dancing[4]) (int32_t, int32_t) = {LF_Dancing, RF_Dancing, RB_Dancing, LB_
 void clear()
 {
     LeftFrontReachLower = 0;
-		RightFrontReachLower = 0;
-		RightBackReachLower = 0;
-		LeftBackReachLower = 0;
+	RightFrontReachLower = 0;
+	RightBackReachLower = 0;
+	LeftBackReachLower = 0;
     LeftFrontReachUpper = 0;
-		RightFrontReachUpper = 0;
-		RightBackReachUpper = 0;
-		LeftBackReachUpper = 0;
+	RightFrontReachUpper = 0;
+	RightBackReachUpper = 0;
+	LeftBackReachUpper = 0;
 
 }
 
