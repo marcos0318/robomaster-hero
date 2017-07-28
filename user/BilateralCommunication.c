@@ -181,10 +181,10 @@ void USART3_IRQHandler(void)
 		else if(getID() == 70){
 				if(getPositionSetpoint() == 1) goOnStageMode();
 					else offStageMode();
-		    LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + FLASH_MEM[0];
-            LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + FLASH_MEM[0];
-            LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2]+ DOWN_SETPOINT;
-            LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3]+ DOWN_SETPOINT;    
+				LiftingMotorPositionSetpoint[0] = LiftingMotorBias[0] + FLASH_MEM[0];
+        LiftingMotorPositionSetpoint[1] = LiftingMotorBias[1] + FLASH_MEM[0];
+        LiftingMotorPositionSetpoint[2] = LiftingMotorBias[2]+ DOWN_SETPOINT;
+        LiftingMotorPositionSetpoint[3] = LiftingMotorBias[3]+ DOWN_SETPOINT;    
 		}
 		else if(getID() == 71) {
 			goOnStageMode();

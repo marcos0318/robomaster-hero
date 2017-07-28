@@ -304,19 +304,19 @@ void TIM7_IRQHandler(void){
 				{
 					//has already raising for the maximum raising time, still not all reached 
 					LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
-					LiftingMotorBias[0] = LiftingMotorPositionLimit[0]  - UP_DOWN_DISTANCE;
+					LiftingMotorBias[0] = LiftingMotorPositionLimit[0]  - UP_DOWN_DISTANCE[0];
 //					LiftingMotorUpperLimit[0] = LiftingMotorBias[0] + UP_SETPOINT;
 					LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - DOWN_SETPOINT;
 					LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
-					LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE;
+					LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE[1];
 //					LiftingMotorUpperLimit[1] = LiftingMotorBias[1] + UP_SETPOINT;
 					LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - DOWN_SETPOINT;
 					LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
-					LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE;
+					LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE[2];
 //					LiftingMotorUpperLimit[2] = LiftingMotorBias[2] + UP_SETPOINT;
 					LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
 					LiftingMotorPositionLimit[3] = CM3Encoder.ecd_angle;
-					LiftingMotorBias[3] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE;
+					LiftingMotorBias[3] = LiftingMotorPositionLimit[3]  - UP_DOWN_DISTANCE[3];
 //					LiftingMotorUpperLimit[3] = LiftingMotorBias[2] + UP_SETPOINT;
 					LiftingMotorPositionSetpoint[3] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
 					
@@ -342,7 +342,7 @@ void TIM7_IRQHandler(void){
 					for(u8 i = 0; i < 4; i++)
 					{
 //						LiftingMotorUpperLimit[i] = LiftingMotorBias[i] + UP_SETPOINT;
-						LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE;
+						LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE[i];
 					}
 					INIT_protection_down_begin_flag = 0;
 				}

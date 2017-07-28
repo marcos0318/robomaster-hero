@@ -13,7 +13,7 @@
 #define DOWN_SETPOINT 3500//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
 #define MID_SETPOINT 98150
 #define TOTALLY_DOWN_SETPOINT 3500
-#define UP_DOWN_DISTANCE 130000
+extern u32 UP_DOWN_DISTANCE[4];
 #define DANCING_MODE_UP_DOWN_DIFF 16000
 #define ON_ENGINEERING_ROBOT_BACK 35000
 #define ON_ENGINEERING_ROBOT_FRONT 49900
