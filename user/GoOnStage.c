@@ -101,7 +101,8 @@ void speedProcess(){
 			
     }
     
-	u32 tempSpeedSetpointLimit = INIT_FLAG ? INIT_SPEED_SETPOINT_LIMIT : SPEED_SETPOINT_LIMIT; 
+		int32_t tempSpeedSetpointLimit=SPEED_SETPOINT_LIMIT;
+		if(INIT_FLAG == 1) tempSpeedSetpointLimit=INIT_SPEED_SETPOINT_LIMIT; 
     
     //to correct the output to get a reasonable speed
     for(uint8_t i=0;i<4;i++){

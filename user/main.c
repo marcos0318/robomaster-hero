@@ -5,7 +5,7 @@
 #include "initialization_process.h"
 
 static u32 ticks_msimg = (u32)-1;
-
+int32_t MAX = 0;
 void init(){
 //	InfantryJudge.LastBlood = 1500;
 	SysTick_Init();  
@@ -75,8 +75,8 @@ int main(void)
 				for(u8 i=2;i<11;i++) 
           tft_clear_line(i); 
 				tft_prints(1, 2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
-				//tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
-				//tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
+				tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
+				tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
 				//tft_prints(1, 5,"LFH:%f", (float)(CM1Encoder.ecd_angle-LiftingMotorBias[0]));
 				//tft_prints(1, 6,"RFH:%f", (float)(CM2Encoder.ecd_angle-LiftingMotorBias[1]));
 				//tft_prints(1, 7,"RBH:%f", (float)(CM3Encoder.ecd_angle-LiftingMotorBias[2]));
@@ -96,15 +96,17 @@ int main(void)
           		//tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
 				//tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
 				//tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
-				tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
-				tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
+				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
+				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
 				
 				//tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);
 				//tft_prints(1,4,"RFH:%f", (float)(CM2Encoder.ecd_angle - LiftingMotorBias[1]));
 
 //				tft_prints(1,5,"DT:%d", INIT_protection_timer_down);
 				tft_prints(1,5,"RF fr %d", CM2Encoder.filter_rate);
-				tft_prints(1,6,"RF speed %d", LiftingMotorOutput[1]);
+				//tft_prints(1,6,"RF speed %d", LiftingMotorOutput[1]);
+				if(LiftingMotorOutput[1]>MAX) MAX = LiftingMotorOutput[1];
+				tft_prints(1, 6, "MAX:%d", MAX);
 				//tft_prints(1, 9, "num_LB: %d", num_of_touch(LeftBack));
 				//tft_prints(1,6, "f0:%d f1:%d", flash0, flash1);
 				//tft_prints(1,7,"F0:%d",readFlash(0));
