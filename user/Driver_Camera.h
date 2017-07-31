@@ -34,6 +34,7 @@ void goOnStageMode();
 void onStageMode();
 void offStageMode();
 void runningMode();
+void jumpOffHighwayMode();
 
 #endif
 

@@ -25,14 +25,14 @@ volatile uint32_t Wheel4BrokenLineCounter = 1;
 volatile u8 LF_TOUCHED = 0, RF_TOUCHED = 0, LB_TOUCHED = 0, RB_TOUCHED = 0, ALL_TOUCHED = 0;
 
 void readFeedback(){
-      LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
-			LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
-			LiftingMotorSpeedFeedback[2] = CM3Encoder.filter_rate;
-			LiftingMotorSpeedFeedback[3] = CM4Encoder.filter_rate;
-			LiftingMotorPositionFeedback[0] = CM1Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[1] = CM2Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[2] = CM3Encoder.ecd_angle;
-			LiftingMotorPositionFeedback[3] = CM4Encoder.ecd_angle;
+	LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
+	LiftingMotorSpeedFeedback[1] = CM2Encoder.filter_rate;
+	LiftingMotorSpeedFeedback[2] = CM3Encoder.filter_rate;
+	LiftingMotorSpeedFeedback[3] = CM4Encoder.filter_rate;
+	LiftingMotorPositionFeedback[0] = CM1Encoder.ecd_angle;
+	LiftingMotorPositionFeedback[1] = CM2Encoder.ecd_angle;
+	LiftingMotorPositionFeedback[2] = CM3Encoder.ecd_angle;
+	LiftingMotorPositionFeedback[3] = CM4Encoder.ecd_angle;
 }
 
 void update_GPIO_state(){
@@ -226,152 +226,152 @@ void TIM7_IRQHandler(void){
     
     if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
     {
-				++TIM_7_counter;
-        		ticks_msimg = get_ms_ticks();
-				if(TIM_7_counter >= 3000){
-					if(TIM_7_counter == 3000) INIT_FLAG = 1;
-					update_GPIO_state();	//always update the GPIO state array
-					if(! (LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED)){
-						if(num_of_touch(LeftFront)>=4) LF_TOUCHED = 1;
-						if(num_of_touch(RightFront)>=4) RF_TOUCHED = 1;
-						if(num_of_touch(RightBack)>=4) RB_TOUCHED = 1;
-						if(num_of_touch(LeftBack)>=4) LB_TOUCHED = 1;		
-						INIT_protection_timer_begin = TIM_7_counter;
-					}
-					if(!ALL_TOUCHED) INIT_protection_timer_begin = TIM_7_counter;
-					if(!ALL_TOUCHED && LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED && 
-						(num_of_touch(LeftFront)==0) && (num_of_touch(RightFront)==0) && 
-						 (num_of_touch(LeftBack)==0)&& (num_of_touch(RightBack)==0))
-						ALL_TOUCHED = 1;
-				}
-				else{
-					INIT_FLAG = 0;
-					INIT_protection_timer_begin = TIM_7_counter;
-				}
-				if(TIM_7_counter % 20 == 0 )
-				{
-					CAN2BrokenLine = checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter)
-											|| checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter)
-											|| checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter)
-											|| checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter);
-				}
+		++TIM_7_counter;
+		ticks_msimg = get_ms_ticks();
+		if(TIM_7_counter >= 3000){
+			if(TIM_7_counter == 3000) INIT_FLAG = 1;
+			update_GPIO_state();	//always update the GPIO state array
+			if(! (LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED)){
+				if(num_of_touch(LeftFront)>=4) LF_TOUCHED = 1;
+				if(num_of_touch(RightFront)>=4) RF_TOUCHED = 1;
+				if(num_of_touch(RightBack)>=4) RB_TOUCHED = 1;
+				if(num_of_touch(LeftBack)>=4) LB_TOUCHED = 1;		
+				INIT_protection_timer_begin = TIM_7_counter;
+			}
+			if(!ALL_TOUCHED) INIT_protection_timer_begin = TIM_7_counter;
+			if(!ALL_TOUCHED && LF_TOUCHED && RF_TOUCHED && RB_TOUCHED && LB_TOUCHED && 
+				(num_of_touch(LeftFront)==0) && (num_of_touch(RightFront)==0) && 
+					(num_of_touch(LeftBack)==0)&& (num_of_touch(RightBack)==0))
+				ALL_TOUCHED = 1;
+		}
+		else{
+			INIT_FLAG = 0;
+			INIT_protection_timer_begin = TIM_7_counter;
+		}
+		if(TIM_7_counter % 20 == 0 )
+		{
+			CAN2BrokenLine = checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter)
+									|| checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter)
+									|| checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter)
+									|| checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter);
+		}
 	
 			
-			//friction wheel initialization needs to be delayed
-			if(TIM_7_counter == 3000)
-				Friction_wheel_init();
+		//friction wheel initialization needs to be delayed
+		if(TIM_7_counter == 3000)
+			Friction_wheel_init();
 
-			if(TIM_7_counter == 5000)
-			  GUN_Init();
-				
-			if(TIM_7_counter>10000){
-				if(!FRICTION_WHEEL_STATE){
-					FRIC_SET_THRUST_L(0);
-					FRIC_SET_THRUST_R(0);
-					FRIC_SET_THRUST_M(0);
-				}
-				else if(!DANCING_MODE_FLAG){
-				FRIC_SET_THRUST_L(600);
-				FRIC_SET_THRUST_R(600);
-				FRIC_SET_THRUST_M(600);
-				}
+		if(TIM_7_counter == 5000)
+			GUN_Init();
+			
+		if(TIM_7_counter>10000){
+			if(!FRICTION_WHEEL_STATE){
+				FRIC_SET_THRUST_L(0);
+				FRIC_SET_THRUST_R(0);
+				FRIC_SET_THRUST_M(0);
 			}
+			else if(!DANCING_MODE_FLAG){
+			FRIC_SET_THRUST_L(600);
+			FRIC_SET_THRUST_R(600);
+			FRIC_SET_THRUST_M(600);
+			}
+		}
 			
 			
-				if(INIT_FLAG && ALL_TOUCHED){
-						initialization_process_full_init();
-					
-				}
-				if(!INIT_FLAG){
-					if(DANCING_MODE_FLAG){
-						for(u8 i = 0; i < 4; i++)
-						{
-							//lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
-							//upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
-							int32_t height = FLASH_MEM[1] - DANCING_MODE_UP_DOWN_DIFF / 2;
-							if (height <= DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF) height = DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF;
-							upper_limit[i]=LiftingMotorBias[i] + height;
-							lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
-							if(lower_limit[i] < LiftingMotorBias[i]) lower_limit[i] = LiftingMotorBias[i];
-						}
-						DancingMode(upper_limit, lower_limit);
-					}
-					if(!DANCING_MODE_FLAG)
-						setSetpoint();
-				}
-				//INIT time protection
-			if( !BROKEN_CABLE && !CAN2BrokenLine){
-				if(INIT_protection_up_begin_flag && !HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)>INIT_UP_PROTECTION_TIME) )
+		if(INIT_FLAG && ALL_TOUCHED){
+				initialization_process_full_init();
+			
+		}
+		if(!INIT_FLAG){
+			if(DANCING_MODE_FLAG){
+				for(u8 i = 0; i < 4; i++)
 				{
-					//has already raising for the maximum raising time, still not all reached 
-					LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
-					LiftingMotorBias[0] = LiftingMotorPositionLimit[0]  - UP_DOWN_DISTANCE[0];
+					//lower_limit[i]=LiftingMotorPositionLimit[i] - DANCING_MODE_UP_DOWN_DIFF;
+					//upper_limit[i]=LiftingMotorPositionLimit[i] - DOWN_SETPOINT;
+					int32_t height = FLASH_MEM[1] - DANCING_MODE_UP_DOWN_DIFF / 2;
+					if (height <= DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF) height = DOWN_SETPOINT + DANCING_MODE_UP_DOWN_DIFF;
+					upper_limit[i]=LiftingMotorBias[i] + height;
+					lower_limit[i]=upper_limit[i] - DANCING_MODE_UP_DOWN_DIFF;
+					if(lower_limit[i] < LiftingMotorBias[i]) lower_limit[i] = LiftingMotorBias[i];
+				}
+				DancingMode(upper_limit, lower_limit);
+			}
+			if(!DANCING_MODE_FLAG)
+				setSetpoint();
+		}
+		//INIT time protection
+	if( !BROKEN_CABLE && !CAN2BrokenLine){
+		if(INIT_protection_up_begin_flag && !HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)>INIT_UP_PROTECTION_TIME) )
+		{
+			//has already raising for the maximum raising time, still not all reached 
+			LiftingMotorPositionLimit[0] = CM1Encoder.ecd_angle;
+			LiftingMotorBias[0] = LiftingMotorPositionLimit[0]  - UP_DOWN_DISTANCE[0];
 //					LiftingMotorUpperLimit[0] = LiftingMotorBias[0] + UP_SETPOINT;
-					LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - DOWN_SETPOINT;
-					LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
-					LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE[1];
+			LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle - DOWN_SETPOINT;
+			LiftingMotorPositionLimit[1] = CM2Encoder.ecd_angle;
+			LiftingMotorBias[1] = LiftingMotorPositionLimit[1]  - UP_DOWN_DISTANCE[1];
 //					LiftingMotorUpperLimit[1] = LiftingMotorBias[1] + UP_SETPOINT;
-					LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - DOWN_SETPOINT;
-					LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
-					LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE[2];
+			LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle - DOWN_SETPOINT;
+			LiftingMotorPositionLimit[2] = CM3Encoder.ecd_angle;
+			LiftingMotorBias[2] = LiftingMotorPositionLimit[2]  - UP_DOWN_DISTANCE[2];
 //					LiftingMotorUpperLimit[2] = LiftingMotorBias[2] + UP_SETPOINT;
-					LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
-					LiftingMotorPositionLimit[3] = CM3Encoder.ecd_angle;
-					LiftingMotorBias[3] = LiftingMotorPositionLimit[3]  - UP_DOWN_DISTANCE[3];
+			LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
+			LiftingMotorPositionLimit[3] = CM3Encoder.ecd_angle;
+			LiftingMotorBias[3] = LiftingMotorPositionLimit[3]  - UP_DOWN_DISTANCE[3];
 //					LiftingMotorUpperLimit[3] = LiftingMotorBias[2] + UP_SETPOINT;
-					LiftingMotorPositionSetpoint[3] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
-					
-					INIT_protection_up_begin_flag = 0;
-					HAS_ALL_REACHED_FLAG = 0;
-					INIT_FLAG = 0;
-					
-				}
-				else if(INIT_protection_up_begin_flag && HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)<=INIT_UP_PROTECTION_TIME) ){
-					INIT_protection_up_begin_flag = 0;
-					HAS_ALL_REACHED_FLAG = 0;
-				}
-				if(!INIT_protection_up_begin_flag){
-					HAS_ALL_REACHED_FLAG = 0;
-				}
-				
-				if(INIT_protection_down_begin_flag && !TP_reach_lower_detection() && ((TIM_7_counter-INIT_protection_timer_reach)>INIT_DOWN_PROTECTION_TIME))
-				{
-					LiftingMotorBias[0] = LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle;
-					LiftingMotorBias[1] = LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle;
-					LiftingMotorBias[2] = LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle;
-					LiftingMotorBias[3] = LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle;	
-					for(u8 i = 0; i < 4; i++)
-					{
+			LiftingMotorPositionSetpoint[3] = CM3Encoder.ecd_angle - DOWN_SETPOINT;
+			
+			INIT_protection_up_begin_flag = 0;
+			HAS_ALL_REACHED_FLAG = 0;
+			INIT_FLAG = 0;
+			
+		}
+		else if(INIT_protection_up_begin_flag && HAS_ALL_REACHED_FLAG && ((TIM_7_counter-INIT_protection_timer_begin)<=INIT_UP_PROTECTION_TIME) ){
+			INIT_protection_up_begin_flag = 0;
+			HAS_ALL_REACHED_FLAG = 0;
+		}
+		if(!INIT_protection_up_begin_flag){
+			HAS_ALL_REACHED_FLAG = 0;
+		}
+		
+		if(INIT_protection_down_begin_flag && !TP_reach_lower_detection() && ((TIM_7_counter-INIT_protection_timer_reach)>INIT_DOWN_PROTECTION_TIME))
+		{
+			LiftingMotorBias[0] = LiftingMotorPositionSetpoint[0] = CM1Encoder.ecd_angle;
+			LiftingMotorBias[1] = LiftingMotorPositionSetpoint[1] = CM2Encoder.ecd_angle;
+			LiftingMotorBias[2] = LiftingMotorPositionSetpoint[2] = CM3Encoder.ecd_angle;
+			LiftingMotorBias[3] = LiftingMotorPositionSetpoint[3] = CM4Encoder.ecd_angle;	
+			for(u8 i = 0; i < 4; i++)
+			{
 //						LiftingMotorUpperLimit[i] = LiftingMotorBias[i] + UP_SETPOINT;
-						LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE[i];
-					}
-					INIT_protection_down_begin_flag = 0;
-				}
-				else if(INIT_protection_down_begin_flag && TP_reach_lower_detection()){
-					INIT_protection_timer_down = TIM_7_counter;
-					INIT_protection_down_begin_flag = 0;
-				}
+				LiftingMotorPositionLimit[i] = LiftingMotorBias[i] + UP_DOWN_DISTANCE[i];
 			}
-				broken_time=ticks_msimg;
-				if((broken_time-receive_time)>3000 || CAN2BrokenLine)
-				{
-					if((broken_time-receive_time)>3000)
-						BROKEN_CABLE=1;
-					else BROKEN_CABLE = 0;
-					//INIT_protection_up_begin_flag = 0;
-					//INIT_FLAG = 0;
+			INIT_protection_down_begin_flag = 0;
+		}
+		else if(INIT_protection_down_begin_flag && TP_reach_lower_detection()){
+			INIT_protection_timer_down = TIM_7_counter;
+			INIT_protection_down_begin_flag = 0;
+		}
+	}
+		broken_time=ticks_msimg;
+		if((broken_time-receive_time)>3000 || CAN2BrokenLine)
+		{
+			if((broken_time-receive_time)>3000)
+				BROKEN_CABLE=1;
+			else BROKEN_CABLE = 0;
+			//INIT_protection_up_begin_flag = 0;
+			//INIT_FLAG = 0;
 //					if(!ALL_TOUCHED)
 //						INIT_protection_timer_begin = TIM_7_counter;
-					for(uint8_t i=0; i<4; i++)
-						PIDClearError(&LiftingMotorState[i]);
-					Set_CM_Speed(CAN2,0,0,0,0);
-				}
-				else{
-					BROKEN_CABLE=0;
-					speedProcess();
-				}
+			for(uint8_t i=0; i<4; i++)
+				PIDClearError(&LiftingMotorState[i]);
+			Set_CM_Speed(CAN2,0,0,0,0);
+		}
+		else{
+			BROKEN_CABLE=0;
+			speedProcess();
+		}
 			
-			INIT_FLAG_PREV = INIT_FLAG;
+		INIT_FLAG_PREV = INIT_FLAG;
 				
     }
     TIM_ClearITPendingBit(TIM7,TIM_IT_Update);

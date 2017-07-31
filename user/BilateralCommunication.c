@@ -6,6 +6,7 @@ u32 receive_time=0;
 u32 broken_time=0;
 u8 HAS_RECEIVED_LOAD = 0;
 u8 c = 0;
+u32 d = 0;
 void Bilateral_Init(void) {
 	
 	
@@ -94,6 +95,15 @@ void modifyingUpperLimit(uint8_t i, u16 step){
 		 LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i];
 	}
 }
+
+void oneScreen() {
+	d+=1;
+}
+
+void fourScreen() {
+	d+=4;
+}
+
 u8 UARTtemp1;
 void USART3_IRQHandler(void)
 {
@@ -141,10 +151,17 @@ void USART3_IRQHandler(void)
 			FRICTION_WHEEL_STATE = false;
 			if(getPositionSetpoint() == 0 || getPositionSetpoint() == 1 || getPositionSetpoint() == 2)
 				runningMode();
-			else if(getPositionSetpoint() == 3)
-				goOnStageMode();
-			else if(getPositionSetpoint() == 4 || getPositionSetpoint() == 5)
+			else if(getPositionSetpoint() == 3 || getPositionSetpoint() == 7) {
+				jumpOffHighwayMode();
+				if(getPositionSetpoint() == 7) 
+					fourScreen();
+			}
+			else if(getPositionSetpoint() == 4 || getPositionSetpoint() == 5 || getPositionSetpoint() == 6){
 				offStageMode();			
+				if(getPositionSetpoint() == 6) {
+					fourScreen();
+				}
+			}
 			if(getPositionSetpoint() != 2){
 				if(getPositionSetpoint() != 4 && getPositionSetpoint() != 0){
 					for(u8 i = 0; i < 4; i++)
@@ -188,8 +205,11 @@ void USART3_IRQHandler(void)
 		}
 		else if(getID() == 71) {
 			goOnStageMode();
+			if(getPositionSetpoint() > 32) {
+				fourScreen();
+			}
 			DANCING_MODE_FLAG = 0;
-			if(getPositionSetpoint() == 1)
+			if(getPositionSetpoint()%32 == 1)
 			{
 				//load DANCING_MODE_RAISING_HEIGHT
 				Set_CM_Speed(CAN2, 0, 0, 0, 0);
@@ -202,7 +222,7 @@ void USART3_IRQHandler(void)
 			
       for(u8 i = 0; i < 4; i++)
          LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + DOWN_SETPOINT;
-			if(getPositionSetpoint() == 2) {
+			if(getPositionSetpoint()%32 == 2) {
 				for(u8 i = 0; i <= 1; i++)
 						LiftingMotorPositionSetpoint[i] = LiftingMotorBias[i] + ON_ENGINEERING_ROBOT_FRONT;
 				for(u8 i = 2; i <= 3; i++)
@@ -212,7 +232,13 @@ void USART3_IRQHandler(void)
 		}
 		
 		else if(getID()==0xFF){
-			if(getPositionSetpoint() == 0) goOnStageMode();
+			if(getPositionSetpoint() == 0 || getPositionSetpoint() == 32) {
+				goOnStageMode();
+				if(getPositionSetpoint() == 32) {
+					fourScreen();
+				}
+			}
+			else if(getPositionSetpoint() == 7) jumpOffHighwayMode();
 				else offStageMode();
 			GO_ON_STAGE_ONE_KEY=true;
 			broken_time=receive_time=get_ms_ticks();
@@ -220,6 +246,19 @@ void USART3_IRQHandler(void)
 		else if(getID()==0xFE){
 			GO_DOWN_STAGE_ONE_KEY=true;
 			broken_time=receive_time=get_ms_ticks();
+		}
+		else if(getID()==0xF7){
+			// switch Monitor
+			if(getPositionSetpoint() == 1) {
+				// switch to 1-screen
+				// need to send signals three times
+				oneScreen();
+			}
+			else if(getPositionSetpoint() == 4) {
+				// switch back to 4-screen
+				// need to send signals five times
+				fourScreen();
+			}
 		}
 		else if(getID()==0xFD){
 			if(GetCameraChannel(1) == 1) {
@@ -243,7 +282,7 @@ void USART3_IRQHandler(void)
 			LiftingMotorPositionSetpoint[3]=LiftingMotorBias[3]+FLASH_MEM[0];
 			LiftingMotorPositionSetpoint[0]=LiftingMotorBias[0]+DOWN_SETPOINT;
 			LiftingMotorPositionSetpoint[1]=LiftingMotorBias[1]+DOWN_SETPOINT;
-			goOnStageMode();
+			jumpOffHighwayMode();
 			broken_time=receive_time=get_ms_ticks();
 		}
 		else if(getID()==0xFA){

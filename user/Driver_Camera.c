@@ -1,6 +1,6 @@
 #define DRIVER_CAMERA_FILE
 
-#include <Driver_Camera.h>
+#include "Driver_Camera.h"
 
 static void BSP_CameraInit(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -53,8 +53,9 @@ void CameraInit(void) {
   
   for (int32_t i = 0; i < CAMERA_SIG_CNT; ++i)
     CameraState[i] = 0;
-	  goOnStageMode();
-	//runningMode();
+    jumpOffHighwayMode();
+	  //goOnStageMode();
+	  //runningMode();
 }
 
 void SetCameraChannel(int32_t signal, int32_t channel) {
@@ -243,3 +244,10 @@ void runningMode() {
 	SetCameraChannel(4, 2);
 }
 
+void jumpOffHighwayMode() {
+  c = 0;
+  SetCameraChannel(1, 3);
+  SetCameraChannel(3, 1);
+  SetCameraChannel(2, 2);
+  SetCameraChannel(4, 2);
+}

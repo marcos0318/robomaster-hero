@@ -1,6 +1,4 @@
 #include "Lifting_Motor_Control.h"
-//u32 UP_SETPOINT = 260000;
-//u32 DANCING_MODE_RASING_HEIGHT = 60600;
 u32 FLASH_MEM[2] = {132000, 130000};
 int32_t LiftingMotorSpeedFeedback[4] = {0};
 float LiftingMotorPositionFeedback[4] = {0};
@@ -9,7 +7,6 @@ int32_t LiftingMotorPositionSetpointBuffered[4] = {0};
 int32_t LiftingMotorSpeedSetpoint[4] = {0};
 int32_t LiftingMotorSpeedSetpointBuffered[4] = {0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
-//int32_t LiftingMotorUpperLimit[4] = {0};
 u32 UP_DOWN_DISTANCE[4] = {130000, 130000, 130000, 130000};
 int32_t LiftingMotorPositionLimit[4] = {130000, 130000, 130000, 130000};
 //Index indices which element in the array should I store current GPIO state

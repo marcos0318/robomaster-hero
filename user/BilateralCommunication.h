@@ -14,6 +14,7 @@ void Bilateral_Init();
 extern u32 receive_time;
 extern u32 broken_time;
 extern u8 c;
+extern u32 d;
 extern uint8_t getID();
 extern int16_t getPositionSetpoint();
 #endif
