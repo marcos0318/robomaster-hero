@@ -68,7 +68,11 @@ void switch_and_send()
 		case INTO_RI_MODE:
 			//LiftingMotors go up
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-			DataMonitor_Send(0xFF, 0);        //GO_ON_STAGE_ONE_KEY
+			if(oneOrFour == 1) {
+				oneOrFour = 4;
+				DataMonitor_Send(0xFF, 32);
+			}
+			else DataMonitor_Send(0xFF, 0);        //GO_ON_STAGE_ONE_KEY
 			//reverse QWEASD
 			filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
 			speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;
@@ -179,18 +183,22 @@ void switch_and_send()
 			pneumatic_control(1, 0);
 			pneumatic_control(3, 0);
 			pneumatic_control(4, 0);
-			DataMonitor_Send(5, 3);
+			if(oneOrFour == 1) {
+				oneOrFour = 4;
+				DataMonitor_Send(5, 7);
+			}
+			else DataMonitor_Send(5, 3);
 			break;
 		case BACK_WHEEL_DOWN:
-			pneumatic_control(1, 1);
-			pneumatic_control(2, 1);
+			pneumatic_control(1, 0);
+			pneumatic_control(2, 0);
 			LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
 			DataMonitor_Send(0xFB, 0);		//ONE_KEY_UP_BACK		
 			break;
 		case FRONT_WHEEL_DOWN:
 			LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
             LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = 0;
-			DataMonitor_Send(0xFF, 0);		//ONE_KEY_UP_FRONT	
+			DataMonitor_Send(0xFF, 7);		//ONE_KEY_UP_FRONT	
 			break;
 		
 	}
@@ -370,26 +378,7 @@ void transmit(){
 			else DataMonitor_Send(0x55, 0);	//keep communication			
 		}
 
-		else { //SHIFT is not pressed
-			if(DBUS_CheckPush(KEY_X)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = DOWN_SETPOINT/8;
-				DataMonitor_Send(0xFC, LiftingMotorSetpoint[0]);		//ONE_KEY_DOWN_FRONT					
-			}
-			else if(DBUS_CheckPush(KEY_V)){
-				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = DOWN_SETPOINT/8;
-				DataMonitor_Send(0xFB, LiftingMotorSetpoint[2]);		//ONE_KEY_DOWN_BACK					
-			}
-			else if(DBUS_CheckPush(KEY_Z)){
-				LiftingMotorSetpoint[0] = LiftingMotorSetpoint[1] = UP_SETPOINT/8;
-				DataMonitor_Send(0xFA, LiftingMotorSetpoint[0]);		//ONE_KEY_UP_FRONT						
-			}
-			else if(DBUS_CheckPush(KEY_C)){
-				LiftingMotorSetpoint[2] = LiftingMotorSetpoint[3] = UP_SETPOINT/8;
-				DataMonitor_Send(0xF9, LiftingMotorSetpoint[2]);		//ONE_KEY_UP_BACK					
-			}	
-			else DataMonitor_Send(0x55, 0);	//keep communication	
-		}
-
+		else DataMonitor_Send(0x55, 0);	//keep communication	
 		
 }
 

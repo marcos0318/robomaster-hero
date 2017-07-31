@@ -360,7 +360,8 @@ int main(void)
 				tft_clear_line(9);
 				tft_clear_line(10);
 				tft_clear_line(11);
-				tft_prints(1,2, "Sp: %d LS:%d", shootingWheelSpeed, InfantryJudge.LastTick);
+				//tft_prints(1,2, "Sp: %d LS:%d", shootingWheelSpeed, InfantryJudge.LastTick);
+				tft_prints(1,2,"OF:%d", oneOrFour); 
 				tft_prints(1,3, "DBUS:%d %d %d", DBUSBrokenLineCounter, DBUSBrokenLine, DBUSBrokenLineRecover);
 				tft_prints(1,4, "CAN1:%d %d %d", CAN1BrokenLineCounter, CAN1BrokenLine, CAN1BrokenLineRecover);
 				tft_prints(1,5, "CAN2:%d %d %d", CAN2BrokenLineCounter, CAN2BrokenLine, CAN2BrokenLineRecover);

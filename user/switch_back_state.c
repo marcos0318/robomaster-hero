@@ -8,6 +8,10 @@ volatile u32 B_RUNNING_MODE_UHPneu_LM_timer = 0;
 volatile u8 B_DANCING_MODE_UVPneu_FW_flag = 0;
 volatile u32 B_DANCING_MODE_UVPneu_FW_timer = 0;
 
+//Back_To_UPPER_PNEU_EXTENDS: upper horizontal pneumatic timer and flag
+volatile u8 B_UHPE_UH_flag = 0;
+volatile u32 B_UHPE_UH_timer = 0;
+
 void Back_To_RUNNING_MODE()
 {
     //set flags and speed limit and direction
@@ -21,7 +25,7 @@ void Back_To_RUNNING_MODE()
     //first withdraw the lower pneumatic and upper vertical pneumatic
     lower_pneumatic_state = 0;
     pneumatic_control(1, 0);
-
+		oneOrFour = 4;
     //need to delay DataMonitor_Send and upper horizontal pneumatic
     B_RUNNING_MODE_UHPneu_LM_flag = 1;
     B_RUNNING_MODE_UHPneu_LM_timer = TIM_7_Counter;
@@ -94,7 +98,8 @@ void Back_To_CATCH_GOLF()
 void Back_To_DANCING_MODE()
 {
 		//need to first extend upper horizontal pneumatic
-		pneumatic_control(3, true);
+		B_UHPE_UH_flag = 1;
+		B_UHPE_UH_timer = TIM_7_Counter;
     ChasisFlag = 3;
     filter_rate_limit = FOR_JOHN_INTO_RI_MAX_SPEED;
     speed_multiplier = -FOR_JOHN_INTO_RI_MAX_SPEED;

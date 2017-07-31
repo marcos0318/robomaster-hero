@@ -9,5 +9,9 @@ extern volatile u32 B_RUNNING_MODE_UHPneu_LM_timer;
 extern volatile u8 B_DANCING_MODE_UVPneu_FW_flag;
 extern volatile u32 B_DANCING_MODE_UVPneu_FW_timer;
 
+//Back_To_UPPER_PNEU_EXTENDS: upper horizontal pneumatic timer and flag
+extern volatile u8 B_UHPE_UH_flag;
+extern volatile u32 B_UHPE_UH_timer;
+
 extern void (*backState[])(void);
 #endif

@@ -70,6 +70,8 @@ extern float pitchSpeedMoveOutput;
 
 extern int32_t pitchPosMultiplier;       //DBUS mouse pitch control
 
+extern u8 oneOrFour;
+
 void gimbal_yaw_control();
 void gimbal_pitch_control();
 void camera_position_control();
