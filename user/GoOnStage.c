@@ -1,4 +1,5 @@
 #include "GoOnStage.h"
+#include "Driver_Foo.h"
 static u32 ticks_msimg = 0;
 volatile u32 TIM_7_counter = 0;
 volatile uint8_t CAN2BrokenLine = 1;
@@ -228,6 +229,52 @@ void TIM7_IRQHandler(void){
     {
 		++TIM_7_counter;
     // Foo Foo Foo
+		#define T 75
+		#define X 1350
+		#define Y ((X)+(T))
+		#define Z 5000
+			/*
+		switch (TIM_7_counter % (2*Z+9*Y)) {
+			case 0: case Y: case 2*Y:
+			case Z+3*Y: case Z+4*Y: case Z+5*Y:
+			case Z+6*Y: case Z+7*Y: case Z+8*Y:
+				GPIO_SetBits(USART1_PORT, USART1_PIN);
+			  break;
+			
+			case T: case Y+T: case 2*Y+T:
+			case Z+3*Y+T: case Z+4*Y+T: case Z+5*Y+T:
+			case Z+6*Y+T: case Z+7*Y+T: case Z+8*Y+T:
+				GPIO_ResetBits(USART1_PORT, USART1_PIN);
+			  break;
+		}
+			*/
+			if (fooRemainCnt) {
+				switch (fooState) {
+					case 0:
+						GPIO_SetBits(USART1_PORT, USART1_PIN);
+					  fooo = TIM_7_counter;
+					  fooState = 1;
+					  break;
+					case 1:
+						if (TIM_7_counter >= fooo+T) {
+							GPIO_ResetBits(USART1_PORT, USART1_PIN);
+							fooState = 2;
+							fooo = TIM_7_counter;
+						}
+						break;
+					case 2:
+						if (TIM_7_counter >= fooo+X) {
+							fooState = 0;
+							--fooRemainCnt;
+						}
+						break;
+				}
+			}
+			#undef T
+			#undef X
+			#undef Y
+			#undef Z
+			
     // Foo Foo Foo
 		ticks_msimg = get_ms_ticks();
 		if(TIM_7_counter >= 3000){

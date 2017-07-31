@@ -1,5 +1,5 @@
 #include "Lifting_Motor_Control.h"
-u32 FLASH_MEM[2] = {132000, 130000};
+u32 FLASH_MEM[2] = {78000, 78000};
 int32_t LiftingMotorSpeedFeedback[4] = {0};
 float LiftingMotorPositionFeedback[4] = {0};
 volatile int32_t LiftingMotorPositionSetpoint[4] = {0};
@@ -7,8 +7,8 @@ int32_t LiftingMotorPositionSetpointBuffered[4] = {0};
 int32_t LiftingMotorSpeedSetpoint[4] = {0};
 int32_t LiftingMotorSpeedSetpointBuffered[4] = {0};
 int32_t LiftingMotorBias[4] = {0};		//actually its the lower limit
-u32 UP_DOWN_DISTANCE[4] = {130000, 130000, 130000, 130000};
-int32_t LiftingMotorPositionLimit[4] = {130000, 130000, 130000, 130000};
+u32 UP_DOWN_DISTANCE[4] = {78000, 78000, 78000, 78000};
+int32_t LiftingMotorPositionLimit[4] = {78000, 78000, 78000, 78000};
 //Index indices which element in the array should I store current GPIO state
 uint8_t LeftFrontIndex = 0;
 uint8_t LeftBackIndex = 0;
@@ -85,9 +85,9 @@ void LiftingMotorInit(){
 	
 	//read UP_SETPOINT and DANCING_MODE_RASING_HEIGHT from flash memory
 	FLASH_MEM[0] = (u32)(readFlash(0));
-	if(FLASH_MEM[0] < 35000 || FLASH_MEM[0] > 130000) FLASH_MEM[0]= 130000;	//for first recording protection
+	if(FLASH_MEM[0] < 35000 || FLASH_MEM[0] > 78000) FLASH_MEM[0]= 78000;	//for first recording protection
 	FLASH_MEM[1] = (u32)(readFlash(1));
-	if(FLASH_MEM[1] < 30000 || FLASH_MEM[1] > 130000) FLASH_MEM[1] = 30000;	//for first recording protection
+	if(FLASH_MEM[1] < 30000 || FLASH_MEM[1] > 78000) FLASH_MEM[1] = 78000;	//for first recording protection
 	//update LiftingMotorUpperLimit[4] by UP_SETPOINT
 	//for(u8 i = 0; i < 4; i++)
 		//LiftingMotorUpperLimit[i] = UP_SETPOINT;

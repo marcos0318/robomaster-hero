@@ -6,7 +6,6 @@ u32 receive_time=0;
 u32 broken_time=0;
 u8 HAS_RECEIVED_LOAD = 0;
 u8 c = 0;
-u32 d = 0;
 void Bilateral_Init(void) {
 	
 	
@@ -97,11 +96,11 @@ void modifyingUpperLimit(uint8_t i, u16 step){
 }
 
 void oneScreen() {
-	d+=1;
+	Foo_Press(4);
 }
 
 void fourScreen() {
-	d+=4;
+	Foo_Press(5);
 }
 
 u8 UARTtemp1;
@@ -175,7 +174,7 @@ void USART3_IRQHandler(void)
 				}
 				else if(getPositionSetpoint() == 0) {
 					for(u8 i = 0; i < 4; i++)
-						LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - 5000;
+						LiftingMotorPositionSetpoint[i] = LiftingMotorPositionLimit[i] - 3000;
 				}
 			}
 			else {
@@ -258,6 +257,9 @@ void USART3_IRQHandler(void)
 				// switch back to 4-screen
 				// need to send signals five times
 				fourScreen();
+			}
+			else if(getPositionSetpoint() == 9) {
+				Foo_Press(1);
 			}
 		}
 		else if(getID()==0xFD){

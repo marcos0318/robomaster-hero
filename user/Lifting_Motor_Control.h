@@ -7,17 +7,17 @@
 #define ANGLE_PID_LIMIT 500
 #define MOVING_BOUND_1 200
 #define MOVING_BOUND_2 450
-#define DOWN_SETPOINT 3500//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
-#define MID_SETPOINT 98150
-#define TOTALLY_DOWN_SETPOINT 3500
+#define DOWN_SETPOINT 2100//determined by the relative height between the pneumatic and the wheels, whe wheels should be put on the stage precisely
+#define MID_SETPOINT 58890
+#define TOTALLY_DOWN_SETPOINT 2100
 extern u32 UP_DOWN_DISTANCE[4];
-#define DANCING_MODE_UP_DOWN_DIFF 16000
-#define ON_ENGINEERING_ROBOT_BACK 35000
-#define ON_ENGINEERING_ROBOT_FRONT 49900
-#define DOWN_ENGINEERING_ROBOT_FRONT 85000
-#define RASING_HEIGHT_FOR_INITIALIZATION 150000
+#define DANCING_MODE_UP_DOWN_DIFF 9600
+#define ON_ENGINEERING_ROBOT_BACK 21000
+#define ON_ENGINEERING_ROBOT_FRONT 29940
+#define DOWN_ENGINEERING_ROBOT_FRONT 51000
+#define RASING_HEIGHT_FOR_INITIALIZATION 90000
 #define INIT_UP_PROTECTION_TIME 4000
-#define INIT_DOWN_PROTECTION_TIME 3200
+#define INIT_DOWN_PROTECTION_TIME 3000
 
 //extern u32 UP_SETPOINT;                  //FLASH_MEM[0]
 //extern u32 DANCING_MODE_RASING_HEIGHT;   //FLASH_MEM[1]
