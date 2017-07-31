@@ -18,17 +18,18 @@ void init(){
 	//ADC1_init();
 	//judging_system_init(); //usart3
 	Bilateral_Init();
-	gyro_init();
+  gyro_init();
 	//pneumatic_init();
 	CAN1_Configuration();
 	CAN2_Configuration();
-	gyro_init();
-	gyro_cal();	
+  gyro_init();
+  gyro_cal();	
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 	LiftingMotorInit();
 	Limit_Switch_init();
 	BSP_DWT_InitConfig();
 	CameraInit();
+  Foo_Init();
 	TIM7_Int_Init(83,999);
 }
 
@@ -75,7 +76,7 @@ int main(void)
 				for(u8 i=2;i<11;i++) 
           tft_clear_line(i); 
 				tft_prints(1, 2,"BC:%d C2:%d", BROKEN_CABLE, CAN2BrokenLine);
-				tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
+				//tft_prints(1, 3, "LF2 %d RF2 %d", checkBrokenLine(TIM_7_counter, Wheel1BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel2BrokenLineCounter));
 				tft_prints(1, 4, "LB2 %d RB2 %d", checkBrokenLine(TIM_7_counter, Wheel4BrokenLineCounter), checkBrokenLine(TIM_7_counter, Wheel3BrokenLineCounter));
 				//tft_prints(1, 5,"LFH:%f", (float)(CM1Encoder.ecd_angle-LiftingMotorBias[0]));
 				//tft_prints(1, 6,"RFH:%f", (float)(CM2Encoder.ecd_angle-LiftingMotorBias[1]));
@@ -97,7 +98,7 @@ int main(void)
           		//tft_prints(1,i+6,"sp %d %d", i+1, LiftingMotorPositionSetpoint[i]);
 				//tft_prints(1,3,"LF sp %d", LiftingMotorPositionSetpoint[0]);
 				tft_prints(1,5,"LF ecd %f", CM1Encoder.ecd_angle);
-				//tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
+				tft_prints(1,3,"BT:%d ",INIT_protection_timer_begin);
 				//tft_prints(1,4,"RT:%d ",INIT_protection_timer_reach);
 				
 				//tft_prints(1,3,"RFBIAS:%d", LiftingMotorBias[1]);

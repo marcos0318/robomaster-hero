@@ -227,6 +227,8 @@ void TIM7_IRQHandler(void){
     if(TIM_GetITStatus(TIM7,TIM_IT_Update)!=RESET)
     {
 		++TIM_7_counter;
+    // Foo Foo Foo
+    // Foo Foo Foo
 		ticks_msimg = get_ms_ticks();
 		if(TIM_7_counter >= 3000){
 			if(TIM_7_counter == 3000) INIT_FLAG = 1;

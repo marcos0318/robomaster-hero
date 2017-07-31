@@ -29,6 +29,7 @@
 #include "Driver_Camera.h"
 #include "Driver_Gun.h"
 #include "Driver_Encoder.h"
+#include "Driver_Foo.h"
 
 #define USE_SIMULATED_JUDGE
 
