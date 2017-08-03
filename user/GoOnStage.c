@@ -23,7 +23,13 @@ volatile uint32_t Wheel2BrokenLineCounter = 1;
 volatile uint32_t Wheel3BrokenLineCounter = 1;
 volatile uint32_t Wheel4BrokenLineCounter = 1;
 
+//extern vu8 oneScreenDelayFlag = 0;
+//extern vu8 fourScreenDelayFlag = 0;
+
 volatile u8 LF_TOUCHED = 0, RF_TOUCHED = 0, LB_TOUCHED = 0, RB_TOUCHED = 0, ALL_TOUCHED = 0;
+
+u8 frictionWheelInitFlag = 1;
+u8 gunInitFlag = 1;
 
 void readFeedback(){
 	LiftingMotorSpeedFeedback[0] = CM1Encoder.filter_rate;
@@ -275,6 +281,14 @@ void TIM7_IRQHandler(void){
 			#undef Y
 			#undef Z
 			
+			if(oneScreenDelayFlag == 1 && Foo_Press(0) == 0) {
+				Foo_Press(4);
+				oneScreenDelayFlag = 0;
+			}
+			else if(fourScreenDelayFlag == 1 && Foo_Press(0) == 0) {
+				Foo_Press(5);
+				fourScreenDelayFlag = 0;
+			}
     // Foo Foo Foo
 		ticks_msimg = get_ms_ticks();
 		if(TIM_7_counter >= 3000){
@@ -307,11 +321,15 @@ void TIM7_IRQHandler(void){
 	
 			
 		//friction wheel initialization needs to be delayed
-		if(TIM_7_counter == 3000)
+		if(frictionWheelInitFlag == 1 && TIM_7_counter >= 3000) {
 			Friction_wheel_init();
+			frictionWheelInitFlag = 0;
+		}
 
-		if(TIM_7_counter == 5000)
+		if(gunInitFlag == 1 && TIM_7_counter >= 5000) {
 			GUN_Init();
+			gunInitFlag = 0;
+		}
 			
 		if(TIM_7_counter>10000){
 			if(!FRICTION_WHEEL_STATE){
@@ -400,6 +418,7 @@ void TIM7_IRQHandler(void){
 			INIT_protection_timer_down = TIM_7_counter;
 			INIT_protection_down_begin_flag = 0;
 		}
+		
 	}
 		broken_time=ticks_msimg;
 		if((broken_time-receive_time)>3000 || CAN2BrokenLine)

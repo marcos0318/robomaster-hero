@@ -15,6 +15,8 @@ extern u32 receive_time;
 extern u32 broken_time;
 extern u8 c;
 extern u32 d;
+extern vu8 oneScreenDelayFlag;
+extern vu8 fourScreenDelayFlag;
 extern uint8_t getID();
 extern int16_t getPositionSetpoint();
 #endif

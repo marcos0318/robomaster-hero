@@ -25,14 +25,13 @@ void init(){
 	CAN2_Configuration();
   gyro_init();
 	gyro_cal();
-  gyro_cal();	
 	TIM5_Int_Init(24,13124);// 256hz //3.9xx ms for gyro usage
 
 	LiftingMotorInit();
 	Limit_Switch_init();
 	BSP_DWT_InitConfig();
 	CameraInit();
-			Foo_Init();
+	Foo_Init();
 	TIM7_Int_Init(83,999);
 
 }
@@ -93,7 +92,8 @@ int main(void)
 				//tft_prints(1,10,"L %d",HAS_RECEIVED_LOAD);
 				u8 temp1 = getID();
 				u8 temp2 = getPositionSetpoint();
-				tft_prints(1,11,"ID: %d kb:%d", temp1, temp2);
+				//tft_prints(1,11,"ID: %d kb:%d", temp1, temp2);
+				tft_prints(1, 11,"%d %d %d", oneScreenDelayFlag, fourScreenDelayFlag, fooRemainCnt);
 				//tft_prints(1,4,"btime %d", broken_time);
 				//tft_prints(1,5,"rtime %d", receive_time);
 				//tft_prints(1, 7,"RB sp %d", LiftingMotorPositionSetpoint[2]);

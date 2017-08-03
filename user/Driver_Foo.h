@@ -12,7 +12,7 @@
   #define FOO_EXT
 #endif
 
-FOO_EXT int32_t fooRemainCnt, fooo, fooState;
+FOO_EXT volatile int32_t fooRemainCnt, fooo, fooState;
 
 void Foo_Init(void);
 	

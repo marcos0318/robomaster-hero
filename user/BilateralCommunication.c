@@ -6,6 +6,8 @@ u32 receive_time=0;
 u32 broken_time=0;
 u8 HAS_RECEIVED_LOAD = 0;
 u8 c = 0;
+vu8 oneScreenDelayFlag = 0;
+vu8 fourScreenDelayFlag = 0;
 void Bilateral_Init(void) {
 	
 	
@@ -96,11 +98,15 @@ void modifyingUpperLimit(uint8_t i, u16 step){
 }
 
 void oneScreen() {
-	Foo_Press(4);
+	if(Foo_Press(0) == 0)
+		Foo_Press(4);
+	else oneScreenDelayFlag = 1;
 }
 
 void fourScreen() {
-	Foo_Press(5);
+	if(Foo_Press(0) == 0)
+		Foo_Press(5);
+	else fourScreenDelayFlag = 1;
 }
 
 u8 UARTtemp1;
