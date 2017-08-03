@@ -315,7 +315,7 @@ void gimbal_pitch_control() {
 		rawpitchsetpoint = 999999; //max
 	}
 	//limit pitch position
-	fwindowLimit(&rawpitchsetpoint, 1100/pitchPosMultiplier, 200/pitchPosMultiplier);
+	fwindowLimit(&rawpitchsetpoint, 1100/pitchPosMultiplier, 150/pitchPosMultiplier);
 
 
 	pitchPositionSetpoint = -rawpitchsetpoint * pitchPosMultiplier;
@@ -411,7 +411,12 @@ void TIM7_IRQHandler(void){
 				Set_CM_Speed(CAN1, gimbalSpeedMoveOutput, pitchSpeedMoveOutput, gunSpeed, cameraSpeedOutput);
 			
 				if(state_delay){
-					if(HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
+					if(HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS) {
+						if((TIM_7_Counter - G_counter) > 300){
+							state_delay = 0;
+						}
+					}
+					else if(HERO == DANCING_MODE || HERO == DOWN_FRONT_WHEEL){
 						if((TIM_7_Counter - G_counter) > 600){
 							state_delay = 0;
 						}
@@ -626,7 +631,7 @@ void TIM7_IRQHandler(void){
 				if(DBUS_CheckPush(KEY_R) && KEY_R_PREV == 0 && (HERO == BACK_WHEEL_UP || HERO == SPEED_LIMITATION || HERO == UPPER_HORIZONTAL_PNEUMATIC_EXTENDS || HERO == CATCH_GOLF || HERO == DANCING_MODE)){
 					DataMonitor_Send(0xFD,0);
 				}
-				else if(keyRCounter == 0 && HERO == RUNNING_MODE && DBUS_CheckPush(KEY_R) && KEY_R_PREV == 0) {
+				else if(keyRCounter == 0 && HERO == RUNNING_MODE && !DBUS_CheckPush(KEY_SHIFT) && !DBUS_CheckPush(KEY_CTRL) && DBUS_CheckPush(KEY_R) && KEY_R_PREV == 0) {
 					if(oneOrFour == 1) {
 						oneOrFour = 4;
 						DataMonitor_Send(0xF7, 4);

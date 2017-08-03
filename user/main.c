@@ -64,7 +64,7 @@ int main(void)
 			
 			if (ticks_msimg % 20 == 0) {
 				shootingWheelSpeed = convertToShootingSpeed( InfantryJudge.RealVoltage );
-				shootingWheelSpeed = fixShootingSpeed(shootingWheelSpeed, get_ms_ticks() - InfantryJudge.LastTick, 850, 300 );
+				shootingWheelSpeed = fixShootingSpeed(shootingWheelSpeed, get_ms_ticks() - InfantryJudge.LastTick, 1020, 235 );
 				
 				if (shootingWheelSpeed > 2000 ) {
 					shootingWheelSpeed = 2000;

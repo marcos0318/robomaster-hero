@@ -177,7 +177,7 @@ void GUN_SetMotion(void) {
 
     shoot = jumpPress || (((pressCount & 0x000FU) == 0)&&pressCount);
     shoot = shoot && (DBUS_ReceiveData.rc.switch_right != 1);
-    shoot = shoot && (ticks_msimg - lastTick > 250);
+    shoot = shoot && (ticks_msimg - lastTick > 235);
     if (shoot) {
         GUN_ShootOne();
         lastTick = ticks_msimg;
